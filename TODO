@@ -1,0 +1,12 @@
+
+TODO:
+-check if the Am-Be source given consider already the steel container or i have to implement it
+-check for fluence
+
+
+
+
+
+
+- Create separate classes for each type of source
+- Clean up DetectorConstruction source code
