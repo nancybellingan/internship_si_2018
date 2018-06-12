@@ -4,6 +4,16 @@
 typedef unsigned long long u64;
 typedef long long i64;
 
+#include <G4String.hh>
+struct DetectorName{
+	G4String pathSphere ="mySphereScorer/totSphereFlux";
+	G4String pathFast = "fastDet/totfastflux";
+	G4String pathAlbedo = "albedoDet/totalbedoflux";
+};
+
+static const DetectorName detectorName;
+
+
 struct Conf{
 	bool enableRoom = false;
 	i64 eventNumber = 5000;

@@ -128,7 +128,7 @@ Run* re02Run=(Run*)aRun;
   //  std::vector<G4THitsMap<G4double>*> ref = re02Run->GetSphereFlux();
 for (uint i=0;i<re02Run->GetSphereFlux().size();i++){
 	for(auto line : *(re02Run->GetSphereFlux()[i]) ){
-		outpr << line.first << line.second << G4endl;
+		outpr << line.first << " boh " << *line.second << G4endl;
 	}
 	//gg all
 
@@ -173,7 +173,7 @@ sensDetHit->FluenceEnergyDistributionHit::Print();
 
 		outp.close();
     }
-}  else{
+} /* else{
 	for(size_t i = 0; i< sds.size(); i++) {
 		    FluenceEnergyDistributionSD* sensDet
 			   = (FluenceEnergyDistributionSD*) (pSDman->
@@ -201,7 +201,7 @@ sensDetHit->FluenceEnergyDistributionHit::Print();
 	    outp2 << "Layers in Si not enabled" << G4endl;
 	    outp2.close();
     }
-}
+}*/
 
 
 

@@ -5,7 +5,8 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 set(CMAKE_C_COMPILER "gcc-7")
 set(CMAKE_CXX_COMPILER "g++-7")
 
-add_compile_options(-g -O0 -fsanitize=address -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow)
+#-fsanitize=address
+add_compile_options(-g -O0  -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow -Wno-unused-variable)
 
 SET(ASAN_FLAGS    "-fsanitize=address")
 
@@ -109,7 +110,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #
 add_executable(SiDetPhant SiDetPhant.cc ${sources} ${headers})
 target_link_libraries(SiDetPhant ${Geant4_LIBRARIES} )
-target_link_libraries(SiDetPhant ${ASAN_FLAGS} )
+#target_link_libraries(SiDetPhant ${ASAN_FLAGS} )
 
 
 
