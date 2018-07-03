@@ -31,7 +31,7 @@ struct Conf{
 	bool DummyScorer = 0;
 	std::vector<double> ebin;
 	G4String folder;
-	bool print_stored_trajectories = true;
+	bool print_stored_trajectories = false;
 };
 const Conf* conf();
 

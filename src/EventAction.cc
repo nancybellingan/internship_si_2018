@@ -59,15 +59,15 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   //
   if (event_id < 10 || event_id%10000 == 0) {
     G4cout << ">>> Event " << evt->GetEventID() << G4endl;
-#ifdef print_stored_trajectories
-    // get number of stored trajectories
-    //
-    G4TrajectoryContainer* trajectoryContainer = evt->GetTrajectoryContainer();
-    G4int n_trajectories = 0;
-    if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
-    G4cout << "    " << n_trajectories 
-           << " trajectories stored in this event." << G4endl;
-#endif
+  }
+  if(conf()->print_stored_trajectories){
+  // get number of stored trajectories
+
+  G4TrajectoryContainer* trajectoryContainer = evt->GetTrajectoryContainer();
+  G4int n_trajectories = 0;
+  if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
+  G4cout << "    " << n_trajectories
+         << " trajectories stored in this event." << G4endl;
   }
 
 }
