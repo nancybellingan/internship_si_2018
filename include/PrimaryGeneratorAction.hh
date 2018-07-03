@@ -62,6 +62,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
   public:
     virtual void GeneratePrimaries(G4Event*);
+	std::vector<G4double> getambedistribution();
 
 /*	void setGunEnergy(const G4double &gEnergy);
 	G4double getGunEnergy() { return fGunEnergy; };
@@ -75,6 +76,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
 	std::ifstream fReadPhsFile; */
 	std::ofstream out;
+
 
   private:
 /*	G4double fSigmaPosition; // Initial beam spot size in x-y plane.
@@ -95,6 +97,8 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
         G4double gaussianShoot(const G4double &meanValue, //describe the gaussian distribution given a mean and a sigma
                                                const G4double &sigmaValue); */
+	std::vector<G4double> ambedistribution;
+
 PrimaryGeneratorMessenger *fMessenger;
            G4GeneralParticleSource* fParticleGun;
 };

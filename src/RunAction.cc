@@ -62,18 +62,18 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Constructor
 RunAction::RunAction()
-  : G4UserRunAction(),
-    fNx(0), fNy(0), fNz(0)
+    : G4UserRunAction(),
+      fNx(0), fNy(0), fNz(0)
 {
-  // - Prepare data member for Run.
-  //   vector represents a list of MultiFunctionalDetector names.
-    // if the Multi functional detector is activated in the main file, then this macro happens. if not it uses the user detector
-/*
+	// - Prepare data member for Run.
+	//   vector represents a list of MultiFunctionalDetector names.
+	// if the Multi functional detector is activated in the main file, then this macro happens. if not it uses the user detector
+	/*
 #ifdef MFD
 	fSDName.push_back(G4String("PhantomSD"));
 #else
 	fDetector = (DetectorConstruction*)
-		          (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+				  (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
 #endif*/
 }
 
@@ -81,20 +81,20 @@ RunAction::RunAction()
 // Destructor.
 RunAction::~RunAction()
 {
-    // if the debug is activated from main, it is given the information that the destructor is happening
+	// if the debug is activated from main, it is given the information that the destructor is happening
 
 	G4cout << "Destructor RunAction" << G4endl;
 
-  fSDName.clear();
+	fSDName.clear();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //== 
 G4Run* RunAction::GenerateRun()
 {
-  // Generate new RUN object, which is specially
-  // dedicated for MultiFunctionalDetector scheme.
-  //  Detail description can be found in Run.hh/cc.
+	// Generate new RUN object, which is specially
+	// dedicated for MultiFunctionalDetector scheme.
+	//  Detail description can be found in Run.hh/cc.
 
 	return (new Run());
 
@@ -104,124 +104,153 @@ G4Run* RunAction::GenerateRun()
 //==
 void RunAction::BeginOfRunAction(const G4Run* aRun)
 {
-  G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
+	G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //== 
 void RunAction::EndOfRunAction(const G4Run* aRun)
 {
-Run* re02Run=(Run*)aRun;
-  if(!IsMaster()) return;
+	Run* re02Run=(Run*)aRun;
+	if(!IsMaster()) return;
 
-  //- Run object.
-  //--- Dump all scored quantities involved in Run if is not being used the Multi functional detector
+	//- Run object.
+	//--- Dump all scored quantities involved in Run if is not being used the Multi functional detector
+	if (conf()->SphereScorer==1){
+		std::fstream outp1;
+		G4int sum = 0;
+		G4String outfiler1="./outputs/outputsphere.dat";
+		G4String outfiler2="./outputs/outputfastdummy.dat";
+		G4String outfiler3="./outputs/outputalbedodummy.dat";
+		//  outfiler.append(std::chrono::system_clock::now());
+		outp1.open(outfiler1.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+		outp1 << "prova" << G4endl;
+		//   G4int n = re02Run->GetNumberOfHitsMap();
+		//  outpr << n << G4endl;
+		//  std::vector<G4THitsMap<G4double>*> ref = re02Run->GetSphereFlux();
+		auto flux1 = re02Run->GetSphereFlux();
+		for (uint i=0;i<flux1.size();i++){
+			auto energy = conf()->ebin[i];
+			for(auto line : *(flux1[i]) ){
+				outp1 << "bin n° " << i <<" energy: " << energy << " id evento ? " << line.first << " boh " << *line.second << G4endl;
+				sum += *line.second;
+			}
 
-  std::fstream outpr;
-  G4String outfiler="./outputs/outputr.dat";
-//  outfiler.append(std::chrono::system_clock::now());
-   outpr.open(outfiler.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-    outpr << "prova" << G4endl;
- //   G4int n = re02Run->GetNumberOfHitsMap();
-  //  outpr << n << G4endl;
-
-  //  std::vector<G4THitsMap<G4double>*> ref = re02Run->GetSphereFlux();
-for (uint i=0;i<re02Run->GetSphereFlux().size();i++){
-	for(auto line : *(re02Run->GetSphereFlux()[i]) ){
-		outpr << line.first << " boh " << *line.second << G4endl;
+			//gg all
+		}
+		outp1 << "tot events" << sum << G4endl;
+		outp1.close();
 	}
-	//gg all
-
- // outpr << aRun->GetNumberOfHitsMap() << "hits" << G4endl;
-//        re02Run->DumpAllScorer(outpr);]
-//
-
-}
- outpr.close();
-
-G4SDManager* pSDman = G4SDManager::GetSDMpointer();
+	if (conf()->DummyScorer==1){
+		std::fstream outp1;
+		G4String outfiler2="./outputs/outputfastdummy.dat";
+		G4String outfiler3="./outputs/outputalbedodummy.dat";
+		outp1.open(outfiler2.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+		outp1 << "prova" << G4endl;
+		auto flux2 = re02Run->GetFastFlux();
+		for (uint i=0;i<flux2.size();i++){
+			auto energy = conf()->ebin[i];
+			for(auto line : *(flux2[i]) ){
+				outp1 << "bin n° " << i <<" energy: " << energy << " id evento ? " << line.first << " boh " << *line.second << G4endl;
+			}
+			//gg all
+		}
+		outp1.close();
+		outp1.open(outfiler3.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+		outp1 << "prova" << G4endl;
+		auto flux3 = re02Run->GetAlbedoFlux();
+		for (uint i=0;i<flux3.size();i++){
+			auto energy = conf()->ebin[i];
+			for(auto line : *(flux3[i]) ){
+				outp1 << "bin n° " << i <<" energy: " << energy << " id evento ? " << line.first << " boh " << *line.second << G4endl;
+			}
+			//gg all
+		}
+		outp1.close();
+	}
+	G4SDManager* pSDman = G4SDManager::GetSDMpointer();
 	const DetectorConstruction* detector =
-		(const DetectorConstruction*)
-		(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-//	detector->GetNumberOfSegmentsInPhantom(fNx,fNy,fNz); //Fill fNx,y,z.
+	        (const DetectorConstruction*)
+	        (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+	//	detector->GetNumberOfSegmentsInPhantom(fNx,fNy,fNz); //Fill fNx,y,z.
 	
 
 	std::vector<G4String> sds = detector->GetUSDNames();
 
 
-    //------- Energy Deposition will be printed in output folder, for both cases of 100 layers and 8 (1+7)
-if(conf()->SiLayersDep ==1){
-    for(size_t i = 0; i< sds.size(); i++) {
-		FluenceEnergyDistributionSD* sensDet
-	               = (FluenceEnergyDistributionSD*) (pSDman->
-			                       FindSensitiveDetector(sds[i]));
-                FluenceEnergyDistributionHit* sensDetHit = (FluenceEnergyDistributionHit*) (pSDman->
-                                                                                           FindSensitiveDetector(sds[i]));
+	//------- Energy Deposition will be printed in output folder, for both cases of 100 layers and 8 (1+7)
+	if(conf()->SiLayersDep ==1){
+		for(size_t i = 0; i< sds.size(); i++) {
+			FluenceEnergyDistributionSD* sensDet
+			        = (FluenceEnergyDistributionSD*) (pSDman->
+			                                          FindSensitiveDetector(sds[i]));
+			FluenceEnergyDistributionHit* sensDetHit = (FluenceEnergyDistributionHit*) (pSDman->
+			                                                                            FindSensitiveDetector(sds[i]));
 
-		G4String outfile="./outputs/" + sds[i] + "ErgfileVoxels.dat";
-//		std::fstream outp(outfile.c_str(),std::fstream::out |
-//										  std::fstream::in  |
-//										  std::fstream::trunc);
-                std::fstream outp;
-                outp.open(outfile.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-                outp << "prova" << G4endl;
-                outp << sds.size() << G4endl;
- //  outp << totflux << G4endl;
-// outp << G4THitsMap->GetHitsMap(sds[i]) << G4endl;
-	      sensDet->FluenceEnergyDistributionSD::DumpAllDetectorCollects(outp);
-sensDetHit->FluenceEnergyDistributionHit::Print();
+			G4String outfile="./outputs/" + sds[i] + "ErgfileVoxels.dat";
+			//		std::fstream outp(outfile.c_str(),std::fstream::out |
+			//										  std::fstream::in  |
+			//										  std::fstream::trunc);
+			std::fstream outp;
+			outp.open(outfile.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+			outp << "prova" << G4endl;
+			outp << sds.size() << G4endl;
+			//  outp << totflux << G4endl;
+			// outp << G4THitsMap->GetHitsMap(sds[i]) << G4endl;
+			sensDet->FluenceEnergyDistributionSD::DumpAllDetectorCollects(outp);
+			sensDetHit->FluenceEnergyDistributionHit::Print();
 
-		outp.close();
-    }
-} /* else{
+			outp.close();
+		}
+	} /* else{
 	for(size_t i = 0; i< sds.size(); i++) {
-		    FluenceEnergyDistributionSD* sensDet
+			FluenceEnergyDistributionSD* sensDet
 			   = (FluenceEnergyDistributionSD*) (pSDman->
 						   FindSensitiveDetector(sds[i]));
-		    FluenceEnergyDistributionHit* sensDetHit = (FluenceEnergyDistributionHit*) (pSDman->
-											       FindSensitiveDetector(sds[i]));
-		    if(sensDet == 0) G4cout << "Not found" << G4endl;
-		    G4String outfile="./outputs/" + sds[i] + "ErgfileVoxels.dat";
-    //		std::fstream outp(outfile.c_str(),std::fstream::out |
-    //										  std::fstream::in  |
-    //										  std::fstream::trunc);
-		    std::fstream outp;
-		    outp.open(outfile.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-		    outp << "prova" << G4endl;
-		    outp << sds.size() << G4endl;
-     //  outp << totflux << G4endl;
-    // outp << G4THitsMap->GetHitsMap(sds[i]) << G4endl;
+			FluenceEnergyDistributionHit* sensDetHit = (FluenceEnergyDistributionHit*) (pSDman->
+												   FindSensitiveDetector(sds[i]));
+			if(sensDet == 0) G4cout << "Not found" << G4endl;
+			G4String outfile="./outputs/" + sds[i] + "ErgfileVoxels.dat";
+	//		std::fstream outp(outfile.c_str(),std::fstream::out |
+	//										  std::fstream::in  |
+	//										  std::fstream::trunc);
+			std::fstream outp;
+			outp.open(outfile.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+			outp << "prova" << G4endl;
+			outp << sds.size() << G4endl;
+	 //  outp << totflux << G4endl;
+	// outp << G4THitsMap->GetHitsMap(sds[i]) << G4endl;
 		  sensDet->FluenceEnergyDistributionSD::DumpAllDetectorCollects(outp);
-    sensDetHit->FluenceEnergyDistributionHit::Print();
+	sensDetHit->FluenceEnergyDistributionHit::Print();
 
-		    outp.close();
+			outp.close();
 
-	    std::fstream outp2;
-	    outp2.open("configinfo.dat",std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-	    outp2 << "Layers in Si not enabled" << G4endl;
-	    outp2.close();
-    }
+		std::fstream outp2;
+		outp2.open("configinfo.dat",std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+		outp2 << "Layers in Si not enabled" << G4endl;
+		outp2.close();
+	}
 }*/
 
 
 
 
-/*
+	/*
 
 std::vector<G4String> mfdName = fDetector->GetUSDNames();
 G4int nMfd = mfdName.size();
 for ( G4int idet = 0; idet < nMfd ; idet++)
-    {
-    G4String detName = mfdName[idet];
-    DetectorCollect* DetCol = (DetectorCollect*)(pSDman->FindSensitiveDetector(detName));
+	{
+	G4String detName = mfdName[idet];
+	DetectorCollect* DetCol = (DetectorCollect*)(pSDman->FindSensitiveDetector(detName));
 //	SDCollect* SDDetCol = (SDCollect*)(pSDman->FindSensitiveDetector(detName));
-    std::fstream outp2;
-    G4String outfile2="./outputs/" + mfdName[idet] + "multidet.dat";
-    outp2.open(outfile2.c_str(), std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-    outp2 << "prova2" << G4endl;
-    DetCol->SDCollect::DumpCollects(out2);
-    //DetectorCollect::DumpDetectorCollect(outp2);
-    outp2.close();
+	std::fstream outp2;
+	G4String outfile2="./outputs/" + mfdName[idet] + "multidet.dat";
+	outp2.open(outfile2.c_str(), std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+	outp2 << "prova2" << G4endl;
+	DetCol->SDCollect::DumpCollects(out2);
+	//DetectorCollect::DumpDetectorCollect(outp2);
+	outp2.close();
 
  //with DetCol -> i am communicating which detector should be taken in consideration already, so the whole dumpdetectorcollect happen
 // for that one only.

@@ -1112,7 +1112,7 @@ void DetectorConstruction::ConstructSDandField() {
 	}
 
 
-	if(conf()->SiLayersDep ==0){
+	if(conf()->DummyScorer ==1){
 		std::vector<double> binningenergy = conf()->ebin;
 		G4MultiFunctionalDetector* FastDetector = new G4MultiFunctionalDetector("fastDet");
 		G4SDManager::GetSDMpointer()->AddNewDetector(FastDetector);
@@ -1158,7 +1158,8 @@ void DetectorConstruction::ConstructSDandField() {
 
 
 
-	}else {
+	}
+	if(conf()->SiLayersDep ==1) {
 		std::vector<G4LogicalVolume*>::iterator LV_i = fUSDVolumes.begin();
 		std::vector<G4LogicalVolume*>::iterator LV_n = fUSDVolumes.end();
 		for(; LV_i != LV_n; ++LV_i) {

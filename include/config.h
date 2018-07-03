@@ -9,6 +9,8 @@ struct DetectorName{
 	G4String pathSphere ="mySphereScorer/totSphereFlux";
 	G4String pathFast = "fastDet/totfastflux";
 	G4String pathAlbedo = "albedoDet/totalbedoflux";
+	G4String pathFastDep = "fastdep/totaldep";
+	G4String pathAlbedoDep = "albedodep/totaldep";
 };
 
 static const DetectorName detectorName;
@@ -26,7 +28,10 @@ struct Conf{
 	double Sourcexcm = 0;
 	double Sourceycm = 0;
 	double Sourcezcm = 0;
+	bool DummyScorer = 0;
 	std::vector<double> ebin;
+	G4String folder;
+	bool print_stored_trajectories = true;
 };
 const Conf* conf();
 

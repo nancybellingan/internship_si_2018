@@ -29,11 +29,11 @@
 //
 // $Id: PrimaryGeneratorAction.cc 68026 2013-03-13 13:45:22Z gcosmo $
 //
-
+#include "ActionInitialization.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "DetectorConstruction.hh"
 #include "G4RunManager.hh"
-
+#include "config.h"
 #include "PrimaryGeneratorMessenger.hh"
 #include "G4GeneralParticleSource.hh"
 #include "G4Event.hh"
@@ -45,30 +45,32 @@
 #include "globals.hh"
 #include "G4SystemOfUnits.hh"    
 #include <cmath>
-
+#include <time.h>
 //============================================================================
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
- :	G4VUserPrimaryGeneratorAction(), fParticleGun(0)
+    :	G4VUserPrimaryGeneratorAction(), fParticleGun(0)
 {
 
-//	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-//	G4ParticleDefinition* particle = particleTable->FindParticle(fParticleName);
+	ambedistribution.resize(conf()->ebin.size());
+	//	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+	//	G4ParticleDefinition* particle = particleTable->FindParticle(fParticleName);
 
-        // uncomment for particlegun monoergetic beam
-        // fParticleGun = new G4ParticleGun(fNumOfParticle);
-       // uncomment for GPS general particle source for am-be
-        fParticleGun = new G4GeneralParticleSource();
-       // fParticleGun->SetParticleDefinition("neutron");
-      // fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0,0.0,1.));
-        // fParticleGun->SetParticleEnergy(fGunEnergy);
-        // updateSigmaGunEnergy();
+	// uncomment for particlegun monoergetic beam
+	// fParticleGun = new G4ParticleGun(fNumOfParticle);
+	// uncomment for GPS general particle source for am-be
+	fParticleGun = new G4GeneralParticleSource();
+	// fParticleGun->SetParticleDefinition("neutron");
+	// fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0,0.0,1.));
+	// fParticleGun->SetParticleEnergy(fGunEnergy);
+	// updateSigmaGunEnergy();
 
 	fMessenger = new PrimaryGeneratorMessenger(this);
 
-//----------------------------------------------------------------------------
-	// Checking Gaussian Distribution
+	//----------------------------------------------------------------------------
+
 	out.open("EDistribution.dat");
+
 
 	/*
 	std::ofstream outw;
@@ -82,22 +84,22 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 	outw.close();
 	*/
 
-//----------------------------------------------------------------------------
+	//----------------------------------------------------------------------------
 
 	//G4double position = -157.5*cm+75.*cm;
 
-// Initial beam spot size in sigma.; This is not a part of ParticleGun.
-//	fSigmaPosition = 10.* mm;
-        //fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm, 0.*cm, position));
-/*
+	// Initial beam spot size in sigma.; This is not a part of ParticleGun.
+	//	fSigmaPosition = 10.* mm;
+	//fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm, 0.*cm, position));
+	/*
 #ifdef FLUKA_PSF
-    std::string ifile="./../../../RPTC/ginputs/11x11/140MeV";
+	std::string ifile="./../../../RPTC/ginputs/11x11/140MeV";
 	fReadPhsFile.open(ifile.c_str());
 	if(!fReadPhsFile)
 	{
 		std::cout << "Cannot find or open file: "
-	              << ifile << std::endl;
-	    exit(-1);
+				  << ifile << std::endl;
+		exit(-1);
 	}
 #endif
 
@@ -117,7 +119,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 	delete fParticleGun;
 	delete fMessenger;
 #ifdef FLUKA_PSF
-    fReadPhsFile.close();
+	fReadPhsFile.close();
 	G4cout << "WARNING: Not in Particle List: " << fNotInList << G4endl;
 #endif
 	out.close();
@@ -125,16 +127,38 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 //======generate primary particles and relative momentum======================================================================
 
+
+
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 { 
-        // G4ThreeVector position = fParticleGun->GetParticlePosition();
+	static int number = 0;
+	// G4ThreeVector position = fParticleGun->GetParticlePosition();
+	number++;
+	timespec tv;
+	clock_gettime (CLOCK_MONOTONIC, &tv);
 	G4double energy = fParticleGun->GetParticleEnergy(); //TODO: Check Function call
-	out << energy << '\n';
+	out << energy << "," << number << "," << tv.tv_sec << "." << tv.tv_nsec << '\n';
+	out.flush();//this will force to write on disk immediately
 
-        fParticleGun->GeneratePrimaryVertex(anEvent);
+	for (uint i=0;i<conf()->ebin.size();i++){
+		if (i==0){
+			if(energy>0 && energy <conf()->ebin[i]){
+				ambedistribution[i]++;
+			}
+		}else {
+			if(energy>=conf()->ebin[i-1] && energy<conf()->ebin[i]){
+				ambedistribution[i]++;
+			}
+		}
 
+		fParticleGun->GeneratePrimaryVertex(anEvent);
+
+	}
 }
 
+std::vector<G4double> PrimaryGeneratorAction::getambedistribution() {
+	return ambedistribution;
+}
 //============================================================================
 
 /* void PrimaryGeneratorAction::setGunEnergy(const G4double &gEnergy)
@@ -153,7 +177,7 @@ G4double PrimaryGeneratorAction::gaussianShoot(
 	{
 		return G4RandGauss::shoot(meanValue,sigmaValue);
 	}
-	else 
+	else
 	{
 		return meanValue;
 	}

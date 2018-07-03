@@ -49,18 +49,18 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Sensitive Detector
 FluenceEnergyDistributionSD::FluenceEnergyDistributionSD(
-		const G4String& name, const G4int& ni, const G4int& nj, 
-		const G4int& nk, const G4int& depth, const G4int& depi, 
-		const G4int& depj,const G4int& depk) 
- : G4VSensitiveDetector(name), fDepth(depth), fDepthi(depi), fDepthj(depj), fDepthk(depk), fWeighted(true), fIntEdep(0.)
+        const G4String& name, const G4int& ni, const G4int& nj,
+        const G4int& nk, const G4int& depth, const G4int& depi,
+        const G4int& depj,const G4int& depk)
+    : G4VSensitiveDetector(name), fDepth(depth), fDepthi(depi), fDepthj(depj), fDepthk(depk), fWeighted(true), fIntEdep(0.)
 {
 	G4cout << "Creating FluenceEnergyDistributionSD for: " << name << G4endl;
-    fNi=ni;
+	fNi=ni;
 	fNj=nj;
 	fNk=nk;
 
-	fEventManager = (G4EventManager*) 
-					G4EventManager::GetEventManager();
+	fEventManager = (G4EventManager*)
+	        G4EventManager::GetEventManager();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -76,12 +76,12 @@ void FluenceEnergyDistributionSD::Initialize(G4HCofThisEvent*) //Hits Collection
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4bool FluenceEnergyDistributionSD::ProcessHits(G4Step* aStep, 
-                                     G4TouchableHistory*)
+                                                G4TouchableHistory*)
 {  
 
 
 	G4double edep = aStep->GetTotalEnergyDeposit();
-	if(edep == 0.) return false; 
+	if(edep == 0.) return false;
 	edep*=aStep->GetPreStepPoint()->GetWeight();
 	fIntEdep+=edep;
 	G4int  index = GetIndex(aStep);
@@ -96,7 +96,7 @@ G4bool FluenceEnergyDistributionSD::ProcessHits(G4Step* aStep,
 
 inline void FluenceEnergyDistributionSD::clear()
 {
-		fLayerEDep.clear();
+	fLayerEDep.clear();
 }
 
 //=============================================================================
@@ -104,8 +104,8 @@ inline void FluenceEnergyDistributionSD::clear()
 void FluenceEnergyDistributionSD::EndOfEvent(G4HCofThisEvent*)
 {
 	if(fIntEdep > 0.) {
-	G4int evtID = fEventManager->GetConstCurrentEvent()->GetEventID();
-	fCountsMap[evtID]=fLayerEDep;
+		G4int evtID = fEventManager->GetConstCurrentEvent()->GetEventID();
+		fCountsMap[evtID]=fLayerEDep;
 	}
 	clear();
 	fIntEdep=0.;
@@ -115,25 +115,25 @@ void FluenceEnergyDistributionSD::EndOfEvent(G4HCofThisEvent*)
 
 G4double FluenceEnergyDistributionSD::ComputeVolume(G4Step* step, G4int idx)
 {
- G4VPhysicalVolume* physVol = step->GetPreStepPoint()->GetPhysicalVolume();
-  G4VPVParameterisation* physParam = physVol->GetParameterisation();
-  G4VSolid* solid = 0;
-  if(physParam)
-  { // for parameterized volume
-    if(idx<0)
-    {
-      G4ExceptionDescription ED;
-      ED << "Incorrect replica number --- GetReplicaNumber : " << idx << G4endl;
-      G4Exception("G4PSCellFlux::ComputeVolume","DetPS0001",JustWarning,ED);
-    }
-    solid = physParam->ComputeSolid(idx, physVol);
-    solid->ComputeDimensions(physParam,idx,physVol);
-  }
-  else
-  { // for ordinary volume
-    solid = physVol->GetLogicalVolume()->GetSolid();
-  }
-  return solid->GetCubicVolume();
+	G4VPhysicalVolume* physVol = step->GetPreStepPoint()->GetPhysicalVolume();
+	G4VPVParameterisation* physParam = physVol->GetParameterisation();
+	G4VSolid* solid = 0;
+	if(physParam)
+	{ // for parameterized volume
+		if(idx<0)
+		{
+			G4ExceptionDescription ED;
+			ED << "Incorrect replica number --- GetReplicaNumber : " << idx << G4endl;
+			G4Exception("G4PSCellFlux::ComputeVolume","DetPS0001",JustWarning,ED);
+		}
+		solid = physParam->ComputeSolid(idx, physVol);
+		solid->ComputeDimensions(physParam,idx,physVol);
+	}
+	else
+	{ // for ordinary volume
+		solid = physVol->GetLogicalVolume()->GetSolid();
+	}
+	return solid->GetCubicVolume();
 }
 
 //=============================================================================
@@ -154,8 +154,8 @@ inline G4int FluenceEnergyDistributionSD::GetIndex(G4Step* aStep)
 		   << touchable->GetVolume(fDepthi)->GetName() << ","
 		   << touchable->GetVolume(fDepthj)->GetName() << ","
 		   << touchable->GetVolume(fDepthk)->GetName() << G4endl;
-		  G4Exception("G4PSEnergyDeposit3D::GetIndex","DetPS0006",
-													JustWarning,ED);
+		G4Exception("G4PSEnergyDeposit3D::GetIndex","DetPS0006",
+		            JustWarning,ED);
 	}
 
 	return i*fNj*fNk+j*fNk+k;
@@ -165,58 +165,39 @@ inline G4int FluenceEnergyDistributionSD::GetIndex(G4Step* aStep)
 
 void FluenceEnergyDistributionSD::DumpAllDetectorCollects(
 
-                                                                                        std::fstream& out)
+        std::fstream& out)
 {
-    //out.open();
-    out.precision(6);
+	//out.open();
+	out.precision(6);
 
 
-    //------- Energy Deposition will be printed in output folder, for both cases of 100 layers and 8 (1+7)
-if(conf()->SiLayersDep==1)
-{
-	CountMap::iterator it    = fCountsMap.begin();
-	CountMap::iterator itend = fCountsMap.end();
-	out << "Tot Events:" << G4endl;
-        out << fCountsMap.size() << G4endl;
-	for(;it!=itend;++it) {
-out << "Event ID with hit" << G4endl;
-		out << std::scientific << it->first << "\t";
-		G4int i=0, j=0, k=0;
-		G4double tot=0;
-		for(;i<fNi;i++){
-	        for(;j<fNj;j++)
-		    for(;k<10;k++) {
-	                G4int ind = CalcIndex(i,j,k);
-					out << (it->second)[ind] << "\t";
-					tot=+(it->second)[ind];
-	            }
+	//------- Energy Deposition will be printed in output folder, for both cases of 100 layers and 8 (1+7)
+	if(conf()->SiLayersDep==1)
+	{
+		CountMap::iterator it    = fCountsMap.begin();
+		CountMap::iterator itend = fCountsMap.end();
+		out << "Tot Events:" << G4endl;
+		out << fCountsMap.size() << G4endl;
+		for(;it!=itend;++it) {
+			out << "Event ID with hit" << G4endl;
+			out << std::scientific << it->first << "\t";
+			G4int i=0, j=0, k=0;
+			G4double tot=0;
+			for(;i<fNi;i++){
+				for(;j<fNj;j++)
+					for(;k<10;k++) {
+						G4int ind = CalcIndex(i,j,k);
+						out << (it->second)[ind] << "\t";
+						tot=+(it->second)[ind];
+					}
+			}
+			out <<"tot E"<< tot << G4endl;
 		}
-		out <<"tot E"<< tot << G4endl;
 	}
-}else
-{
-	CountMap::iterator it    = fCountsMap.begin();
-	CountMap::iterator itend = fCountsMap.end();
-	out << "k:" << fNk << G4endl;
-	out << "Tot Events:" << G4endl;
-	out << fCountsMap.size() << G4endl;
-	for(;it!=itend;++it) {
-out << "Event ID with hit" << G4endl;
-		out << std::scientific << it->first << "\t";
-		G4int i=0, j=0, k=0;
-		//G4double tot=0;
-	    for(;i<fNi;i++)
-		for(;j<fNj;j++)
-		    for(;k<2;k++) {
-			G4int ind = CalcIndex(i,j,k);
-					out << (it->second)[ind] << "\t";
 
-					// tot=+(it->second)[ind];
-		    }
+	// out <<"tot E"<< tot << G4endl;
 
-		// out <<"tot E"<< tot << G4endl;
-	}
-}
+
 
 
 

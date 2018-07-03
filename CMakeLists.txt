@@ -6,9 +6,10 @@ set(CMAKE_C_COMPILER "gcc-7")
 set(CMAKE_CXX_COMPILER "g++-7")
 
 #-fsanitize=address
-add_compile_options(-g -O0  -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow -Wno-unused-variable)
 
-SET(ASAN_FLAGS    "-fsanitize=address")
+add_compile_options(-g -O2 -march=native -flto -fuse-ld=gold -fuse-linker-plugin -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow -Wno-unused-variable)
+
+#SET(ASAN_FLAGS    "-fsanitize=address")
 
 #SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${ASAN_FLAGS}" )
 
@@ -22,8 +23,8 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
 set(CMAKE_CXX_STANDARD 11)
-
-
+#debug symbols maybe??
+set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 
 
 #----------------------------------------------------------------------------

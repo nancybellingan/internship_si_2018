@@ -156,9 +156,9 @@ void Run::RecordEvent(const G4Event* aEvent)
 	  }
 	eventSphereFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[i]));
 	eventFastFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(FastFluxID[i]));
+	eventAlbedoFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(AlbedoFluxID[i]));
 	auto cap = pHCE->GetCapacity();
 	volatile auto x2 = pHCE->GetNumberOfCollections();
-	eventAlbedoFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(AlbedoFluxID[i]));
 	*totSphereFlux[i] += *eventSphereFlux[i];
 	*totFastFlux[i] += *eventFastFlux[i];
 	*totAlbedoFlux[i] += *eventAlbedoFlux[i];

@@ -36,7 +36,7 @@
 #include "G4EventManager.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
-
+#include "config.h"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 EventAction::EventAction()
  : G4UserEventAction()
@@ -54,21 +54,21 @@ void EventAction::BeginOfEventAction(const G4Event*)
 void EventAction::EndOfEventAction(const G4Event* evt)
 {
   G4int event_id = evt->GetEventID();
-  
+
+  G4cout << ">>> Event " << evt->GetEventID() << G4endl;
   // periodic printing
   //
-  if (event_id < 10 || event_id%10000 == 0) {
-    G4cout << ">>> Event " << evt->GetEventID() << G4endl;
-#ifdef print_stored_trajectories
+  //if (event_id < 10 || event_id%10000 == 0) {
+
+    if(conf()->print_stored_trajectories){
     // get number of stored trajectories
-    //
+
     G4TrajectoryContainer* trajectoryContainer = evt->GetTrajectoryContainer();
     G4int n_trajectories = 0;
     if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
     G4cout << "    " << n_trajectories 
            << " trajectories stored in this event." << G4endl;
-#endif
-  }
+	}
 
 }
 

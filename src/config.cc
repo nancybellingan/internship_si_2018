@@ -87,7 +87,9 @@ ConfigHandler::ConfigHandler() {
 	swap("Sourcexcm",conf.Sourcexcm);
 	swap("Sourceycm",conf.Sourceycm);
 	swap("Sourcezcm",conf.Sourcezcm);
-
+	swap("DummyScorer",conf.DummyScorer);
+	//forgive me nancy
+	conf.print_stored_trajectories = true;
 
 	//Now load the binning Info
 	loadBinning(conf.ebin,"configbinning.ini");

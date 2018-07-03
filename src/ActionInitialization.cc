@@ -33,6 +33,8 @@
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
+#include "config.h"
+#include "vector"
 
 ActionInitialization::ActionInitialization()  //constructor
 {;}
@@ -40,9 +42,12 @@ ActionInitialization::ActionInitialization()  //constructor
 ActionInitialization::~ActionInitialization() // deconstructor
 {;}
 
+
+
 void ActionInitialization::Build() const //set/initialize the primary generation, the run and event.
 {
-  //
+
+	//
   SetUserAction(new PrimaryGeneratorAction);
   //
   SetUserAction(new RunAction);
