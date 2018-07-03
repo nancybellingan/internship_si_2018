@@ -193,29 +193,6 @@ out << "Event ID with hit" << G4endl;
 		}
 		out <<"tot E"<< tot << G4endl;
 	}
-}else
-{
-	CountMap::iterator it    = fCountsMap.begin();
-	CountMap::iterator itend = fCountsMap.end();
-	out << "k:" << fNk << G4endl;
-	out << "Tot Events:" << G4endl;
-	out << fCountsMap.size() << G4endl;
-	for(;it!=itend;++it) {
-out << "Event ID with hit" << G4endl;
-		out << std::scientific << it->first << "\t";
-		G4int i=0, j=0, k=0;
-		//G4double tot=0;
-	    for(;i<fNi;i++)
-		for(;j<fNj;j++)
-		    for(;k<2;k++) {
-			G4int ind = CalcIndex(i,j,k);
-					out << (it->second)[ind] << "\t";
-
-					// tot=+(it->second)[ind];
-		    }
-
-		// out <<"tot E"<< tot << G4endl;
-	}
 }
 
 

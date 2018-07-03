@@ -89,25 +89,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 // Initial beam spot size in sigma.; This is not a part of ParticleGun.
 //	fSigmaPosition = 10.* mm;
         //fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm, 0.*cm, position));
-/*
-#ifdef FLUKA_PSF
-    std::string ifile="./../../../RPTC/ginputs/11x11/140MeV";
-	fReadPhsFile.open(ifile.c_str());
-	if(!fReadPhsFile)
-	{
-		std::cout << "Cannot find or open file: "
-	              << ifile << std::endl;
-	    exit(-1);
-	}
-#endif
 
-#ifdef SPECSCHUSS
-	fGeometry = (DetectorConstruction*)
-			(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-	fEnergyVec = fGeometry->GetEnergyVec();
-	fPDFVec 	 = fGeometry->GetPDFVec();
-#endif
-*/
 }
 
 //============================================================================
@@ -116,10 +98,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
 	delete fParticleGun;
 	delete fMessenger;
-#ifdef FLUKA_PSF
-    fReadPhsFile.close();
-	G4cout << "WARNING: Not in Particle List: " << fNotInList << G4endl;
-#endif
+
 	out.close();
 }
 
@@ -128,7 +107,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 { 
         // G4ThreeVector position = fParticleGun->GetParticlePosition();
-	G4double energy = fParticleGun->GetParticleEnergy(); //TODO: Check Function call
+	G4double energy = fParticleGun->GetParticleEnergy();
 	out << energy << '\n';
 
         fParticleGun->GeneratePrimaryVertex(anEvent);
