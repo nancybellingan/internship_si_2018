@@ -82,14 +82,13 @@ Run::Run() : G4Run()
   SphereFluxID.resize(conf()->ebin.size());
   FastFluxID.resize(conf()->ebin.size());
   AlbedoFluxID.resize(conf()->ebin.size());
-  for (uint i=0;i<=conf()->ebin.size();i++){
+  for (uint i=0;i<conf()->ebin.size();i++){
   G4String evtID =std::to_string(i);
-  G4String pathSphere ="mySphereScorer/totSphereFlux";
-  G4String pathFast = "fastDet/totfastflux";
-  G4String pathAlbedo = "AlbedoDet/totalbedoflux";
-  SphereFluxID[i] = pSDman->GetCollectionID(pathSphere+evtID);
-  FastFluxID[i] = pSDman->GetCollectionID(pathFast+evtID);
-  AlbedoFluxID[i] = pSDman->GetCollectionID(pathAlbedo+evtID);
+
+  SphereFluxID[i] = pSDman->GetCollectionID(detectorName.pathSphere+evtID);
+  FastFluxID[i] = pSDman->GetCollectionID(detectorName.pathFast+evtID);
+  AlbedoFluxID[i] = pSDman->GetCollectionID(detectorName.pathAlbedo+evtID);
+
 }
   //=================================================
   //  Initalize RunMaps for accumulation.
@@ -145,11 +144,21 @@ void Run::RecordEvent(const G4Event* aEvent)
 	totAlbedoFlux.resize(conf()->ebin.size());
 
 
-  for (uint i=0;i<=conf()->ebin.size();i++){
-
+  for (uint i=0;i<conf()->ebin.size();i++){
+	  if(totSphereFlux[i] == nullptr){
+		  totSphereFlux[i] = new G4THitsMap<G4double>();
+	  }
+	  if(totFastFlux[i] == nullptr){
+		  totFastFlux[i] = new G4THitsMap<G4double>();
+	  }
+	  if(totAlbedoFlux[i] == nullptr){
+		  totAlbedoFlux[i] = new G4THitsMap<G4double>();
+	  }
 	eventSphereFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[i]));
 	eventFastFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(FastFluxID[i]));
 	eventAlbedoFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(AlbedoFluxID[i]));
+	//auto cap = pHCE->GetCapacity();
+	//volatile auto x2 = pHCE->GetNumberOfCollections();
 	*totSphereFlux[i] += *eventSphereFlux[i];
 	*totFastFlux[i] += *eventFastFlux[i];
 	*totAlbedoFlux[i] += *eventAlbedoFlux[i];

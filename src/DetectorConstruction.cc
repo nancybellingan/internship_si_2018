@@ -1088,7 +1088,7 @@ void DetectorConstruction::ConstructSDandField() {
 		std::vector<double> binningenergy = conf()->ebin;
 		std::vector<G4PSPassageCellCurrent*> totalSphereFlux(conf()->ebin.size());
 		std::vector<G4SDParticleWithEnergyFilter*> binfilter(conf()->ebin.size());
-		for (uint i=0;i < conf()->ebin.size();i++){
+		for (uint i=0;i<conf()->ebin.size();i++){
 			if (i==0){
 				binfilter[i]=new G4SDParticleWithEnergyFilter("ebinfilter"+std::to_string(i),0,binningenergy.at(i));
 			}else {
@@ -1112,22 +1112,22 @@ void DetectorConstruction::ConstructSDandField() {
 	}
 
 
-	if(conf()->SiLayersDep ==0){
+	if(conf()->DummyScorer ==1){
 		std::vector<double> binningenergy = conf()->ebin;
 		G4MultiFunctionalDetector* FastDetector = new G4MultiFunctionalDetector("fastDet");
 		G4SDManager::GetSDMpointer()->AddNewDetector(FastDetector);
 		G4MultiFunctionalDetector* AlbedoDetector = new G4MultiFunctionalDetector("albedoDet");
-		G4SDManager::GetSDMpointer()->AddNewDetector(FastDetector);
+		G4SDManager::GetSDMpointer()->AddNewDetector(AlbedoDetector);
 		std::vector<G4PSPassageCellCurrent*> fastflux(conf()->ebin.size());
 		std::vector<G4SDParticleWithEnergyFilter*> fastbinfilter(conf()->ebin.size());
 		std::vector<G4PSPassageCellCurrent*> albedoflux(conf()->ebin.size());
 		std::vector<G4SDParticleWithEnergyFilter*> albedobinfilter(conf()->ebin.size());
 
-		for (uint i=0;i<=conf()->ebin.size();i++){
+		for (uint i=0;i<conf()->ebin.size();i++){
 			if (i==0){
-				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+i,0,binningenergy[i]);
+				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+std::to_string(i),0,binningenergy[i]);
 			}else {
-				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+i,binningenergy[i-1],binningenergy[i]);
+				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+std::to_string(i),binningenergy[i-1],binningenergy[i]);
 			}
 			fastbinfilter[i]->add("neutron");
 			fastbinfilter[i]->show();
@@ -1139,11 +1139,11 @@ void DetectorConstruction::ConstructSDandField() {
 		}
 		fLVPhantomSens->SetSensitiveDetector(FastDetector);
 
-		for (uint i=0;i<=conf()->ebin.size();i++){
+		for (uint i=0;i<conf()->ebin.size();i++){
 			if (i==0){
-				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+i,0,binningenergy[i]);
+				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),0,binningenergy[i]);
 			}else {
-				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+i,binningenergy[i-1],binningenergy[i]);
+				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),binningenergy[i-1],binningenergy[i]);
 			}
 			albedobinfilter[i]->add("neutron");
 			albedobinfilter[i]->show();
@@ -1158,7 +1158,8 @@ void DetectorConstruction::ConstructSDandField() {
 
 
 
-	}else {
+	}
+	if(conf()->SiLayersDep ==1) {
 		std::vector<G4LogicalVolume*>::iterator LV_i = fUSDVolumes.begin();
 		std::vector<G4LogicalVolume*>::iterator LV_n = fUSDVolumes.end();
 		for(; LV_i != LV_n; ++LV_i) {

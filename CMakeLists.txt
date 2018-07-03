@@ -6,7 +6,7 @@ set(CMAKE_C_COMPILER "gcc-7")
 set(CMAKE_CXX_COMPILER "g++-7")
 
 add_compile_options(-g -O0 -fsanitize=address -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow)
-
+#
 SET(ASAN_FLAGS    "-fsanitize=address")
 
 #SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${ASAN_FLAGS}" )
