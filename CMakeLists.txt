@@ -6,7 +6,14 @@ set(CMAKE_C_COMPILER "gcc-7")
 set(CMAKE_CXX_COMPILER "g++-7")
 
 #-fsanitize=address
-
+#[[What the option means ?
+-g add debug symbol 
+-Ox (optimization level -O0 is none (for easy debug) -O2 is release -O3 can sometimes be slower, sometimes be a litte faster than -O2
+-march=native do not care about portability, create code to be runned as best as possible on this specific CPU
+-flto -fuse-ld=gold -fuse-linker-plugin those 3 goes togheter, and enable the https://llvm.org/docs/LinkTimeOptimization.html (debug can be impossible so use only for release and max speed)
+-fno-omit-frame-pointer suggested to be on by ASAN (no impact on speed but helps debug and stack trace generation)
+-Wall -Wextra -Werror -pedantic -Wshadow -Wno-unused-variable be a bit stricter and report a bit more info about error and typo
+]]
 add_compile_options(-g -O2 -march=native -flto -fuse-ld=gold -fuse-linker-plugin -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow -Wno-unused-variable)
 
 #SET(ASAN_FLAGS    "-fsanitize=address")
