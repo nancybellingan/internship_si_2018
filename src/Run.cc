@@ -77,43 +77,58 @@
 Run::Run() : G4Run()
 {
 
-  G4SDManager* pSDman = G4SDManager::GetSDMpointer();
-//voglio dire nell header che la dimensione sarebbe conf ebin.size ma non me lo fa fare mi dava errore)
-  SphereFluxID.resize(conf()->ebin.size());
-  FastFluxID.resize(conf()->ebin.size());
-  AlbedoFluxID.resize(conf()->ebin.size());
-  for (uint i=0;i<conf()->ebin.size();i++){
-  G4String evtID =std::to_string(i);
-
-  SphereFluxID[i] = pSDman->GetCollectionID(detectorName.pathSphere+evtID);
-  FastFluxID[i] = pSDman->GetCollectionID(detectorName.pathFast+evtID);
-  AlbedoFluxID[i] = pSDman->GetCollectionID(detectorName.pathAlbedo+evtID);
-
-}
-  //=================================================
-  //  Initalize RunMaps for accumulation.
-  //  Get CollectionIDs for HitCollections.
 
 
-// G4cout << "Run Constructor" << G4endl;
+	G4SDManager* pSDman = G4SDManager::GetSDMpointer();
+
+	if(conf()->SphereScorer==1){
+		//voglio dire nell header che la dimensione sarebbe conf ebin.size ma non me lo fa fare mi dava errore)
+		SphereFluxID.resize(conf()->ebin.size());
+		for (uint i=0;i<conf()->ebin.size();i++){
+			G4String evtID =std::to_string(i);
+
+			SphereFluxID[i] = pSDman->GetCollectionID(detectorName.pathSphere+evtID);
+		}
+	}
+	if(conf()->DummyScorer==1){
+		FastFluxID.resize(conf()->ebin.size());
+		AlbedoFluxID.resize(conf()->ebin.size());
+		for (uint i=0;i<conf()->ebin.size();i++){
+			G4String evtID =std::to_string(i);
+			FastFluxID[i] = pSDman->GetCollectionID(detectorName.pathFast+evtID);
+			AlbedoFluxID[i] = pSDman->GetCollectionID(detectorName.pathAlbedo+evtID);
+
+		}
+	}
 
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//
-// Destructor
-//    clear all data members.
+
+
+
+	//=================================================
+	//  Initalize RunMaps for accumulation.
+	//  Get CollectionIDs for HitCollections.
+
+
+	// G4cout << "Run Constructor" << G4endl;
+
+
+	//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+	//
+	// Destructor
+	//    clear all data members.
 }
 Run::~Run()
 {
 
-  //--- Clear HitsMap for RUN
-  G4int nMap = fRunMap.size();
-  for ( G4int i = 0; i < nMap; i++){
-    if(fRunMap[i] ) fRunMap[i]->clear();
-  }
-  fCollName.clear();
-  fCollID.clear();
-  fRunMap.clear();
+	//--- Clear HitsMap for RUN
+	G4int nMap = fRunMap.size();
+	for ( G4int i = 0; i < nMap; i++){
+		if(fRunMap[i] ) fRunMap[i]->clear();
+	}
+	fCollName.clear();
+	fCollID.clear();
+	fRunMap.clear();
 
 }
 
@@ -135,42 +150,41 @@ void Run::RecordEvent(const G4Event* aEvent)
 	G4HCofThisEvent* pHCE = aEvent->GetHCofThisEvent();
 	if (!pHCE) return;
 
+	if(conf()->SphereScorer==1){
+		eventSphereFlux.resize(conf()->ebin.size());
+		totSphereFlux.resize(conf()->ebin.size());
+		for (uint i=0;i<conf()->ebin.size();i++){
+			if(totSphereFlux[i] == nullptr){
+				totSphereFlux[i] = new G4THitsMap<G4double>();
+			}
+			eventSphereFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[i]));
+			*totSphereFlux[i] += *eventSphereFlux[i];
+		}
+	}
+	if(conf()->DummyScorer==1){
+		eventFastFlux.resize(conf()->ebin.size());
+		eventAlbedoFlux.resize(conf()->ebin.size());
+		totFastFlux.resize(conf()->ebin.size());
+		totAlbedoFlux.resize(conf()->ebin.size());
+		for (uint i=0;i<conf()->ebin.size();i++){
+			if(totFastFlux[i] == nullptr){
+				totFastFlux[i] = new G4THitsMap<G4double>();
+			}
+			if(totAlbedoFlux[i] == nullptr){
+				totAlbedoFlux[i] = new G4THitsMap<G4double>();
+			}
+			eventFastFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(FastFluxID[i]));
+			eventAlbedoFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(AlbedoFluxID[i]));
+			*totFastFlux[i] += *eventFastFlux[i];
+			*totAlbedoFlux[i] += *eventAlbedoFlux[i];
+		}
+	}
 
-	eventSphereFlux.resize(conf()->ebin.size());
-	eventFastFlux.resize(conf()->ebin.size());
-	eventAlbedoFlux.resize(conf()->ebin.size());
-	totSphereFlux.resize(conf()->ebin.size());
-	totFastFlux.resize(conf()->ebin.size());
-	totAlbedoFlux.resize(conf()->ebin.size());
-
-
-  for (uint i=0;i<conf()->ebin.size();i++){
-	  if(totSphereFlux[i] == nullptr){
-		  totSphereFlux[i] = new G4THitsMap<G4double>();
-	  }
-	  if(totFastFlux[i] == nullptr){
-		  totFastFlux[i] = new G4THitsMap<G4double>();
-	  }
-	  if(totAlbedoFlux[i] == nullptr){
-		  totAlbedoFlux[i] = new G4THitsMap<G4double>();
-	  }
-	eventSphereFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[i]));
-	eventFastFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(FastFluxID[i]));
-	eventAlbedoFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(AlbedoFluxID[i]));
-	//auto cap = pHCE->GetCapacity();
-	//volatile auto x2 = pHCE->GetNumberOfCollections();
-	*totSphereFlux[i] += *eventSphereFlux[i];
-	*totFastFlux[i] += *eventFastFlux[i];
-	*totAlbedoFlux[i] += *eventAlbedoFlux[i];
-}
-
-
-
-  //auto ref = eventSphereFlux->GetMap();
-//	for(int i = 0; i < ref->size(); i++){
-//		auto ref2 = ref->at(i);
-//		G4cout << "pos " << i << " value:" << ref2 << G4endl;
-//	}
+	//auto ref = eventSphereFlux->GetMap();
+	//	for(int i = 0; i < ref->size(); i++){
+	//		auto ref2 = ref->at(i);
+	//		G4cout << "pos " << i << " value:" << ref2 << G4endl;
+	//	}
 	/*
 	for (auto pair: *(eventSphereFlux->GetMap())){
 		G4double flux =*(pair.second);
@@ -189,8 +203,8 @@ void Run::RecordEvent(const G4Event* aEvent)
 template <typename T>
 bool sameSize(const T& lhs, const T& rhs){
 	if(lhs.size() != rhs.size()){
-	      G4cout << "The size of the vector is different" << __FILE__ << __LINE__;
-		  return false;
+		G4cout << "The size of the vector is different" << __FILE__ << __LINE__;
+		return false;
 	}
 	return true;
 }
@@ -199,36 +213,40 @@ bool sameSize(const T& lhs, const T& rhs){
 void Run::Merge(const G4Run * aRun)
 {
 
-  G4cout << "MERGE" << G4endl;
+	G4cout << "MERGE" << G4endl;
 
 
-  const Run* localRun = static_cast<const Run*>(aRun);
-  //=======================================================
-  // Merge HitsMap of working threads
-  //=======================================================
-  bool a = sameSize(totSphereFlux,localRun->totSphereFlux);
-  bool b = sameSize(totFastFlux,localRun->totFastFlux);
-  bool c = sameSize(totAlbedoFlux,localRun->totAlbedoFlux);
-  if(!(a && b && c)){
-	  abort();
-  }
-      for(uint num = 0; num < totSphereFlux.size(); num++){
-		 *totSphereFlux.at(num)  += *localRun->totSphereFlux[num];
-	  }
-	  for(uint num = 0; num < totFastFlux.size(); num++){
-		 *totFastFlux.at(num)  += *localRun->totFastFlux[num];
-	  }
-	  for(uint num = 0; num < totAlbedoFlux.size(); num++){
-		 *totAlbedoFlux.at(num)  += *localRun->totAlbedoFlux[num];
-	  }
+	const Run* localRun = static_cast<const Run*>(aRun);
+	//=======================================================
+	// Merge HitsMap of working threads
+	//=======================================================
+	bool a = sameSize(totSphereFlux,localRun->totSphereFlux);
+	bool b = sameSize(totFastFlux,localRun->totFastFlux);
+	bool c = sameSize(totAlbedoFlux,localRun->totAlbedoFlux);
+	if(!(a && b && c)){
+		abort();
+	}
+	if(conf()->SphereScorer==1){
+		for(uint num = 0; num < totSphereFlux.size(); num++){
+			*totSphereFlux.at(num)  += *localRun->totSphereFlux[num];
+		}
+	}
+	if(conf()->DummyScorer==1){
+		for(uint num = 0; num < totFastFlux.size(); num++){
+			*totFastFlux.at(num)  += *localRun->totFastFlux[num];
+		}
+		for(uint num = 0; num < totAlbedoFlux.size(); num++){
+			*totAlbedoFlux.at(num)  += *localRun->totAlbedoFlux[num];
+		}
+	}
 
-  //SphereFlux += *(localRun->SphereFlux);
-  //FastFlux += *(localRun->FastFlux);
-  //AlbedoFlux += *(localRun->AlbedoFlux);
+	//SphereFlux += *(localRun->SphereFlux);
+	//FastFlux += *(localRun->FastFlux);
+	//AlbedoFlux += *(localRun->AlbedoFlux);
 
 
 
-  G4Run::Merge(aRun);
+	G4Run::Merge(aRun);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
