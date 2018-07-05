@@ -41,15 +41,16 @@
 #include "G4THitsMap.hh"
 #include "DetectorCollect.hh"
 #include "SDCollect.hh"
-
+#include <sys/stat.h>
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"    
 #include <chrono>
 #include <ctime>
+#include <time.h>
 #include <fstream>
 #include <iostream>
 #include "config.h"
-
+#include <string>
 //=======================================================================
 // RunAction
 //  
@@ -113,15 +114,17 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 {
 Run* re02Run=(Run*)aRun;
   if(!IsMaster()) return;
-
+  std::time_t timeint = std::time(0);  // t is an integer type
+  G4String timenow = std::to_string(timeint);
+  G4String path = "./";
+  G4String pathtime = path + timenow;
+  mkdir(pathtime, 0777);
   //- Run object.
   //--- Dump all scored quantities involved in Run if is not being used the Multi functional detector
   if (conf()->SphereScorer==1){
 	  std::fstream outp1;
 	  G4int sum = 0;
-	  G4String outfiler1="./outputs/outputsphere.dat";
-	  G4String outfiler2="./outputs/outputfastdummy.dat";
-	  G4String outfiler3="./outputs/outputalbedodummy.dat";
+	  G4String outfiler1=pathtime +"/outputsphere.dat";
 	  //  outfiler.append(std::chrono::system_clock::now());
 	  outp1.open(outfiler1.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
 	  outp1 << "prova" << G4endl;
@@ -143,8 +146,8 @@ Run* re02Run=(Run*)aRun;
   }
   if (conf()->DummyScorer==1){
 	  std::fstream outp1;
-	  G4String outfiler2="./outputs/outputfastdummy.dat";
-	  G4String outfiler3="./outputs/outputalbedodummy.dat";
+	  G4String outfiler2=pathtime +"/outputfastdummy.dat";
+	  G4String outfiler3=pathtime +"/outputalbedodummy.dat";
 	  outp1.open(outfiler2.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
 	  outp1 << "prova" << G4endl;
 	  auto flux2 = re02Run->GetFastFlux();
@@ -188,7 +191,7 @@ if(conf()->SphereScorer==1){
 		FluenceEnergyDistributionSD* sensDet
 	               = (FluenceEnergyDistributionSD*) (pSDman->
 			                       FindSensitiveDetector(sds[i]));
-		G4String outfile="./outputs/" + sds[i] + "ErgfileVoxels.dat";
+		G4String outfile=pathtime + sds[i] + "ErgfileVoxels.dat";
 //		std::fstream outp(outfile.c_str(),std::fstream::out |
 //										  std::fstream::in  |
 //										  std::fstream::trunc);
@@ -206,7 +209,7 @@ if(conf()->SphereScorer==1){
 		FluenceEnergyDistributionSD* sensDet
 		           = (FluenceEnergyDistributionSD*) (pSDman->
 		                           FindSensitiveDetector(sds[i]));
-		G4String outfile="./outputs/" + sds[i] + "ErgfileVoxels.dat";
+		G4String outfile=pathtime + sds[i] + "ErgfileVoxels.dat";
 //		std::fstream outp(outfile.c_str(),std::fstream::out |
 //										  std::fstream::in  |
 //										  std::fstream::trunc);
