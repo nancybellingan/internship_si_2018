@@ -68,7 +68,10 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 
 //----------------------------------------------------------------------------
 	// Checking Gaussian Distribution
-	out.open("EDistribution.dat");
+	std::time_t timeint2 = std::time(0);  // t is an integer type
+	G4String timenow2 = std::to_string(timeint2);
+	G4String outputEDistr =timenow2+"Edistr.dat";
+	out.open(outputEDistr);
 
 	/*
 	std::ofstream outw;
