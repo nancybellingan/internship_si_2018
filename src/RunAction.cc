@@ -183,8 +183,8 @@ G4SDManager* pSDman = G4SDManager::GetSDMpointer();
 
 
     //------- Energy Deposition will be printed in output folder, for both cases of 100 layers and 8 (1+7)
-
-    for(size_t i = 0; i< sds.size(); i++) {
+if(conf()->SphereScorer==1){
+	for(size_t i = 1; i< sds.size(); i++) {
 		FluenceEnergyDistributionSD* sensDet
 	               = (FluenceEnergyDistributionSD*) (pSDman->
 			                       FindSensitiveDetector(sds[i]));
@@ -201,7 +201,25 @@ G4SDManager* pSDman = G4SDManager::GetSDMpointer();
 	      sensDet->FluenceEnergyDistributionSD::DumpAllDetectorCollects(outp);
 		outp.close();
     }
-
+} else{
+	for(size_t i = 0; i< sds.size(); i++) {
+		FluenceEnergyDistributionSD* sensDet
+		           = (FluenceEnergyDistributionSD*) (pSDman->
+		                           FindSensitiveDetector(sds[i]));
+		G4String outfile="./outputs/" + sds[i] + "ErgfileVoxels.dat";
+//		std::fstream outp(outfile.c_str(),std::fstream::out |
+//										  std::fstream::in  |
+//										  std::fstream::trunc);
+		        std::fstream outp;
+				outp.open(outfile.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+				outp << "prova" << G4endl;
+				outp << sds.size() << G4endl;
+ //  outp << totflux << G4endl;
+// outp << G4THitsMap->GetHitsMap(sds[i]) << G4endl;
+				sensDet->FluenceEnergyDistributionSD::DumpAllDetectorCollects(outp);
+		outp.close();
+	}
+}
 }
 
 

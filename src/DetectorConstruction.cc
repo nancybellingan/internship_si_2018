@@ -32,15 +32,12 @@
 
 #include "DetectorConstruction.hh"
 #include "FluenceEnergyDistributionSD.hh"
-
 #include "G4PSEnergyDeposit3D.hh"
 #include "G4PSDoseDeposit3D.hh"
 #include "G4PSCellFlux3D.hh"
-
 #include "G4SDParticleWithEnergyFilter.hh"
 #include "G4SDParticleFilter.hh"
 #include "G4SDChargedFilter.hh"
-
 #include "G4NistManager.hh"
 #include "G4Material.hh"
 #include "G4Box.hh"
@@ -52,7 +49,6 @@
 #include "G4SDManager.hh"
 #include "G4Region.hh"
 #include "G4SubtractionSolid.hh"
-
 #include "G4MultiFunctionalDetector.hh"
 #include "G4VPrimitiveScorer.hh"
 #include <G4PSFlatSurfaceCurrent.hh>
@@ -66,21 +62,18 @@
 #include "G4PSFlatSurfaceFlux3D.hh"
 #include "G4PSFlatSurfaceCurrent3D.hh"
 #include <G4PSPassageCellCurrent.hh>
-
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
-
 #include "G4SystemOfUnits.hh"    
 #include "G4PhysicalConstants.hh"
 #include "G4ios.hh"
-
 #include <iostream>
 #include "config.h"
 #include <string>
 //=======================================================================
 
 DetectorConstruction::DetectorConstruction()
-	: G4VUserDetectorConstruction(), fCheckOverlaps(0)
+    : G4VUserDetectorConstruction(), fCheckOverlaps(0)
 {
 	fNx = fNy = fNz = 1; // Number of segmentation of water phantom.
 
@@ -178,7 +171,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		fAir->AddElement(Ar,0.231781);
 
 		fWater = new G4Material("G4_WATER",0.998*g/cm3,2,
-					kStateLiquid,293.15*kelvin);
+		                        kStateLiquid,293.15*kelvin);
 		fWater->SetChemicalFormula("H_2O");
 		fWater->AddElement(fthsc_H,2);
 		fWater->AddElement(fO,1);
@@ -215,20 +208,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4ThreeVector worldSize = G4ThreeVector(500.*cm, 500.*cm, 1500.*cm);
 
 	G4Box * solidWorld
-			= new G4Box("world", worldSize.x()/2.,
-				    worldSize.y()/2.,
-				    worldSize.z()/2.);
+	        = new G4Box("world", worldSize.x()/2.,
+	                    worldSize.y()/2.,
+	                    worldSize.z()/2.);
 	G4LogicalVolume * logicWorld
-			= new G4LogicalVolume(solidWorld, fAir, "World", 0, 0, 0);
+	        = new G4LogicalVolume(solidWorld, fAir, "World", nullptr, nullptr, nullptr);
 
 	G4VPhysicalVolume * physiWorld
-			= new G4PVPlacement(0,               // no rotation
-					    G4ThreeVector(), // at (0,0,0)
-					    logicWorld,      // its logical volume
-					    "World",         // its name
-					    0,               // its mother  volume
-					    false,           // no boolean operations
-					    0);              // copy number
+	        = new G4PVPlacement(nullptr,               // no rotation
+	                            G4ThreeVector(), // at (0,0,0)
+	                            logicWorld,      // its logical volume
+	                            "World",         // its name
+	                            nullptr,               // its mother  volume
+	                            false,           // no boolean operations
+	                            0);              // copy number
 
 	//----------------------------------------------------------------------------
 
@@ -261,7 +254,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 	// Thermal scattering hydrogen:
 	G4Element* thsc_H = new G4Element("TS_H_of_Polyethylene","H_POLYETHYLENE",
-					  1.0,1.0079*g/mole);
+	                                  1.0,1.0079*g/mole);
 
 	//-------------------------------------------------------------------------
 
@@ -269,7 +262,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	Vacuum = NistManager->FindOrBuildMaterial("G4_Galactic");
 	G4Material* Ceramic = NistManager->FindOrBuildMaterial("G4_ALUMINUM_OXIDE");
 	G4Material* Epoxidharz = new G4Material("Epoxidharz",1.2*g/cm3,4,
-						kStateSolid,temperature);
+	                                        kStateSolid,temperature);
 	Epoxidharz->AddElement(C,0.7545);
 	Epoxidharz->AddElement(H,0.0715);
 	Epoxidharz->AddElement(N,0.0065);
@@ -278,19 +271,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	//-------------------------------------------------------------------------
 
 	G4Material* Lead = new G4Material("Blei",11.342*g/cm3,1,
-					  kStateSolid,temperature);
+	                                  kStateSolid,temperature);
 	Lead->AddElement(Pb,1);
 
 	//-------------------------------------------------------------------------
 
 	G4Material* Iron = new G4Material("Stahl",7.874*g/cm3,1,
-					  kStateSolid,temperature);
+	                                  kStateSolid,temperature);
 	Iron->AddElement(Fe,1);
 
 	//-------------------------------------------------------------------------
 	
 	G4Material* SiliconOxide = new G4Material("Siliziumdioxid",2.19*g/cm3
-						  /* bis 2.66*g/cm3*/,2,kStateSolid,temperature);
+	                                          /* bis 2.66*g/cm3*/,2,kStateSolid,temperature);
 	SiliconOxide->SetChemicalFormula("SiO_2");
 	SiliconOxide->AddElement(Si,(G4int)1);
 	SiliconOxide->AddElement(O,(G4int)2);
@@ -298,26 +291,26 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	//-------------------------------------------------------------------------
 	
 	G4Material* Silicon = new G4Material("Silizium",2.336*g/cm3,1,
-					     kStateSolid,temperature);
+	                                     kStateSolid,temperature);
 	Silicon->AddElement(Si,1);
 
 	//-------------------------------------------------------------------------
 
 	G4Material* Aluminium = new G4Material("Aluminium",2.7*g/cm3,1,
-					       kStateSolid,temperature);
+	                                       kStateSolid,temperature);
 	Aluminium->AddElement(Al,1);
 
 	//-------------------------------------------------------------------------
 
 	G4Material* Cadmium = new G4Material("Cadmium",8.65*g/cm3,1,
-					     kStateSolid,temperature);
+	                                     kStateSolid,temperature);
 	Cadmium->AddElement(Cd,1);
 
 	//-------------------------------------------------------------------------
 
 	G4Material* Wax = new G4Material("Polyethylenwax",/*0.94*g/cm3 bis
-													 0.97*g/cm3*/0.98*g/cm3/*gemessen*/,2,
-					 kStateSolid,temperature);
+																					  0.97*g/cm3*/0.98*g/cm3/*gemessen*/,2,
+	                                 kStateSolid,temperature);
 	Wax->SetChemicalFormula("(C_2H_4)-Polyethylene");
 	Wax->AddElement(C,(G4int)1);
 	Wax->AddElement(thsc_H,(G4int)2); // thermal scattering auch für PE
@@ -325,7 +318,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	//-------------------------------------------------------------------------
 
 	G4Material* B4C = new G4Material("Borcarbid",1.32*g/cm3/*Packung*/,
-					 2,kStateSolid,temperature);
+	                                 2,kStateSolid,temperature);
 	// B4C kein Eintrag in "Chemical Formula" vorhanden...
 	B4C->AddElement(B,(G4int)4);
 	B4C->AddElement(C,(G4int)1);
@@ -333,22 +326,22 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	//-------------------------------------------------------------------------
 
 	G4Material* BoronCarbidEpoxid = new G4Material("B4C_Epoxidharz",
-						       1.585*g/cm3/*gemessen*/,2,
-						       kStateSolid,temperature);
+	                                               1.585*g/cm3/*gemessen*/,2,
+	                                               kStateSolid,temperature);
 	BoronCarbidEpoxid->AddMaterial(B4C,0.6);
 	BoronCarbidEpoxid->AddMaterial(Epoxidharz,0.4);
 
 	//-------------------------------------------------------------------------
 
 	G4Material* Glue = new G4Material("Glue",0.83*g/cm3/*???*/,2,
-					  kStateLiquid,temperature);
+	                                  kStateLiquid,temperature);
 	Glue->AddElement(C,(G4int)1);
 	Glue->AddElement(H,(G4int)2);
 
 	//-------------------------------------------------------------------------
 
 	G4Material* LiF = new G4Material("LiF",2.55*g/cm3/*berechnet*/,2,
-					 kStateSolid,temperature);
+	                                 kStateSolid,temperature);
 	LiF->SetChemicalFormula("LiF");
 	LiF->AddElement(Li,(G4int)1);
 	LiF->AddElement(F,(G4int)1);
@@ -356,7 +349,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	//-------------------------------------------------------------------------
 
 	G4Material* LiF_CH2 = new G4Material("LiF_CH2",2.46*g/cm3/*berechnet*/,2,
-					     kStateSolid,temperature);
+	                                     kStateSolid,temperature);
 	LiF_CH2->AddMaterial(LiF,0.95);
 	LiF_CH2->AddMaterial(Glue,0.05);
 
@@ -371,7 +364,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
 	G4Material* pmma = new G4Material("PMMA",1.19*g/cm3,3,kStateSolid,
-					  temperature);
+	                                  temperature);
 	pmma->SetChemicalFormula("(C_5H_8O-2)-Polymethil_Methacrylate");
 	pmma->AddElement(thsc_H,(G4int)8);
 	pmma->AddElement(C,(G4int)5);
@@ -418,8 +411,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		G4double scorerr1= 9*cm;
 		G4double scorerr2= 10*cm;
 		solidscorer= new G4Sphere("solidscorer",scorerr1,scorerr2,0,twopi,0,twopi/2);
-		logicscorer = new G4LogicalVolume(solidscorer,Air,"logicscorername",0,0,0);
-		physicscorer= new G4PVPlacement(0,positionscorer,logicscorer,"physicscorer",logicWorld,false,0);
+		logicscorer = new G4LogicalVolume(solidscorer,Air,"logicscorername",nullptr,nullptr,nullptr);
+		physicscorer= new G4PVPlacement(nullptr,positionscorer,logicscorer,
+		                                "physicscorer",logicWorld,false,0);
 
 		fUSDVolumes.push_back(logicscorer); //logical name
 		fUSDNames.push_back("logicscorername"); //3rd par in logical volume
@@ -432,21 +426,21 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4RotationMatrix* PMMAPhantomRot = new G4RotationMatrix();
 
 	fSolidPMMAPhantom = new G4Box("solidPMMAPhantom",
-				      PMMAPhantomSize.x()/2.,
-				      PMMAPhantomSize.y()/2.,
-				      PMMAPhantomSize.z()/2.);
+	                              PMMAPhantomSize.x()/2.,
+	                              PMMAPhantomSize.y()/2.,
+	                              PMMAPhantomSize.z()/2.);
 
 	fLogicPMMAPhantom = new G4LogicalVolume(fSolidPMMAPhantom,pmma,
-						"logicPMMAPhantom",0,0,0);
+	                                        "logicPMMAPhantom",0,0,0);
 
 	fPhysiPMMAPhantom = new G4PVPlacement(PMMAPhantomRot,
-					      PMMAPhantomPos,
-					      fLogicPMMAPhantom,
-					      "physiPMMAPhantom",
-					      logicWorld,
-					      false,
-					      0,
-					      true);
+	                                      PMMAPhantomPos,
+	                                      fLogicPMMAPhantom,
+	                                      "physiPMMAPhantom",
+	                                      logicWorld,
+	                                      false,
+	                                      0,
+	                                      true);
 
 
 	// Gehäuse, Füllung und Plazierung:
@@ -466,20 +460,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4double fast_leadThicknessBack  = 1.0*mm;
 
 	G4double fast_sensorThickness = fast_leadThicknessBack
-			+ fast_ceramicThickness
-			+ detectorThickness
-			+ fast_waxThickness
-			+ fast_leadThicknessFront;
+	        + fast_ceramicThickness
+	        + detectorThickness
+	        + fast_waxThickness
+	        + fast_leadThicknessFront;
 
 	//=========================================================================
 	// Fast Sensor housing shape, logical volume, position and rotation matrix before that
 	G4Box* fast_housing_s = new G4Box("fast_housing_s",
-					  sensorWidthExt/2.,
-					  sensorWidthExt/2.,
-					  fast_sensorThickness/2.);
+	                                  sensorWidthExt/2.,
+	                                  sensorWidthExt/2.,
+	                                  fast_sensorThickness/2.);
 	G4LogicalVolume*
-			fast_housing_log = new G4LogicalVolume(fast_housing_s,Lead,
-							       "fast_housing_log");
+	        fast_housing_log = new G4LogicalVolume(fast_housing_s,Lead,
+	                                               "fast_housing_log");
 
 	//	fast_housing_log->SetVisAttributes(lead_vis);
 	G4RotationMatrix* rotFast = new G4RotationMatrix();
@@ -487,78 +481,78 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
 	G4PVPlacement* fast_housing =
-			new G4PVPlacement(rotFast,
+	        new G4PVPlacement(rotFast,
 
-					  G4ThreeVector(1.5*cm,0.*cm,-15.*cm-fast_sensorThickness/2.), //on the phantom, decentered
-					  //G4ThreeVector(0.,10.*cm,0.),
+	                          G4ThreeVector(1.5*cm,0.*cm,-15.*cm-fast_sensorThickness/2.), //on the phantom, decentered
+	                          //G4ThreeVector(0.,10.*cm,0.),
 
-					  "Fast_Housing",
-					  fast_housing_log,
-					  fPhysiPMMAPhantom,
-					  false,
-					  0,
-					  1);
+	                          "Fast_Housing",
+	                          fast_housing_log,
+	                          fPhysiPMMAPhantom,
+	                          false,
+	                          0,
+	                          1);
 
 	//-------------------------------------------------------------------------
 	
 	G4Box* fast_leadFront_s = new G4Box("fast_leadFront_s",
-					    sensorWidth/2.,
-					    sensorWidth/2.,
-					    fast_leadThicknessFront/2.);
+	                                    sensorWidth/2.,
+	                                    sensorWidth/2.,
+	                                    fast_leadThicknessFront/2.);
 
 	G4Box* fast_wax_s = new G4Box("fast_wax_s",
-				      sensorWidth/2.,
-				      sensorWidth/2.,
-				      fast_waxThickness/2.);
+	                              sensorWidth/2.,
+	                              sensorWidth/2.,
+	                              fast_waxThickness/2.);
 
 	G4Box* fast_ceramic_s = new G4Box("fast_ceramic_s",
-					  sensorWidth/2.,
-					  sensorWidth/2.,
-					  fast_ceramicThickness/2.);
+	                                  sensorWidth/2.,
+	                                  sensorWidth/2.,
+	                                  fast_ceramicThickness/2.);
 
 	G4Box* fast_leadBack_s = new G4Box("fast_leadBack_s",
-					   sensorWidth/2.,
-					   sensorWidth/2.,
-					   fast_leadThicknessBack/2.);
+	                                   sensorWidth/2.,
+	                                   sensorWidth/2.,
+	                                   fast_leadThicknessBack/2.);
 
 	G4Box* solidFastSens = new G4Box("solidFastSens",
-					 sensorWidth/2.,
-					 sensorWidth/2.,
-					 detectorThickness/2.);
+	                                 sensorWidth/2.,
+	                                 sensorWidth/2.,
+	                                 detectorThickness/2.);
 	//-------------------------------------------------------------------------
 
 	G4LogicalVolume* fast_leadFront_log =
-			new G4LogicalVolume(fast_leadFront_s,
-					    Lead,
-					    "fast_leadFront_log");
+	        new G4LogicalVolume(fast_leadFront_s,
+	                            Lead,
+	                            "fast_leadFront_log");
 	//    fast_leadFront_log->SetVisAttributes(lead_vis);
 
 	//-------------------------------------------------------------------------
 	
 	G4LogicalVolume* fast_wax_log = new G4LogicalVolume(fast_wax_s,
-							    Wax,
-							    "fast_wax_log");
+	                                                    Wax,
+	                                                    "fast_wax_log");
 	//    fast_wax_log->SetVisAttributes(converter_vis);
 
 	//-------------------------------------------------------------------------
 
 	G4LogicalVolume* fast_ceramic_log = new G4LogicalVolume(fast_ceramic_s,
-								Ceramic,
-								"fast_ceramic_log");
+	                                                        Ceramic,
+	                                                        "fast_ceramic_log");
 	//   fast_ceramic_log->SetVisAttributes(ceramic_vis);
 
 	//-------------------------------------------------------------------------
 
 	G4LogicalVolume* fast_leadBack_log = new G4LogicalVolume(fast_leadBack_s,
-								 Lead,
-								 "fast_leadBack_log");
+	                                                         Lead,
+	                                                         "fast_leadBack_log");
 	//   fast_leadBack_log->SetVisAttributes(lead_vis);
 
 	//-------------------------------------------------------------------------
 
 	G4LogicalVolume* logicFastSens = new G4LogicalVolume(solidFastSens,
-							     Silicon,
-							     "logicFastSens");
+	                                                     Silicon,
+	                                                     "logicFastSens");
 
 
 	G4Region* detectorRegion = new G4Region("detectorRegion");
@@ -572,83 +566,83 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4double fast_offset = -0.5 * fast_sensorThickness;
 
 	G4double fast_posLeadBack = fast_offset
-			+ fast_leadThicknessBack / 2.;
+	        + fast_leadThicknessBack / 2.;
 
 	G4double fast_posCeramic = fast_offset
-			+ fast_leadThicknessBack
-			+ fast_ceramicThickness / 2.;
+	        + fast_leadThicknessBack
+	        + fast_ceramicThickness / 2.;
 
 	G4double fast_posWax = fast_offset
-			+ fast_leadThicknessBack
-			+ fast_ceramicThickness
-			+ detectorThickness
-			+ fast_waxThickness / 2.;
+	        + fast_leadThicknessBack
+	        + fast_ceramicThickness
+	        + detectorThickness
+	        + fast_waxThickness / 2.;
 
 	G4double fast_posLeadFront = fast_offset
-			+ fast_leadThicknessBack
-			+ fast_ceramicThickness
-			+ detectorThickness
-			+ fast_waxThickness
-			+ fast_leadThicknessFront / 2.;
+	        + fast_leadThicknessBack
+	        + fast_ceramicThickness
+	        + detectorThickness
+	        + fast_waxThickness
+	        + fast_leadThicknessFront / 2.;
 
 	//=========================================================================
 
 	fast_leadFront = new G4PVPlacement(0,
-					   G4ThreeVector(0,0,fast_posLeadFront),
-					   "fast_LeadFront",
-					   fast_leadFront_log,
-					   fast_housing,
-					   false,
-					   0,
-					   1);
+	                                   G4ThreeVector(0,0,fast_posLeadFront),
+	                                   "fast_LeadFront",
+	                                   fast_leadFront_log,
+	                                   fast_housing,
+	                                   false,
+	                                   0,
+	                                   1);
 	
 	//-------------------------------------------------------------------------
 
 	fast_wax = new G4PVPlacement(0,
-				     G4ThreeVector(0,0,fast_posWax),
-				     "fast_Wax",
-				     fast_wax_log,
-				     fast_housing,
-				     false,
-				     0,
-				     1);
+	                             G4ThreeVector(0,0,fast_posWax),
+	                             "fast_Wax",
+	                             fast_wax_log,
+	                             fast_housing,
+	                             false,
+	                             0,
+	                             1);
 
 	//-------------------------------------------------------------------------
 
 	fast_ceramic = new G4PVPlacement(0,
-					 G4ThreeVector(0,0,fast_posCeramic),
-					 "fast_Ceramic",
-					 fast_ceramic_log,
-					 fast_housing,
-					 false,
-					 0,
-					 1);
+	                                 G4ThreeVector(0,0,fast_posCeramic),
+	                                 "fast_Ceramic",
+	                                 fast_ceramic_log,
+	                                 fast_housing,
+	                                 false,
+	                                 0,
+	                                 1);
 
 	//-------------------------------------------------------------------------
 
 	fast_leadBack = new G4PVPlacement(0,
-					  G4ThreeVector(0,0,fast_posLeadBack),
-					  "fast_LeadBack",
-					  fast_leadBack_log,
-					  fast_housing,
-					  false,
-					  0,
-					  1);
+	                                  G4ThreeVector(0,0,fast_posLeadBack),
+	                                  "fast_LeadBack",
+	                                  fast_leadBack_log,
+	                                  fast_housing,
+	                                  false,
+	                                  0,
+	                                  1);
 
 	//-------------------------------------------------------------------------
 
 	G4double zPosFastSens = fast_sensorThickness/2. - fast_waxThickness
-			- fast_leadThicknessFront
-			- detectorThickness/2.;
+	        - fast_leadThicknessFront
+	        - detectorThickness/2.;
 
 	physiFastSens = new G4PVPlacement(0,
-					  G4ThreeVector(0,0,zPosFastSens),
-					  "physiFastSens",
-					  logicFastSens,
-					  fast_housing,
-					  false,
-					  0,
-					  1);
+	                                  G4ThreeVector(0,0,zPosFastSens),
+	                                  "physiFastSens",
+	                                  logicFastSens,
+	                                  fast_housing,
+	                                  false,
+	                                  0,
+	                                  1);
 	//Albedo
 	//=========================================================================
 
@@ -660,20 +654,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4double albedo_holeDiameter		= 5.0*mm;
 
 	G4double albedo_sensorThickness = albedo_hullThicknessBack
-			+ albedo_ceramicThickness
-			+ detectorThickness
-			+ albedo_converterThickness
-			+ albedo_gapThickness
-			+ albedo_hullThicknessFront;
+	        + albedo_ceramicThickness
+	        + detectorThickness
+	        + albedo_converterThickness
+	        + albedo_gapThickness
+	        + albedo_hullThicknessFront;
 
 	G4Box* albedo_housing_s = new G4Box("albedo_housing_s",
-					    sensorWidthExt/2.,
-					    sensorWidthExt/2.,
-					    albedo_sensorThickness/2.);
+	                                    sensorWidthExt/2.,
+	                                    sensorWidthExt/2.,
+	                                    albedo_sensorThickness/2.);
 	G4LogicalVolume*
-			albedo_housing_log = new G4LogicalVolume(albedo_housing_s,
-								 Cadmium,
-								 "albedo_housing_log");
+	        albedo_housing_log = new G4LogicalVolume(albedo_housing_s,
+	                                                 Cadmium,
+	                                                 "albedo_housing_log");
 	detectorRegion->AddRootLogicalVolume(albedo_housing_log);
 	//albedo_housing_log->SetVisAttributes(lead_vis);
 
@@ -682,109 +676,109 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	rotAlbedo->rotateY(180.*deg);
 
 	G4PVPlacement* albedo_housing =
-			new G4PVPlacement(rotAlbedo,
+	        new G4PVPlacement(rotAlbedo,
 
-					  G4ThreeVector(-1.5,0.,-15*cm-albedo_sensorThickness/2), //at the phantom, decentered
-					  //G4ThreeVector(0.,0.,PMMAPhantomSize.x()/2.
-					  //                              +fast_sensorThickness/2.-5.*cm),
-					  //G4ThreeVector(0.,-10.*cm,0.),
+	                          G4ThreeVector(-1.5,0.,-15*cm-albedo_sensorThickness/2), //at the phantom, decentered
+	                          //G4ThreeVector(0.,0.,PMMAPhantomSize.x()/2.
+	                          //                              +fast_sensorThickness/2.-5.*cm),
+	                          //G4ThreeVector(0.,-10.*cm,0.),
 
-					  "Albedo_Housing",
-					  albedo_housing_log,
-					  fPhysiPMMAPhantom,
-					  false,
-					  0);
+	                          "Albedo_Housing",
+	                          albedo_housing_log,
+	                          fPhysiPMMAPhantom,
+	                          false,
+	                          0);
 	//Albedo Sensor components
 	//-------------------------------------------------------------------------
 
 	G4Box* albedo_hullFront_s = new G4Box("albedo_hullFront_s",
-					      sensorWidth/2.,
-					      sensorWidth/2.,
-					      albedo_hullThicknessFront/2.);
+	                                      sensorWidth/2.,
+	                                      sensorWidth/2.,
+	                                      albedo_hullThicknessFront/2.);
 
 	//-------------------------------------------------------------------------
 	
 	G4Box* albedo_gap_s = new G4Box("albedo_gap_s",
-					sensorWidth/2.,
-					sensorWidth/2.,
-					albedo_gapThickness/2.);
+	                                sensorWidth/2.,
+	                                sensorWidth/2.,
+	                                albedo_gapThickness/2.);
 
 	//-------------------------------------------------------------------------
 	
 	G4Box* albedo_converter_s = new G4Box("albedo_converter_s",
-					      sensorWidth/2.,
-					      sensorWidth/2.,
-					      albedo_converterThickness/2.);
+	                                      sensorWidth/2.,
+	                                      sensorWidth/2.,
+	                                      albedo_converterThickness/2.);
 
 	//-------------------------------------------------------------------------
 	
 	G4Box* albedo_ceramic_s = new G4Box("albedo_ceramic_s",
-					    sensorWidth/2.,
-					    sensorWidth/2.,
-					    albedo_ceramicThickness/2.);
+	                                    sensorWidth/2.,
+	                                    sensorWidth/2.,
+	                                    albedo_ceramicThickness/2.);
 
 	//-------------------------------------------------------------------------
 	
 	G4Box* albedo_hullBack_s = new G4Box("albedo_hullBack_s",
-					     sensorWidth/2.,
-					     sensorWidth/2.,
-					     albedo_hullThicknessBack/2.);
+	                                     sensorWidth/2.,
+	                                     sensorWidth/2.,
+	                                     albedo_hullThicknessBack/2.);
 
 	//-------------------------------------------------------------------------
 	
 	G4Tubs* albedo_hole_s = new G4Tubs("albedo_hole_s",
-					   0,
-					   albedo_holeDiameter/2.,
-					   albedo_hullThicknessBack/2.,
-					   0,2*pi);
+	                                   0,
+	                                   albedo_holeDiameter/2.,
+	                                   albedo_hullThicknessBack/2.,
+	                                   0,2*pi);
 
 	//-------------------------------------------------------------------------
 	
 	G4LogicalVolume* albedo_hullFront_log =
-			new G4LogicalVolume(albedo_hullFront_s,
-					    Cadmium,
-					    "albedo_hullFront_log");
+	        new G4LogicalVolume(albedo_hullFront_s,
+	                            Cadmium,
+	                            "albedo_hullFront_log");
 	//albedo_hullFront_log->SetVisAttributes(lead_vis);
 
 
 	//-------------------------------------------------------------------------
 
 	G4LogicalVolume* albedo_gap_log =
-			new G4LogicalVolume(albedo_gap_s,
-					    Air,
-					    "albedo_gap_log");
+	        new G4LogicalVolume(albedo_gap_s,
+	                            Air,
+	                            "albedo_gap_log");
 	//albedo_gap_log->SetVisAttributes(G4VisAttributes::Invisible);
 
 	//-------------------------------------------------------------------------
 	
 	G4LogicalVolume* albedo_converter_log =
-			new G4LogicalVolume(albedo_converter_s,
-					    LiF_CH2,
-					    "albedo_converter_log");
+	        new G4LogicalVolume(albedo_converter_s,
+	                            LiF_CH2,
+	                            "albedo_converter_log");
 	//albedo_converter_log->SetVisAttributes(converter_vis);
 
 	//-------------------------------------------------------------------------
 	
 	G4LogicalVolume* albedo_ceramic_log =
-			new G4LogicalVolume(albedo_ceramic_s,
-					    Ceramic,
-					    "albedo_ceramic_log");
+	        new G4LogicalVolume(albedo_ceramic_s,
+	                            Ceramic,
+	                            "albedo_ceramic_log");
 	//albedo_ceramic_log->SetVisAttributes(ceramic_vis);
 
 	//-------------------------------------------------------------------------
 
 	G4LogicalVolume* albedo_hullBack_log =
-			new G4LogicalVolume(albedo_hullBack_s,
-					    Cadmium,
-					    "albedo_hullBack_log");
+	        new G4LogicalVolume(albedo_hullBack_s,
+	                            Cadmium,
+	                            "albedo_hullBack_log");
 	//albedo_hullBack_log->SetVisAttributes(lead_vis);
 
 	//-------------------------------------------------------------------------
 	
 	G4LogicalVolume* albedo_hole_log =
-			new G4LogicalVolume(albedo_hole_s,
-					    Air,
-					    "albedo_hole_log");
+	        new G4LogicalVolume(albedo_hole_s,
+	                            Air,
+	                            "albedo_hole_log");
 	//albedo_hole_log->SetVisAttributes(hole_vis);
 
 	//=========================================================================
@@ -793,116 +787,116 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4double albedo_offset = -0.5 * albedo_sensorThickness;
 
 	G4double albedo_posHullBack = albedo_offset
-			+ albedo_hullThicknessBack / 2.;
+	        + albedo_hullThicknessBack / 2.;
 
 	G4double albedo_posCeramic  = albedo_offset
-			+ albedo_hullThicknessBack
-			+ albedo_ceramicThickness / 2.;
+	        + albedo_hullThicknessBack
+	        + albedo_ceramicThickness / 2.;
 
 	G4double albedo_posConverter = albedo_offset
-			+ albedo_hullThicknessBack
-			+ albedo_ceramicThickness
-			+ detectorThickness
-			+ albedo_converterThickness / 2.;
+	        + albedo_hullThicknessBack
+	        + albedo_ceramicThickness
+	        + detectorThickness
+	        + albedo_converterThickness / 2.;
 
 	G4double albedo_posGap = albedo_offset
-			+ albedo_hullThicknessBack
-			+ albedo_ceramicThickness
-			+ detectorThickness
-			+ albedo_converterThickness
-			+ albedo_gapThickness / 2.;
+	        + albedo_hullThicknessBack
+	        + albedo_ceramicThickness
+	        + detectorThickness
+	        + albedo_converterThickness
+	        + albedo_gapThickness / 2.;
 
 	G4double albedo_posHullFront = albedo_offset
-			+ albedo_hullThicknessBack
-			+ albedo_ceramicThickness
-			+ detectorThickness
-			+ albedo_converterThickness
-			+ albedo_gapThickness
-			+ albedo_hullThicknessFront / 2.;
+	        + albedo_hullThicknessBack
+	        + albedo_ceramicThickness
+	        + detectorThickness
+	        + albedo_converterThickness
+	        + albedo_gapThickness
+	        + albedo_hullThicknessFront / 2.;
 
 	//-------------------------------------------------------------------------
 	
 	albedo_hullFront = new G4PVPlacement(0,
-					     G4ThreeVector(0,
-							   0,
-							   albedo_posHullFront),
-					     "albedo_HullFront",
-					     albedo_hullFront_log,
-					     albedo_housing,
-					     false,
-					     0);
+	                                     G4ThreeVector(0,
+	                                                   0,
+	                                                   albedo_posHullFront),
+	                                     "albedo_HullFront",
+	                                     albedo_hullFront_log,
+	                                     albedo_housing,
+	                                     false,
+	                                     0);
 
 	albedo_gap = new G4PVPlacement(0,
-				       G4ThreeVector(0,0,albedo_posGap),
-				       "albedo_Gap",
-				       albedo_gap_log,
-				       albedo_housing,
-				       false,
-				       0);
+	                               G4ThreeVector(0,0,albedo_posGap),
+	                               "albedo_Gap",
+	                               albedo_gap_log,
+	                               albedo_housing,
+	                               false,
+	                               0);
 
 	albedo_converter = new G4PVPlacement(0,
-					     G4ThreeVector(0,
-							   0,
-							   albedo_posConverter),
-					     "albedo_Converter",
-					     albedo_converter_log,
-					     albedo_housing,
-					     false,
-					     0);
+	                                     G4ThreeVector(0,
+	                                                   0,
+	                                                   albedo_posConverter),
+	                                     "albedo_Converter",
+	                                     albedo_converter_log,
+	                                     albedo_housing,
+	                                     false,
+	                                     0);
 
 	albedo_ceramic = new G4PVPlacement(0,
-					   G4ThreeVector(0,
-							 0,
-							 albedo_posCeramic),
-					   "albedo_Ceramic",
-					   albedo_ceramic_log,
-					   albedo_housing,
-					   false,
-					   0);
+	                                   G4ThreeVector(0,
+	                                                 0,
+	                                                 albedo_posCeramic),
+	                                   "albedo_Ceramic",
+	                                   albedo_ceramic_log,
+	                                   albedo_housing,
+	                                   false,
+	                                   0);
 
 	albedo_hullBack = new G4PVPlacement(0,
-					    G4ThreeVector(0,
-							  0,
-							  albedo_posHullBack),
-					    "albedo_HullBack",
-					    albedo_hullBack_log,
-					    albedo_housing,
-					    false,
-					    0);
+	                                    G4ThreeVector(0,
+	                                                  0,
+	                                                  albedo_posHullBack),
+	                                    "albedo_HullBack",
+	                                    albedo_hullBack_log,
+	                                    albedo_housing,
+	                                    false,
+	                                    0);
 
 	albedo_hole = new G4PVPlacement(0,
-					G4ThreeVector(0,0,0),
-					"albedo_Hole",
-					albedo_hole_log,
-					albedo_hullBack,
-					false,
-					0);
+	                                G4ThreeVector(0,0,0),
+	                                "albedo_Hole",
+	                                albedo_hole_log,
+	                                albedo_hullBack,
+	                                false,
+	                                0);
 
 
 	//=========================================================================
 
 	G4String yDetRepName("DetRepY");
 	G4VSolid* solYRepDet = new G4Box(yDetRepName,
-					 sensorWidth/2.,
-					 sensorWidth/2.,
-					 detectorThickness/2.);
+	                                 sensorWidth/2.,
+	                                 sensorWidth/2.,
+	                                 detectorThickness/2.);
 
 	G4LogicalVolume* logYRepDet = new G4LogicalVolume(solYRepDet,
-							  fWater,
-							  yDetRepName);
+	                                                  fWater,
+	                                                  yDetRepName);
 	//G4PVReplica* yReplica =
 	new G4PVReplica(yDetRepName,logYRepDet,logicFastSens,
-			kYAxis,1,sensorWidth);
+	                kYAxis,1,sensorWidth);
 	// X Slice
 	G4String xDetRepName("DetRepX");
 	G4VSolid* solXRepDet = new G4Box(xDetRepName,
-					 sensorWidth/2.,
-					 sensorWidth/2.,
-					 detectorThickness/2.);
+	                                 sensorWidth/2.,
+	                                 sensorWidth/2.,
+	                                 detectorThickness/2.);
 	
 	G4LogicalVolume* logXRepDet = new G4LogicalVolume(solXRepDet,
-							  fWater,
-							  xDetRepName);
+	                                                  fWater,
+	                                                  xDetRepName);
 	//G4PVReplica* xReplica =
 	new G4PVReplica(xDetRepName,logXRepDet,logYRepDet,kXAxis,1,sensorWidth);
 
@@ -914,9 +908,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	// Z Slice
 	G4String zDetVoxName("FastSens");
 	G4VSolid* solDetVoxel = new G4Box(zDetVoxName,
-					  sensorWidth/2.,
-					  sensorWidth/2.,
-					  layerThickness/2.);
+	                                  sensorWidth/2.,
+	                                  sensorWidth/2.,
+	                                  layerThickness/2.);
 
 	fLVPhantomSens = new G4LogicalVolume(solDetVoxel,fWater,zDetVoxName);
 
@@ -930,34 +924,34 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 		G4ThreeVector detSize(sensorWidth,sensorWidth,layerThickness);
 		NestedPhantomParameterisation* paramFastSens
-				= new NestedPhantomParameterisation(detSize/2.,
-								    fNz,
-								    fastSensMat);
+		        = new NestedPhantomParameterisation(detSize/2.,
+		                                            fNz,
+		                                            fastSensMat);
 
 		//G4VPhysicalVolume * physiPhantomSens =
 		new G4PVParameterised("FastSens",     // their name
-				      fLVPhantomSens,    // their logical volume
-				      logXRepDet,           // Mother logical volume
-				      kUndefined,        // Are placed along this axis
-				      numberOfLayers,           // Number of cells
-				      paramFastSens);     // Parameterisation.
+		                      fLVPhantomSens,    // their logical volume
+		                      logXRepDet,           // Mother logical volume
+		                      kUndefined,        // Are placed along this axis
+		                      numberOfLayers,           // Number of cells
+		                      paramFastSens);     // Parameterisation.
 	}else  // if only layer 1 for active and layer 2 to 8 for depletion
 	{
 		fNz=numberOfLayers2;
 
 		G4ThreeVector detSize(sensorWidth,sensorWidth,layerThickness2);
 		NestedPhantomParameterisation* paramFastSens
-				= new NestedPhantomParameterisation(detSize/2.,
-								    fNz,
-								    fastSensMat);
+		        = new NestedPhantomParameterisation(detSize/2.,
+		                                            fNz,
+		                                            fastSensMat);
 
 		//G4VPhysicalVolume * physiPhantomSens =
 		new G4PVParameterised("FastSens",     // their name
-				      fLVPhantomSens,    // their logical volume
-				      logXRepDet,           // Mother logical volume
-				      kUndefined,        // Are placed along this axis
-				      numberOfLayers2,           // Number of cells
-				      paramFastSens);     // Parameterisation.
+		                      fLVPhantomSens,    // their logical volume
+		                      logXRepDet,           // Mother logical volume
+		                      kUndefined,        // Are placed along this axis
+		                      numberOfLayers2,           // Number of cells
+		                      paramFastSens);     // Parameterisation.
 	}
 	// if(conf()->SphereScorer == 0){
 	fUSDVolumes.push_back(fLVPhantomSens);
@@ -966,68 +960,68 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	//=========================================================================
 
 	G4Box* solidAlbedoSens = new G4Box("solidAlbedoSens",
-					   sensorWidth/2.,
-					   sensorWidth/2.,
-					   detectorThickness/2.);
+	                                   sensorWidth/2.,
+	                                   sensorWidth/2.,
+	                                   detectorThickness/2.);
 
 	G4LogicalVolume* logicAlbedoSens = new G4LogicalVolume(solidAlbedoSens,
-							       Silicon,
-							       "logicAlbedoSens");
+	                                                       Silicon,
+	                                                       "logicAlbedoSens");
 
 	G4double zPosAlbedoSens = albedo_sensorThickness/2.
-			- albedo_converterThickness
-			- albedo_gapThickness
-			- albedo_hullThicknessFront
-			- detectorThickness/2.;
+	        - albedo_converterThickness
+	        - albedo_gapThickness
+	        - albedo_hullThicknessFront
+	        - detectorThickness/2.;
 
 	physiAlbedoSens = new G4PVPlacement(0,
-					    G4ThreeVector(0,0,zPosAlbedoSens),
-					    "physiAlbedoSens",
-					    logicAlbedoSens,
-					    albedo_housing,
-					    false,
-					    0,
-					    1);
+	                                    G4ThreeVector(0,0,zPosAlbedoSens),
+	                                    "physiAlbedoSens",
+	                                    logicAlbedoSens,
+	                                    albedo_housing,
+	                                    false,
+	                                    0,
+	                                    1);
 
 	G4String yADetRepName("ADetRepY");
 	G4VSolid* solYRepADet = new G4Box(yADetRepName,
-					  sensorWidth/2.,
-					  sensorWidth/2.,
-					  detectorThickness/2.);
+	                                  sensorWidth/2.,
+	                                  sensorWidth/2.,
+	                                  detectorThickness/2.);
 
 	G4LogicalVolume* logYRepADet = new G4LogicalVolume(solYRepADet,
-							   fWater,
-							   yDetRepName);
+	                                                   fWater,
+	                                                   yDetRepName);
 
 	new G4PVReplica(yADetRepName,
-			logYRepADet,
-			logicAlbedoSens,
-			kYAxis,
-			1,
-			sensorWidth);
+	                logYRepADet,
+	                logicAlbedoSens,
+	                kYAxis,
+	                1,
+	                sensorWidth);
 
 	G4String xADetRepName("ADetRepX");
 	G4VSolid* solXRepADet = new G4Box(xADetRepName,
-					  sensorWidth/2.,
-					  sensorWidth/2.,
-					  detectorThickness/2.);
+	                                  sensorWidth/2.,
+	                                  sensorWidth/2.,
+	                                  detectorThickness/2.);
 
 	G4LogicalVolume* logXRepADet = new G4LogicalVolume(solXRepADet,
-							   fWater,
-							   xDetRepName);
+	                                                   fWater,
+	                                                   xDetRepName);
 	new G4PVReplica(xADetRepName,
-			logXRepADet,
-			logYRepADet,
-			kXAxis,
-			1,
-			sensorWidth);
+	                logXRepADet,
+	                logYRepADet,
+	                kXAxis,
+	                1,
+	                sensorWidth);
 
 
 	G4String zADetVoxName("AlbedoSens");
 	G4VSolid* solADetVoxel = new G4Box(zDetVoxName,
-					   sensorWidth/2.,
-					   sensorWidth/2.,
-					   layerThickness/2.);
+	                                   sensorWidth/2.,
+	                                   sensorWidth/2.,
+	                                   layerThickness/2.);
 	fAlbedoZSens = new G4LogicalVolume(solADetVoxel,fWater,zADetVoxName);
 
 	std::vector<G4Material*> albedoSensMat(2,Silicon);
@@ -1042,31 +1036,31 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 		G4ThreeVector adetSize(sensorWidth,sensorWidth,layerThickness);
 		NestedPhantomParameterisation* paramAlbedoSens
-				= new NestedPhantomParameterisation(adetSize/2.,
-								    fNz,
-								    albedoSensMat);
+		        = new NestedPhantomParameterisation(adetSize/2.,
+		                                            fNz,
+		                                            albedoSensMat);
 
 		new G4PVParameterised("AlbedoSens",     // their name
-				      fAlbedoZSens,
-				      logXRepADet,
-				      kUndefined,
-				      numberOfLayers,
-				      paramAlbedoSens);
+		                      fAlbedoZSens,
+		                      logXRepADet,
+		                      kUndefined,
+		                      numberOfLayers,
+		                      paramAlbedoSens);
 	}else  // if only layer 1 for active and layer 2 to 8 for depletion
 	{
 		fNz=numberOfLayers2;
 		G4ThreeVector adetSize(sensorWidth,sensorWidth,layerThickness2);
 		NestedPhantomParameterisation* paramAlbedoSens
-				= new NestedPhantomParameterisation(adetSize/2.,
-								    fNz,
-								    albedoSensMat);
+		        = new NestedPhantomParameterisation(adetSize/2.,
+		                                            fNz,
+		                                            albedoSensMat);
 
 		new G4PVParameterised("AlbedoSens",     // their name
-				      fAlbedoZSens,
-				      logXRepADet,
-				      kUndefined,
-				      numberOfLayers2,
-				      paramAlbedoSens);
+		                      fAlbedoZSens,
+		                      logXRepADet,
+		                      kUndefined,
+		                      numberOfLayers2,
+		                      paramAlbedoSens);
 	}
 
 
@@ -1090,9 +1084,11 @@ void DetectorConstruction::ConstructSDandField() {
 		std::vector<G4SDParticleWithEnergyFilter*> binfilter(conf()->ebin.size());
 		for (uint i=0;i<conf()->ebin.size();i++){
 			if (i==0){
-				binfilter[i]=new G4SDParticleWithEnergyFilter("ebinfilter"+std::to_string(i),0,binningenergy.at(i));
+				binfilter[i]=new G4SDParticleWithEnergyFilter("ebinfilter"+std::to_string(i),
+				                                              0,binningenergy.at(i));
 			}else {
-				binfilter[i]=new G4SDParticleWithEnergyFilter("ebinfilter"+std::to_string(i),binningenergy.at(i-1),binningenergy.at(i));
+				binfilter[i]=new G4SDParticleWithEnergyFilter("ebinfilter"+std::to_string(i),
+				                                              binningenergy.at(i-1),binningenergy.at(i));
 			}
 			binfilter[i]->add("neutron");
 			binfilter[i]->show();
@@ -1125,9 +1121,11 @@ void DetectorConstruction::ConstructSDandField() {
 
 		for (uint i=0;i<conf()->ebin.size();i++){
 			if (i==0){
-				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+std::to_string(i),0,binningenergy[i]);
+				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+std::to_string(i),
+				                                                  0,binningenergy[i]);
 			}else {
-				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+std::to_string(i),binningenergy[i-1],binningenergy[i]);
+				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+std::to_string(i),
+				                                                  binningenergy[i-1],binningenergy[i]);
 			}
 			fastbinfilter[i]->add("neutron");
 			fastbinfilter[i]->show();
@@ -1141,9 +1139,11 @@ void DetectorConstruction::ConstructSDandField() {
 
 		for (uint i=0;i<conf()->ebin.size();i++){
 			if (i==0){
-				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),0,binningenergy[i]);
+				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),
+				                                                    0,binningenergy[i]);
 			}else {
-				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),binningenergy[i-1],binningenergy[i]);
+				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),
+				                                                    binningenergy[i-1],binningenergy[i]);
 			}
 			albedobinfilter[i]->add("neutron");
 			albedobinfilter[i]->show();
@@ -1160,14 +1160,27 @@ void DetectorConstruction::ConstructSDandField() {
 
 	}
 	if(conf()->SiLayersDep ==1) {
-		std::vector<G4LogicalVolume*>::iterator LV_i = fUSDVolumes.begin();
-		std::vector<G4LogicalVolume*>::iterator LV_n = fUSDVolumes.end();
-		for(; LV_i != LV_n; ++LV_i) {
-			FluenceEnergyDistributionSD* EDistri =
-					new FluenceEnergyDistributionSD((*LV_i)->GetName(),
-									fNx,fNy,fNz,0);
-			pSDman->AddNewDetector(EDistri);
-			(*LV_i)->SetSensitiveDetector(EDistri);
+		if(conf()->SphereScorer==1){
+			std::vector<G4LogicalVolume*>::iterator LV_i = std::next(fUSDVolumes.begin());
+			std::vector<G4LogicalVolume*>::iterator LV_n = fUSDVolumes.end();
+			for(; LV_i != LV_n; ++LV_i) {
+				FluenceEnergyDistributionSD* EDistri =
+				        new FluenceEnergyDistributionSD((*LV_i)->GetName(),
+				                                        fNx,fNy,fNz,0);
+				pSDman->AddNewDetector(EDistri);
+				(*LV_i)->SetSensitiveDetector(EDistri);
+			}
+		}else{
+			std::vector<G4LogicalVolume*>::iterator LV_i = fUSDVolumes.begin();
+			std::vector<G4LogicalVolume*>::iterator LV_n = fUSDVolumes.end();
+			for(; LV_i != LV_n; ++LV_i) {
+				FluenceEnergyDistributionSD* EDistri =
+				        new FluenceEnergyDistributionSD((*LV_i)->GetName(),
+				                                        fNx,fNy,fNz,0);
+				pSDman->AddNewDetector(EDistri);
+				(*LV_i)->SetSensitiveDetector(EDistri);
+			}
 		}
+
 	}
 }
