@@ -1090,7 +1090,11 @@ void DetectorConstruction::ConstructSDandField() {
 				binfilter[i]=new G4SDParticleWithEnergyFilter("ebinfilter"+std::to_string(i),
 				                                              binningenergy.at(i-1),binningenergy.at(i));
 			}
+			if(conf()->Protondummy==0){
 			binfilter[i]->add("neutron");
+			}else{
+			binfilter[i]->add("proton");
+			}
 			binfilter[i]->show();
 			G4String pt1 ="totSphereFlux";
 			G4String pt2 =std::to_string(i);
@@ -1127,7 +1131,11 @@ void DetectorConstruction::ConstructSDandField() {
 				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+std::to_string(i),
 				                                                  binningenergy[i-1],binningenergy[i]);
 			}
+			if(conf()->Protondummy==0){
 			fastbinfilter[i]->add("neutron");
+			}else{
+			fastbinfilter[i]->add("proton");
+			}
 			fastbinfilter[i]->show();
 			G4String pt3 ="totfastflux";
 			G4String pt4 =std::to_string(i);
@@ -1145,7 +1153,11 @@ void DetectorConstruction::ConstructSDandField() {
 				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),
 				                                                    binningenergy[i-1],binningenergy[i]);
 			}
+			if(conf()->Protondummy==0){
 			albedobinfilter[i]->add("neutron");
+			}else{
+			albedobinfilter[i]->add("proton");
+			}
 			albedobinfilter[i]->show();
 			G4String pt5 ="totalbedoflux";
 			G4String pt6 =std::to_string(i);

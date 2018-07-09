@@ -36,6 +36,7 @@ struct Conf{
 	G4String folder;
 	bool print_stored_trajectories = false;
 	G4String timenow = std::to_string(std::time(0));
+	bool Protondummy = false;
 };
 const Conf* conf();
 

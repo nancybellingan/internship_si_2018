@@ -90,7 +90,7 @@ ConfigHandler::ConfigHandler() {
 	swap("DummyScorer",conf.DummyScorer);
 	//forgive me nancy
 	swap("print_stored_trajectories",conf.print_stored_trajectories);
-
+	swap("Protondummy",conf.Protondummy);
 	//Now load the binning Info
 	loadBinning(conf.ebin,"configbinning.ini");
 
