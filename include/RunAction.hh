@@ -86,11 +86,13 @@ public:
   G4int CopyNo(G4int ix, G4int iy, G4int iz)
   {  return (iy*(fNx*fNz)+ix*fNz+iz); }
 
-private:
-  // Data member 
-  // - vector of MultiFunctionalDetecor names.
-  std::vector<G4String> fSDName;  
+//  G4String getPathtime() const;
 
+private:
+   // Data member
+   // - vector of MultiFunctionalDetecor names.
+  std::vector<G4String> fSDName;  
+ G4String pathtime;
   // for conversion of sengment number to copyNo.
   G4int fNx, fNy, fNz;
 	DetectorConstruction* fDetector;

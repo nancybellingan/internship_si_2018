@@ -36,7 +36,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
 #include "DetectorConstruction.hh"
-
+#include "RunAction.hh"
 #include <fstream>
 #include <cmath>
 #include "PiotPhaseSpace.hh"

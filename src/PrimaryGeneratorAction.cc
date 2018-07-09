@@ -33,7 +33,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "DetectorConstruction.hh"
 #include "G4RunManager.hh"
-
+#include "RunAction.hh"
 #include "PrimaryGeneratorMessenger.hh"
 #include "G4GeneralParticleSource.hh"
 #include "G4Event.hh"
@@ -45,7 +45,7 @@
 #include "globals.hh"
 #include "G4SystemOfUnits.hh"    
 #include <cmath>
-
+#include "config.h"
 //============================================================================
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
@@ -68,9 +68,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 
 //----------------------------------------------------------------------------
 	// Checking Gaussian Distribution
-	std::time_t timeint2 = std::time(0);  // t is an integer type
-	G4String timenow2 = std::to_string(timeint2);
-	G4String outputEDistr =timenow2+"Edistr.dat";
+	G4String outputEDistr ="./" + conf()->timenow + "/Edistr.dat";
 	out.open(outputEDistr);
 
 	/*

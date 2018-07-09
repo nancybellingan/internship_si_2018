@@ -114,11 +114,11 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 {
 Run* re02Run=(Run*)aRun;
   if(!IsMaster()) return;
-  std::time_t timeint = std::time(0);  // t is an integer type
-  G4String timenow = std::to_string(timeint);
+ // std::time_t timeint = std::time(0);  // t is an integer type
+ // G4String timenow = std::to_string(timeint);
   G4String path = "./";
-  G4String pathtime = path + timenow;
-  mkdir(pathtime, 0777);
+ pathtime = path + conf()->timenow;
+ // mkdir(pathtime, 0777);
   //- Run object.
   //--- Dump all scored quantities involved in Run if is not being used the Multi functional detector
   if (conf()->SphereScorer==1){
@@ -191,7 +191,7 @@ if(conf()->SphereScorer==1){
 		FluenceEnergyDistributionSD* sensDet
 	               = (FluenceEnergyDistributionSD*) (pSDman->
 			                       FindSensitiveDetector(sds[i]));
-		G4String outfile=pathtime + sds[i] + "ErgfileVoxels.dat";
+		G4String outfile= pathtime + "/" + sds[i] + "ErgfileVoxels.dat";
 //		std::fstream outp(outfile.c_str(),std::fstream::out |
 //										  std::fstream::in  |
 //										  std::fstream::trunc);
@@ -209,7 +209,7 @@ if(conf()->SphereScorer==1){
 		FluenceEnergyDistributionSD* sensDet
 		           = (FluenceEnergyDistributionSD*) (pSDman->
 		                           FindSensitiveDetector(sds[i]));
-		G4String outfile=pathtime + sds[i] + "ErgfileVoxels.dat";
+		G4String outfile=pathtime + "/" + sds[i] + "ErgfileVoxels.dat";
 //		std::fstream outp(outfile.c_str(),std::fstream::out |
 //										  std::fstream::in  |
 //										  std::fstream::trunc);
@@ -256,4 +256,6 @@ for ( G4int idet = 0; idet < nMfd ; idet++)
 
 
 }
+
+
 // --

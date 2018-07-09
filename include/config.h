@@ -1,6 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 #include <vector>
+#include <chrono>
+#include <ctime>
+#include <time.h>
 typedef unsigned long long u64;
 typedef long long i64;
 
@@ -32,6 +35,7 @@ struct Conf{
 	std::vector<double> ebin;
 	G4String folder;
 	bool print_stored_trajectories = false;
+	G4String timenow = std::to_string(std::time(0));
 };
 const Conf* conf();
 
