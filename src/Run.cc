@@ -131,55 +131,72 @@ Run::~Run()
 	fRunMap.clear();
 
 }
-
+#include <mutex>
+static std::mutex mutexFileWrite;
+static int counterForFlileFlush = 0;
+void printOnHit(const G4VHitsCollection* eventMap, std::ofstream* file, const uint binSlot ){
+	const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
+	auto map = castedMap->GetMap();
+	if(! map->empty()){
+		//We only care about the FIRST (key = 0) layer
+		//in case we have > 1 event detected, we print multiple time
+		auto iter = map->find(0);
+		if( iter != map->end()){
+			counterForFlileFlush++;
+			int eventRegistered = *iter->second;
+			std::lock_guard<std::mutex> lock(mutexFileWrite);
+			for(int i=0; i < eventRegistered; i++){
+				*file << binSlot << G4endl;
+			}
+		}
+	}
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //
 //  RecordEvent is called at end of event.
 //  For scoring purpose, the resultant quantity in a event,
 //  is accumulated during a Run.
-void Run::RecordEvent(const G4Event* aEvent)
-{
+void Run::RecordEvent(const G4Event* aEvent) {
 	numberOfEvent++;  // This is an original line.
-	//	G4cout << "RECORD" << G4endl;
 	//=============================
 	// HitsCollection of This Event
 	//============================
 	aEvent->GetEventID();
 
-
 	G4HCofThisEvent* pHCE = aEvent->GetHCofThisEvent();
-	if (!pHCE) return;
+	if (!pHCE) {
+		return;
+	}
 
+	//when you switch to the other sensor style, change plug in the other function and gg...
 	if(conf()->SphereScorer==1){
-		eventSphereFlux.resize(conf()->ebin.size());
-		totSphereFlux.resize(conf()->ebin.size());
-		for (uint i=0;i<conf()->ebin.size();i++){
-			if(totSphereFlux[i] == nullptr){
-				totSphereFlux[i] = new G4THitsMap<G4double>();
-			}
-			eventSphereFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[i]));
-			*totSphereFlux[i] += *eventSphereFlux[i];
+
+	//	eventSphereFlux.resize(conf()->ebin.size());
+	//	totSphereFlux.resize(conf()->ebin.size());
+
+		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
+	//		eventSphereFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[binSlot]));
+			printOnHit(pHCE->GetHC(SphereFluxID[binSlot]),conf()->SphereFlux,binSlot);
+			conf()->SphereFlux->flush();
+	//		*totSphereFlux[binSlot] += *eventSphereFlux[binSlot];
 		}
 	}
 	if(conf()->DummyScorer==1){
-		eventFastFlux.resize(conf()->ebin.size());
-		eventAlbedoFlux.resize(conf()->ebin.size());
-		totFastFlux.resize(conf()->ebin.size());
-		totAlbedoFlux.resize(conf()->ebin.size());
-		for (uint i=0;i<conf()->ebin.size();i++){
-			if(totFastFlux[i] == nullptr){
-				totFastFlux[i] = new G4THitsMap<G4double>();
-			}
-			if(totAlbedoFlux[i] == nullptr){
-				totAlbedoFlux[i] = new G4THitsMap<G4double>();
-			}
-			eventFastFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(FastFluxID[i]));
-			eventAlbedoFlux[i] = (G4THitsMap<G4double>*)(pHCE->GetHC(AlbedoFluxID[i]));
-			*totFastFlux[i] += *eventFastFlux[i];
-			*totAlbedoFlux[i] += *eventAlbedoFlux[i];
+		//Here the sensor has 8 LAYER, but we do not care
+		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
+			printOnHit(pHCE->GetHC(FastFluxID[binSlot]), conf()->fastFlux,binSlot);
+			printOnHit(pHCE->GetHC(AlbedoFluxID[binSlot]), conf()->albedoFlux,binSlot);
+			conf()->fastFlux->flush();
+			conf()->albedoFlux->flush();
 		}
 	}
-
+	 if(counterForFlileFlush > 128){
+		std::lock_guard<std::mutex> lock(mutexFileWrite);
+		conf()->SphereFlux->flush();
+		conf()->fastFlux->flush();
+		conf()->albedoFlux->flush();
+		counterForFlileFlush = 0;
+	}
 	//auto ref = eventSphereFlux->GetMap();
 	//	for(int i = 0; i < ref->size(); i++){
 	//		auto ref2 = ref->at(i);
@@ -191,12 +208,7 @@ void Run::RecordEvent(const G4Event* aEvent)
 		G4int copyNb = *(pair.first);
 	}
 	*/
-
-
-
-
 	G4Run::RecordEvent(aEvent);
-
 }
 
 

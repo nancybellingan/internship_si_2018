@@ -1132,9 +1132,9 @@ void DetectorConstruction::ConstructSDandField() {
 				                                                  binningenergy[i-1],binningenergy[i]);
 			}
 			if(conf()->Protondummy==0){
-			fastbinfilter[i]->add("neutron");
+				fastbinfilter[i]->add("neutron");
 			}else{
-			fastbinfilter[i]->add("proton");
+				fastbinfilter[i]->add("GenericIon");
 			}
 			fastbinfilter[i]->show();
 			G4String pt3 ="totfastflux";
@@ -1156,7 +1156,7 @@ void DetectorConstruction::ConstructSDandField() {
 			if(conf()->Protondummy==0){
 			albedobinfilter[i]->add("neutron");
 			}else{
-			albedobinfilter[i]->add("proton");
+			albedobinfilter[i]->add("GenericIon");
 			}
 			albedobinfilter[i]->show();
 			G4String pt5 ="totalbedoflux";

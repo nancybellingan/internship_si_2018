@@ -74,7 +74,6 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 				             updateSigmaGunEnergy(); };
 
 	std::ifstream fReadPhsFile; */
-	std::ofstream out;
 
   private:
 /*	G4double fSigmaPosition; // Initial beam spot size in x-y plane.

@@ -33,7 +33,6 @@
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
-#include <sys/stat.h>
 #include "config.h"
 #include <chrono>
 #include <ctime>
@@ -47,8 +46,6 @@ ActionInitialization::~ActionInitialization() // deconstructor
 void ActionInitialization::Build() const //set/initialize the primary generation, the run and event.
 {
   //
-	G4String pathtimenow = "./" + conf()->timenow;
-	 mkdir(pathtimenow, 0777);
   SetUserAction(new PrimaryGeneratorAction);
   //
   SetUserAction(new RunAction);

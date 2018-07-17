@@ -36,6 +36,7 @@
 #include "G4EventManager.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4Trajectory.hh"
+#include "Run.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 EventAction::EventAction()
@@ -58,7 +59,8 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   // periodic printing
   //
   if (event_id < 10 || event_id%10000 == 0) {
-    G4cout << ">>> Event " << evt->GetEventID() << G4endl;
+    G4cout << ">>> Event " << event_id << G4endl;
+
   }
   if(conf()->print_stored_trajectories){
   // get number of stored trajectories

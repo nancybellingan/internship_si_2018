@@ -37,6 +37,12 @@ struct Conf{
 	bool print_stored_trajectories = false;
 	G4String timenow = std::to_string(std::time(0));
 	bool Protondummy = false;
+	mutable std::ofstream* edistr = nullptr;
+	mutable std::ofstream* SphereFlux = nullptr;
+	mutable std::ofstream* fastFlux = nullptr;
+	mutable std::ofstream* albedoFlux = nullptr;
+	bool multithreading = false;
+	int numbercores = 0;
 };
 const Conf* conf();
 
@@ -44,6 +50,7 @@ class ConfigHandler {
 public:
 	static ConfigHandler& getInstance();
 	static Conf conf;
+	static void closeFile();
 private:
 	ConfigHandler();
 };

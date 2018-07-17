@@ -34,6 +34,7 @@
 
 //-- In order to obtain detector information.
 #include "G4RunManager.hh"
+#include "G4MTRunManager.hh"
 #include "G4SDManager.hh"
 #include "DetectorConstruction.hh"
 #include "FluenceEnergyDistributionSD.hh"
@@ -112,19 +113,20 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 //== 
 void RunAction::EndOfRunAction(const G4Run* aRun)
 {
-Run* re02Run=(Run*)aRun;
+ Run* re02Run=(Run*)aRun;
   if(!IsMaster()) return;
  // std::time_t timeint = std::time(0);  // t is an integer type
  // G4String timenow = std::to_string(timeint);
   G4String path = "./";
- pathtime = path + conf()->timenow;
+   auto flux1 = re02Run->GetSphereFlux();
+ // pathtime = path + conf()->timenow;
  // mkdir(pathtime, 0777);
   //- Run object.
   //--- Dump all scored quantities involved in Run if is not being used the Multi functional detector
-  if (conf()->SphereScorer==1){
+ /* if (conf()->SphereScorer==1){
 	  std::fstream outp1;
 	  G4int sum = 0;
-	  G4String outfiler1=pathtime +"/outputsphere.dat";
+	  G4String outfiler1=conf()->timenow +"/outputsphere1.dat";
 	  //  outfiler.append(std::chrono::system_clock::now());
 	  outp1.open(outfiler1.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
 	  outp1 << "prova" << G4endl;
@@ -143,7 +145,8 @@ Run* re02Run=(Run*)aRun;
 	  }
 	  outp1 << "tot events" << sum << G4endl;
 	  outp1.close();
-  }
+  } */
+  /*
   if (conf()->DummyScorer==1){
 	  std::fstream outp1;
 	  G4String outfiler2=pathtime +"/outputfastdummy.dat";
@@ -171,7 +174,7 @@ Run* re02Run=(Run*)aRun;
 	  }
 	  outp1.close();
   }
-
+*/
 if(conf()->SiLayersDep ==1){
 
 

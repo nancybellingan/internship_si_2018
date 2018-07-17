@@ -4,6 +4,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <sys/stat.h>
 
 using namespace std;
 Conf ConfigHandler::conf;
@@ -14,6 +15,13 @@ std::map<std::string,std::string> settings;
 ConfigHandler &ConfigHandler::getInstance() {
 	static ConfigHandler instance = ConfigHandler();
 	return instance;
+}
+
+void ConfigHandler::closeFile() {
+	conf.edistr->close();
+	conf.SphereFlux->close();
+	conf.fastFlux->close();
+	conf.albedoFlux->close();
 }
 
 void swap(const std::string& key, std::string& val) {
@@ -35,8 +43,15 @@ void swap(const std::string& key, i64& val){
 	if (it != settings.end()){
 		val = stoll(it->second);
 	}
-}
 
+}
+void swap(const std::string& key, int& val){
+	auto it = settings.find(key);
+	if (it != settings.end()){
+		val = stoi(it->second);
+	}
+
+}
 void swap(const std::string& key, double& val){
 	auto it = settings.find(key);
 	if (it != settings.end()){
@@ -58,6 +73,16 @@ void loadBinning(std::vector<double>& binning, const std::string& fileName ){
 
 }
 
+std::ofstream* openFile(const G4String& name){
+	auto file = new std::ofstream();
+	file->open(name);
+	if(!file->is_open()) {
+		std::cout << "impossible to open " << name << endl;
+		exit(0);
+	}
+	return file;
+}
+
 ConfigHandler::ConfigHandler() {
 
 	std::ifstream file ("config.ini", std::ifstream::in);
@@ -68,7 +93,6 @@ ConfigHandler::ConfigHandler() {
 		std::string         data;
 		std::string         key;
 		std::string         val;
-
 
 		// Read the integers using the operator >>
 		linestream >> key >> val;
@@ -91,9 +115,26 @@ ConfigHandler::ConfigHandler() {
 	//forgive me nancy
 	swap("print_stored_trajectories",conf.print_stored_trajectories);
 	swap("Protondummy",conf.Protondummy);
+	swap("multithreading",conf.multithreading);
+	swap("numbercores",conf.numbercores);
 	//Now load the binning Info
 	loadBinning(conf.ebin,"configbinning.ini");
 
+
+	G4String pathtimenow = "./" + conf.timenow;
+	mkdir(pathtimenow, 0777);
+
+	G4String outputEDistr ="./" + conf.timenow + "/Edistr.dat";
+	conf.edistr = openFile(outputEDistr);
+
+	G4String outfiler1="./" + conf.timenow + "/outputSphere.dat";
+	conf.SphereFlux = openFile(outfiler1);
+
+	G4String fastFlux="./" + conf.timenow + "/outputFlux.dat";
+	conf.fastFlux = openFile(fastFlux);
+
+	G4String albedoFlux="./" + conf.timenow + "/outputAlbedo.dat";
+	conf.albedoFlux = openFile(albedoFlux);
 }
 
 const Conf *conf() {

@@ -4,8 +4,9 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 set(CMAKE_C_COMPILER "gcc-7")
 set(CMAKE_CXX_COMPILER "g++-7")
-
-add_compile_options(-g -O0  -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow)
+#(-g -O0  -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow)
+#-g -O2 -flto -fuse-ld=gold -fuse-linker-plugin
+add_compile_options(-g -O0 -flto -fuse-ld=gold -fuse-linker-plugin -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow)
 #-fsanitize=address
 #(-g -O2 -march=native -flto -fuse-ld=gold -fuse-linker-plugin -fno-omit-frame-pointer -Wall -Wextra -Werror -pedantic -Wshadow -Wno-unused-variable)
 #SET(ASAN_FLAGS    "-fsanitize=address")
@@ -18,16 +19,10 @@ add_compile_options(-g -O0  -fno-omit-frame-pointer -Wall -Wextra -Werror -pedan
 
 project(SiDetPhant LANGUAGES C CXX)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-
-
-
+# set(CMAKE_CXX_STANDARD 17) doesnt work dunno why
 set(CMAKE_CXX_STANDARD 11)
-#debug symbols maybe??
 set(CMAKE_BUILD_TYPE "RelWithDebInfo")
-
-
-
-#----------------------------------------------------------------------------
+#-------------------------------------g -O2 -flto -fuse-ld=gold -fuse-linker-plugin----------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
 # to build a batch mode only executable

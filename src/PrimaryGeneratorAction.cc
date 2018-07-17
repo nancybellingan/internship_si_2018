@@ -68,8 +68,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 
 //----------------------------------------------------------------------------
 	// Checking Gaussian Distribution
-	G4String outputEDistr ="./" + conf()->timenow + "/Edistr.dat";
-	out.open(outputEDistr);
 
 	/*
 	std::ofstream outw;
@@ -99,20 +97,27 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
 	delete fParticleGun;
 	delete fMessenger;
-
-	out.close();
 }
 
 //======generate primary particles and relative momentum======================================================================
+#include <mutex>
+static std::mutex mutexFileWrite;
+static int counterForFlileFlush = 0;
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
 
-void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
-{ 
-        // G4ThreeVector position = fParticleGun->GetParticlePosition();
+	counterForFlileFlush++;
+	// G4ThreeVector position = fParticleGun->GetParticlePosition();
+	fParticleGun->GeneratePrimaryVertex(anEvent);
 	G4double energy = fParticleGun->GetParticleEnergy();
-	out << energy << '\n';
 
-        fParticleGun->GeneratePrimaryVertex(anEvent);
+	std::lock_guard<std::mutex> lock(mutexFileWrite);
+	*(conf()->edistr) << energy << '\n';
+	//G4cout << "energy: " << energy << G4endl;
 
+	if(counterForFlileFlush > 128){
+		conf()->edistr->flush();
+		counterForFlileFlush = 0;
+	}
 }
 
 //============================================================================
