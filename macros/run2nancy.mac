@@ -37,13 +37,32 @@
 #/random/setSeeds 6657 2
 #
 /gps/particle neutron
+
+/gps/pos/type Surface
+#parallel
+#/gps/pos/shape Cylinder
+#/gps/pos/centre 0 0 -115 cm
+#/gps/pos/radius 6. cm
+#/gps/pos/halfz 0 cm
+#/gps/ang/type cos
+#/gps/direction 0. 0. 1.
+
+#isotropic
+#/gps/pos/type Point
+#/gps/pos/centre 0 0 -115 cm
+#/gps/ang/type iso
+#/gps/ene/type Arb
+#/gps/hist/type arb
+
+#beam
 /gps/pos/type Point
-/gps/pos/centre 0. 0. -0.82 m
-/gps/direction 0. 0. 1.
-/gps/pos/type Beam 
+/gps/position 0 0 -115 cm
+/gps/direction 0 0 1
 /gps/ene/type Arb
 /gps/hist/type arb
-/gps/ang/type planar
+
+
+
 /gps/hist/point	0.0714	0
 /gps/hist/point	0.141	0.06349
 /gps/hist/point	0.2106	0.1031
@@ -203,5 +222,5 @@
 /gps/hist/inter Lin
 
 
-/run/beamOn 1000
+/run/beamOn 2000000
 
