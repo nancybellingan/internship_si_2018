@@ -1,23 +1,22 @@
-
+// NOT USED BY  MY CODE, TO FULLY REMOVE
 
 #include <vector>
 #include <map>
 #include "SDCollect.hh"
 #include "G4SystemOfUnits.hh"
 
-SDCollect::SDCollect(const std::vector<G4double>& thisBinning)
-	: fParticleName("any"), fFlux(0.), fkenergy(0.),
+/*	: fParticleName("any"), fFlux(0.), fkenergy(0.),
 		fBinningVector(thisBinning)
 {
 	InitSpectralFluxMap();
 }
 
-/*SDCollect::SDCollect()
+SDCollect::SDCollect()
 	: fParticleName("any"), fFlux(0.), fDoseDeposit(0.)
 {	
 }
 */
-
+/*
 SDCollect::~SDCollect()
 {}
 // goes through each binning / energy step and add the flux in the right energy range for the whole mapped Energies
@@ -88,4 +87,4 @@ out << "flux, energy " << it->first << it->second << G4endl;
 // G4cout << "flux, energy " << SDCollect::getFlux() << SD:Collect::getkEnergy() << g4endl;
 	}
 }
-
+*/

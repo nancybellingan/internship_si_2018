@@ -81,7 +81,7 @@ NestedPhantomParameterisation::~NestedPhantomParameterisation(){
 // Material assignment to geometry.
 //
 G4Material* NestedPhantomParameterisation
-::ComputeMaterial(G4VPhysicalVolume* /*currentVol*/, const G4int copyNo, 
+::ComputeMaterial(G4VPhysicalVolume* /*currentVol*/, const G4int copyNo,
                   const G4VTouchable* parentTouch)
 {
   if(parentTouch==0) return fMat[0]; // protection for initialization and

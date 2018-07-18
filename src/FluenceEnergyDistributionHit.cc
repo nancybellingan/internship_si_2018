@@ -1,4 +1,4 @@
-//
+// // NOT USED BY  MY CODE, TO FULLY REMOVE
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -37,7 +37,7 @@
 #include "G4SystemOfUnits.hh"
 
 #include <iomanip>
-
+/*
 G4ThreadLocal G4Allocator<FluenceEnergyDistributionHit>* FluenceEnergyDistributionHitAllocator=0;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -87,14 +87,14 @@ void FluenceEnergyDistributionHit::Draw()
 {
   G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
   if(pVVisManager)
-  {
+  {*/
  /*   G4Circle circle(fPos);
     circle.SetScreenSize(4.);
     circle.SetFillStyle(G4Circle::filled);
     G4Colour colour(1.,0.,0.);
     G4VisAttributes attribs(colour);
     circle.SetVisAttributes(attribs);
-    pVVisManager->Draw(circle); */
+	pVVisManager->Draw(circle);
   }
 }
 
@@ -110,3 +110,4 @@ void FluenceEnergyDistributionHit::Print()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+*/
