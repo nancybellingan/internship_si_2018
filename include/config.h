@@ -12,8 +12,9 @@ struct DetectorName{
 	G4String pathSphere ="mySphereScorer/totSphereFlux";
 	G4String pathFast = "fastDet/totfastflux";
 	G4String pathAlbedo = "albedoDet/totalbedoflux";
-	G4String pathFastDep = "fastdep/totaldep";
-	G4String pathAlbedoDep = "albedodep/totaldep";
+	G4String pathFastDep = "fastDet/totaldep";
+	G4String pathAlbedoDep = "albedoDet/totaldep";
+	G4String pathAlbedoDepScorer ="EDepFast";
 };
 
 static const DetectorName detectorName;
@@ -41,6 +42,8 @@ struct Conf{
 	mutable std::ofstream* SphereFlux = nullptr;
 	mutable std::ofstream* fastFlux = nullptr;
 	mutable std::ofstream* albedoFlux = nullptr;
+	mutable std::ofstream* albedoDep = nullptr;
+	mutable std::ofstream* fastDep = nullptr;
 	bool multithreading = false;
 	int numbercores = 0;
 };

@@ -123,6 +123,8 @@ G4int nEvent;
 std::vector<G4int> SphereFluxID;
 std::vector<G4int> FastFluxID;
 std::vector<G4int> AlbedoFluxID;
+G4int EDepFastID;
+G4int EDepAlbedoID;
   std::vector<G4THitsMap<G4double>*> totSphereFlux;
   std::vector<G4THitsMap<G4double>*> totFastFlux;
   std::vector<G4THitsMap<G4double>*> totAlbedoFlux;

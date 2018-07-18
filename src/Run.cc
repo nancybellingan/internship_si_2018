@@ -100,6 +100,10 @@ Run::Run() : G4Run()
 
 		}
 	}
+	if(conf()->SiLayersDep==1){
+	EDepFastID = pSDman->GetCollectionID("fastDet/EDepFast");
+	EDepAlbedoID = pSDman->GetCollectionID("albedoDet/EDepAlbedo");
+	}
 
 
 
@@ -133,7 +137,9 @@ Run::~Run()
 }
 #include <mutex>
 //static std::mutex mutexFileWrite;
+//static std::mutex mutexFileWrite2;
 static int counterForFlileFlush = 0;
+static int counterForFlileFlush2 = 0;
 void printOnHit(const G4VHitsCollection* eventMap, std::ofstream* file, const uint binSlot ){
 	const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
 	auto map = castedMap->GetMap();
@@ -152,7 +158,21 @@ void printOnHit(const G4VHitsCollection* eventMap, std::ofstream* file, const ui
 		}
 	}
 }
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// here i tried to do the same done for PrintonHit, but adapted to this kind of map which should have 40 different
+//first values one for each division of the silicon part, and then as second the energy deposition. i need it over
+// the first 10 elements actually, not all.
+void PrintOnDep(const G4VHitsCollection* eventMap, std::ofstream* file){
+const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
+std::map<G4int,G4double*>::iterator it = castedMap->GetMap()->begin();
+for(; it != castedMap->GetMap()->end(); it++){
+
+	*file << "fNz number \t"<< it->first << "E Dep in MeV \t" << *(it->second) << G4endl;
+}
+    *file << G4endl;
+}
+
+
+    //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //
 //  RecordEvent is called at end of event.
 //  For scoring purpose, the resultant quantity in a event,
@@ -191,12 +211,24 @@ void Run::RecordEvent(const G4Event* aEvent) {
 	//		conf()->albedoFlux->flush();
 		}
 	}
+	if(conf()->SiLayersDep==1){
+		auto depMapFast = (G4THitsMap<G4double>*)(pHCE->GetHC(EDepFastID));
+		auto depMapAlbedo = (G4THitsMap<G4double>*)(pHCE->GetHC(EDepAlbedoID));
+		PrintOnDep(depMapFast,conf()->fastDep);
+		PrintOnDep(depMapAlbedo,conf()->albedoDep);
+	}
 	 if(counterForFlileFlush > 128){
 //		std::lock_guard<std::mutex> lock(mutexFileWrite);
 		conf()->SphereFlux->flush();
 		conf()->fastFlux->flush();
 		conf()->albedoFlux->flush();
 		counterForFlileFlush = 0;
+	}
+	 if(counterForFlileFlush2 > 128){
+//		std::lock_guard<std::mutex> lock(mutexFileWrite2);
+		conf()->albedoDep->flush();
+		conf()->fastDep->flush();
+		counterForFlileFlush2 = 0;
 	}
 	//auto ref = eventSphereFlux->GetMap();
 	//	for(int i = 0; i < ref->size(); i++){

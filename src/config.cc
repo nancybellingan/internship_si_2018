@@ -135,6 +135,12 @@ ConfigHandler::ConfigHandler() {
 
 	G4String albedoFlux="./" + conf.timenow + "/outputAlbedo.dat";
 	conf.albedoFlux = openFile(albedoFlux);
+
+	G4String albedoDep="./" + conf.timenow + "/outputAlbedoDept.dat";
+	conf.albedoDep =openFile(albedoDep);
+
+	G4String fastDep="./" + conf.timenow + "/outputFastDept.dat";
+	conf.fastDep =openFile(fastDep);
 }
 
 const Conf *conf() {

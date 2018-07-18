@@ -76,7 +76,8 @@ DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(), fCheckOverlaps(0)
 {
 	fNx = fNy = fNz = 1; // Number of segmentation of water phantom.
-
+	numberOfLayers = 40; //for more precise E deposition
+	numberOfLayers2 = 8;  // 1 layer for active, 7 for depletion
 	//-------------------------------------------------------------------------
 	// Reading energy binning for Spectral Values
 
@@ -446,8 +447,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	// Gehäuse, Füllung und Plazierung:
 
 	G4double detectorThickness = 400*um;
-	G4double numberOfLayers	   = 40; //for more precise E deposition
-	G4double numberOfLayers2 = 8;  // 1 layer for active, 7 for depletion
+
 	G4double layerThickness    = detectorThickness / (double)numberOfLayers; //for more precise E deposition
 	G4double layerThickness2    = detectorThickness / (double)numberOfLayers2;  // first layer: active part, rest depletion
 	G4double sensorWidth	   = sqrt(200)*mm;
@@ -1073,12 +1073,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 void DetectorConstruction::ConstructSDandField() {
 
-	G4SDManager* pSDman = G4SDManager::GetSDMpointer();
+	// G4SDManager* pSDman = G4SDManager::GetSDMpointer();
+	G4MultiFunctionalDetector* myScorer = new G4MultiFunctionalDetector("mySphereScorer");
+	G4SDManager::GetSDMpointer()->AddNewDetector(myScorer);
+	G4MultiFunctionalDetector* FastDetector = new G4MultiFunctionalDetector("fastDet");
+	G4SDManager::GetSDMpointer()->AddNewDetector(FastDetector);
+	G4MultiFunctionalDetector* AlbedoDetector = new G4MultiFunctionalDetector("albedoDet");
+	G4SDManager::GetSDMpointer()->AddNewDetector(AlbedoDetector);
 
 	if(conf()->SphereScorer ==1){
 		//declare my sphere Scorer as multifunctional detector scorer
-		G4MultiFunctionalDetector* myScorer = new G4MultiFunctionalDetector("mySphereScorer");
-		G4SDManager::GetSDMpointer()->AddNewDetector(myScorer);
 		std::vector<double> binningenergy = conf()->ebin;
 		std::vector<G4PSPassageCellCurrent*> totalSphereFlux(conf()->ebin.size());
 		std::vector<G4SDParticleWithEnergyFilter*> binfilter(conf()->ebin.size());
@@ -1101,23 +1105,14 @@ void DetectorConstruction::ConstructSDandField() {
 			totalSphereFlux[i]= new G4PSPassageCellCurrent(pt1+pt2);
 			totalSphereFlux[i]->SetFilter(binfilter[i]);
 			myScorer->RegisterPrimitive(totalSphereFlux[i]);
-
 		}
-		
 		logicscorer->SetSensitiveDetector(myScorer);
-		
-		
-		
-
 	}
 
 
 	if(conf()->DummyScorer ==1){
 		std::vector<double> binningenergy = conf()->ebin;
-		G4MultiFunctionalDetector* FastDetector = new G4MultiFunctionalDetector("fastDet");
-		G4SDManager::GetSDMpointer()->AddNewDetector(FastDetector);
-		G4MultiFunctionalDetector* AlbedoDetector = new G4MultiFunctionalDetector("albedoDet");
-		G4SDManager::GetSDMpointer()->AddNewDetector(AlbedoDetector);
+
 		std::vector<G4PSPassageCellCurrent*> fastflux(conf()->ebin.size());
 		std::vector<G4SDParticleWithEnergyFilter*> fastbinfilter(conf()->ebin.size());
 		std::vector<G4PSPassageCellCurrent*> albedoflux(conf()->ebin.size());
@@ -1143,8 +1138,6 @@ void DetectorConstruction::ConstructSDandField() {
 			fastflux[i]->SetFilter(fastbinfilter[i]);
 			FastDetector->RegisterPrimitive(fastflux[i]);
 		}
-		fLVPhantomSens->SetSensitiveDetector(FastDetector);
-
 		for (uint i=0;i<conf()->ebin.size();i++){
 			if (i==0){
 				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),
@@ -1165,13 +1158,18 @@ void DetectorConstruction::ConstructSDandField() {
 			albedoflux[i]->SetFilter(albedobinfilter[i]);
 			AlbedoDetector->RegisterPrimitive(albedoflux[i]);
 		}
-		fAlbedoZSens->SetSensitiveDetector(AlbedoDetector);
-
-
-
-
 	}
-	if(conf()->SiLayersDep ==1) {
+	if(conf()->SiLayersDep==1){
+		G4PSEnergyDeposit3D* depfast = new G4PSEnergyDeposit3D("EDepFast",fNx,fNy,numberOfLayers);
+		G4PSEnergyDeposit3D* depalbedo = new G4PSEnergyDeposit3D("EDepAlbedo",fNx,fNy,numberOfLayers);
+		AlbedoDetector->RegisterPrimitive(depalbedo);
+		FastDetector->RegisterPrimitive(depfast);
+	}
+	if (conf()->DummyScorer==1 ||  conf()->SiLayersDep==1){
+	fLVPhantomSens->SetSensitiveDetector(FastDetector);
+	fAlbedoZSens->SetSensitiveDetector(AlbedoDetector);
+	}
+/*	if(conf()->SiLayersDep ==1) {
 		if(conf()->SphereScorer==1){
 			std::vector<G4LogicalVolume*>::iterator LV_i = std::next(fUSDVolumes.begin());
 			std::vector<G4LogicalVolume*>::iterator LV_n = fUSDVolumes.end();
@@ -1194,5 +1192,5 @@ void DetectorConstruction::ConstructSDandField() {
 			}
 		}
 
-	}
+	} */
 }

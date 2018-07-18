@@ -64,7 +64,7 @@ public:
 public:
   // Get/Set Access methods for data members
 	void GetNumberOfSegmentsInPhantom(G4int& nx, G4int& ny, G4int& nz) const
-		                                                { nx=fNx; ny=fNy; nz=fNz; }
+	                                                    { nx=fNx; ny=fNy; nz=fNz;}
 
 	std::vector<G4double> GetEnergyBinning() const { return fEnergyBinning; };
 	std::vector<G4String> GetUSDNames()      const { return fUSDNames;      };
@@ -77,7 +77,8 @@ public:
 private:
   // Data members
 	G4bool fCheckOverlaps;
-	G4int  fNx,fNy,fNz;    // Number of segmentation of water phantom.
+	G4int  fNx,fNy,fNz;  // Number of segmentation of water phantom.
+	G4double numberOfLayers, numberOfLayers2;
 	G4LogicalVolume* fLVPhantomSens;
 	G4LogicalVolume* fAlbedoZSens= nullptr;
 
