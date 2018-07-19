@@ -1,7 +1,7 @@
 // src/PiotPhaseSpace.cc
 
 #include "PiotPhaseSpace.hh"
-
+/*
 PiotPhaseSpace::PiotPhaseSpace()
 : particleName("spaceFile.spec"), atomNum(0), nuclNum(0),
   xPos(0.0), yPos(0.0), zPos(0.0),
@@ -47,4 +47,4 @@ PiotPhaseSpace::PiotPhaseSpace(const PiotPhaseSpace &pps)
 
 PiotPhaseSpace::~PiotPhaseSpace()
 {;}
-
+*/

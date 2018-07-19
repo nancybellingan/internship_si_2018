@@ -165,9 +165,9 @@ void PrintOnDep(const G4VHitsCollection* eventMap, std::ofstream* file){
 const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
 std::map<G4int,G4double*>::iterator it = castedMap->GetMap()->begin();
 for(; it != castedMap->GetMap()->end(); it++){
-
-	*file << "fNz number \t"<< it->first << "E Dep in MeV \t" << *(it->second) << G4endl;
-}
+if(*(it->second)>=0){
+	*file << "fNz number= \t"<< it->first << "\t E Dep in MeV = \t" << *(it->second) << "\t \t";
+}}
     *file << G4endl;
 }
 
