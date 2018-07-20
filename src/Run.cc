@@ -140,7 +140,7 @@ static std::mutex mutexFileWrite;
 static std::mutex mutexFileWrite2;
 static int counterForFlileFlush = 0;
 static int counterForFlileFlush2 = 0;
-void printOnHit(const G4VHitsCollection* eventMap, std::ofstream* file, const uint binSlot ){
+void printOnHit(const G4VHitsCollection* eventMap, std::ofstream* file, const uint binSlot, const G4Event* aEvent ){
 	const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
 	auto map = castedMap->GetMap();
 	if(! map->empty()){
@@ -153,7 +153,7 @@ void printOnHit(const G4VHitsCollection* eventMap, std::ofstream* file, const ui
 			auto eventRegistered = *iter->second;
 			std::lock_guard<std::mutex> lock(mutexFileWrite);
 			for(int i=0; i < eventRegistered; i++){
-				*file << binSlot << G4endl;
+				*file << "EventID= \t" << aEvent->GetEventID() << "\t Bin number \t" << binSlot << G4endl;
 			}
 		}
 	}
@@ -162,19 +162,26 @@ void printOnHit(const G4VHitsCollection* eventMap, std::ofstream* file, const ui
 //first values one for each division of the silicon part, and then as second the energy deposition. i need it over
 // the first 10 elements actually, not all.
 //probably implement a parallel variable with the sum with the correction factor
-void PrintOnDep(const G4VHitsCollection* eventMap, std::ofstream* file){
+void PrintOnDep(const G4VHitsCollection* eventMap, std::ofstream* file, const G4Event* aEvent){
 	const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
 	std::map<G4int,G4double*>::iterator it = castedMap->GetMap()->begin();
+	counterForFlileFlush2++;
+	std::lock_guard<std::mutex> lock(mutexFileWrite2);
+	int index = 0;
 	for(; it != castedMap->GetMap()->end(); it++){
-		if(*(it->second)>0){
-			counterForFlileFlush2++;
-			std::lock_guard<std::mutex> lock(mutexFileWrite2);
-			*file << "fNz number= \t"<< it->first << "\t E Dep in MeV = \t" << *(it->second) << "\t \t";
-			if(it == castedMap->GetMap()->end()){
-			*file << G4endl;
-			}
-		}
+		auto edep = *it->second;
 
+		if(edep>0){
+	index++;
+
+	        *file << "fNz number for event ID \t" <<  aEvent->GetEventID() << "\t = \t"<< it->first << "\t E Dep in MeV = \t" << edep << "\t \t";
+
+		    }
+	    }
+	if(index>0){
+	*file << "\n"  << G4endl;
+		//need to ask roy because i have an issue here; i never know when is printing the last item
+		//but i want a newline at the end of the map. but only if i actually prin
 	}
 
 }
@@ -205,7 +212,7 @@ void Run::RecordEvent(const G4Event* aEvent) {
 
 		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
 			//		eventSphereFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[binSlot]));
-			printOnHit(pHCE->GetHC(SphereFluxID[binSlot]),conf()->SphereFlux,binSlot);
+			printOnHit(pHCE->GetHC(SphereFluxID[binSlot]),conf()->SphereFlux,binSlot, aEvent);
 			//		conf()->SphereFlux->flush();
 			//		*totSphereFlux[binSlot] += *eventSphereFlux[binSlot];
 		}
@@ -213,8 +220,8 @@ void Run::RecordEvent(const G4Event* aEvent) {
 	if(conf()->DummyScorer==1){
 		//Here the sensor has 8 LAYER, but we do not care
 		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
-			printOnHit(pHCE->GetHC(FastFluxID[binSlot]), conf()->fastFlux,binSlot);
-			printOnHit(pHCE->GetHC(AlbedoFluxID[binSlot]), conf()->albedoFlux,binSlot);
+			printOnHit(pHCE->GetHC(FastFluxID[binSlot]), conf()->fastFlux,binSlot, aEvent);
+			printOnHit(pHCE->GetHC(AlbedoFluxID[binSlot]), conf()->albedoFlux,binSlot, aEvent);
 			//		conf()->fastFlux->flush();
 			//		conf()->albedoFlux->flush();
 		}
@@ -222,8 +229,8 @@ void Run::RecordEvent(const G4Event* aEvent) {
 	if(conf()->SiLayersDep==1){
 		auto depMapFast = (G4THitsMap<G4double>*)(pHCE->GetHC(EDepFastID));
 		auto depMapAlbedo = (G4THitsMap<G4double>*)(pHCE->GetHC(EDepAlbedoID));
-		PrintOnDep(depMapFast,conf()->fastDep);
-		PrintOnDep(depMapAlbedo,conf()->albedoDep);
+		PrintOnDep(depMapFast,conf()->fastDep, aEvent);
+		PrintOnDep(depMapAlbedo,conf()->albedoDep, aEvent);
 	}
 	if(counterForFlileFlush > 128){
 		std::lock_guard<std::mutex> lock(mutexFileWrite);
