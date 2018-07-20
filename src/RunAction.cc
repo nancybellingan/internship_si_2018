@@ -117,7 +117,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   if(!IsMaster()) return;
  // std::time_t timeint = std::time(0);  // t is an integer type
  // G4String timenow = std::to_string(timeint);
-  G4String path = "./";
+  // G4String path = "./";
    auto flux1 = re02Run->GetSphereFlux();
  // pathtime = path + conf()->timenow;
  // mkdir(pathtime, 0777);
@@ -175,7 +175,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 	  outp1.close();
   }
 */
-if(conf()->SiLayersDep ==1){
+/*if(conf()->SiLayersDep ==1){
 
 
 G4SDManager* pSDman = G4SDManager::GetSDMpointer();
@@ -226,7 +226,7 @@ if(conf()->SphereScorer==1){
 		outp.close();
 	}
 }
-}
+}*/
 
 
 

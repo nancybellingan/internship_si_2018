@@ -37,7 +37,7 @@ struct Conf{
 	G4String folder;
 	bool print_stored_trajectories = false;
 	G4String timenow = std::to_string(std::time(0));
-	bool Protondummy = false;
+	bool Iondummy = false;
 	mutable std::ofstream* edistr = nullptr;
 	mutable std::ofstream* SphereFlux = nullptr;
 	mutable std::ofstream* fastFlux = nullptr;

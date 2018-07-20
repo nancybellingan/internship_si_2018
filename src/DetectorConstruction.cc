@@ -23,11 +23,10 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file runAndEvent/RE02/src/DetectorConstruction.cc
-/// \brief Implementation of the DetectorConstruction class
+/// \file SiDetPhant/src/DetectorConstruction.cc
+/// \brief Implementation of the DetectorConstruction class and the primitive scorers
 //
 //
-// $Id: DetectorConstruction.cc 75682 2013-11-05 09:11:19Z gcosmo $
 //
 
 #include "DetectorConstruction.hh"
@@ -76,7 +75,7 @@ DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(), fCheckOverlaps(0)
 {
 	fNx = fNy = fNz = 1; // Number of segmentation of water phantom.
-	numberOfLayers = 40; //for more precise E deposition
+	numberOfLayers = 40; //for more precise E deposition, 10 micron for each layer
 	numberOfLayers2 = 8;  // 1 layer for active, 7 for depletion
 	//-------------------------------------------------------------------------
 	// Reading energy binning for Spectral Values
@@ -919,8 +918,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
 	//----- if the layers are 100 and checking the E dep on each of them
-	if (conf()->SiLayersDep == 1)
-	{	fNz=numberOfLayers;
+	//if (conf()->SiLayersDep == 1)
+	//{
+	    fNz=numberOfLayers;
 
 		G4ThreeVector detSize(sensorWidth,sensorWidth,layerThickness);
 		NestedPhantomParameterisation* paramFastSens
@@ -935,7 +935,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		                      kUndefined,        // Are placed along this axis
 		                      numberOfLayers,           // Number of cells
 		                      paramFastSens);     // Parameterisation.
-	}else  // if only layer 1 for active and layer 2 to 8 for depletion
+	/*}else  // if only layer 1 for active and layer 2 to 8 for depletion
 	{
 		fNz=numberOfLayers2;
 
@@ -952,7 +952,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		                      kUndefined,        // Are placed along this axis
 		                      numberOfLayers2,           // Number of cells
 		                      paramFastSens);     // Parameterisation.
-	}
+	}*/
 	// if(conf()->SphereScorer == 0){
 	fUSDVolumes.push_back(fLVPhantomSens);
 	fUSDNames.push_back(zDetVoxName);
@@ -1094,7 +1094,7 @@ void DetectorConstruction::ConstructSDandField() {
 				binfilter[i]=new G4SDParticleWithEnergyFilter("ebinfilter"+std::to_string(i),
 				                                              binningenergy.at(i-1),binningenergy.at(i));
 			}
-			if(conf()->Protondummy==0){
+			if(conf()->Iondummy==0){
 			binfilter[i]->add("neutron");
 			}else{
 			binfilter[i]->add("proton");
@@ -1126,7 +1126,7 @@ void DetectorConstruction::ConstructSDandField() {
 				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+std::to_string(i),
 				                                                  binningenergy[i-1],binningenergy[i]);
 			}
-			if(conf()->Protondummy==0){
+			if(conf()->Iondummy==0){
 				fastbinfilter[i]->add("neutron");
 			}else{
 				fastbinfilter[i]->add("GenericIon");
@@ -1146,7 +1146,7 @@ void DetectorConstruction::ConstructSDandField() {
 				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),
 				                                                    binningenergy[i-1],binningenergy[i]);
 			}
-			if(conf()->Protondummy==0){
+			if(conf()->Iondummy==0){
 			albedobinfilter[i]->add("neutron");
 			}else{
 			albedobinfilter[i]->add("GenericIon");
