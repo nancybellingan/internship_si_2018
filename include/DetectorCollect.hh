@@ -1,4 +1,4 @@
-
+/*
 
 #ifndef DETECTORCOLLECT_HH_
 #define DETECTORCOLLECT_HH_ 1
@@ -51,3 +51,4 @@ class DetectorCollect
 };
 
 #endif // end of class DetectorCollect
+*/

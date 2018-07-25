@@ -118,7 +118,7 @@ private:
 	std::vector<G4String> fSDNames;
 	std::vector<G4double> fBinningVector;
 	DetectorConstruction* fDetector;
-	std::map<G4String,DetectorCollect*> DetectorCollectMap;
+//	std::map<G4String,DetectorCollect*> DetectorCollectMap;
 G4int nEvent;
 std::vector<G4int> SphereFluxID;
 std::vector<G4int> FastFluxID;

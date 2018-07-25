@@ -46,6 +46,7 @@ struct Conf{
 	mutable std::ofstream* fastDep = nullptr;
 	bool multithreading = false;
 	int numbercores = 0;
+	bool albedocentre = true;
 };
 const Conf* conf();
 

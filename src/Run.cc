@@ -101,8 +101,8 @@ Run::Run() : G4Run()
 		}
 	}
 	if(conf()->SiLayersDep==1){
-		EDepFastID = pSDman->GetCollectionID("fastDet/EDepFast");
-		EDepAlbedoID = pSDman->GetCollectionID("albedoDet/EDepAlbedo");
+		EDepFastID = pSDman->GetCollectionID("fastDetDep/EDepFast");
+		EDepAlbedoID = pSDman->GetCollectionID("albedoDetDep/EDepAlbedo");
 	}
 
 

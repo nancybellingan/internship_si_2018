@@ -129,10 +129,10 @@ ConfigHandler::ConfigHandler() {
 	G4String outfiler1="./" + conf.timenow + "/outputSphere.dat"; //output for dummy sphere
 	conf.SphereFlux = openFile(outfiler1);
 
-	G4String fastFlux="./" + conf.timenow + "/outputFlux.dat"; //output for dummy fast
+	G4String fastFlux="./" + conf.timenow + "/outputFastFlux.dat"; //output for dummy fast
 	conf.fastFlux = openFile(fastFlux);
 
-	G4String albedoFlux="./" + conf.timenow + "/outputAlbedo.dat"; // output for dummy albedo
+	G4String albedoFlux="./" + conf.timenow + "/outputAlbedoFlux.dat"; // output for dummy albedo
 	conf.albedoFlux = openFile(albedoFlux);
 
 	G4String albedoDep="./" + conf.timenow + "/outputAlbedoDept.dat"; //output for E deposition in albedo

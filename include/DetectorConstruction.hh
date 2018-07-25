@@ -79,8 +79,10 @@ private:
 	G4bool fCheckOverlaps;
 	G4int  fNx,fNy,fNz;  // Number of segmentation of water phantom.
 	G4double numberOfLayers, numberOfLayers2;
-	G4LogicalVolume* fLVPhantomSens;
-	G4LogicalVolume* fAlbedoZSens= nullptr;
+	G4LogicalVolume* LogicFastSi;
+	G4LogicalVolume* LogicAlbedoSi= nullptr;
+	G4LogicalVolume* fast_housing_log;
+	G4LogicalVolume* albedo_housing_log;
 
 	// Data for all Threads
 	//==========================================================================
@@ -113,6 +115,7 @@ private:
 	G4PVPlacement* fast_ceramic;
 	G4PVPlacement* fast_leadBack;
 	G4PVPlacement* physiFastSens;
+	G4ThreeVector Fast_housing_pos;
 
 	G4PVPlacement* albedo_hullFront;
 	G4PVPlacement* albedo_gap;
@@ -121,6 +124,7 @@ private:
 	G4PVPlacement* albedo_hullBack;
 	G4PVPlacement* albedo_hole;
 	G4PVPlacement* physiAlbedoSens;
+	G4ThreeVector albedo_housing_pos;
 
 	//==========================================================================
 
