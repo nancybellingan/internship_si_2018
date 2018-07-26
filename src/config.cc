@@ -116,8 +116,10 @@ ConfigHandler::ConfigHandler() {
 	swap("Iondummy",conf.Iondummy); //true if only the E kin of ions in the Si dummy is wanted
 	swap("multithreading",conf.multithreading); //if use MT Manager
 	swap("numbercores",conf.numbercores); //  number of cores to use for the MT
+	swap("totdata",conf.totdata); //to print the accumulated quantities on the sphere scorer and the dummy scorer
 	//Now load the binning Info
 	loadBinning(conf.ebin,"configbinning.ini"); //load the binning energies
+
 
 
 	G4String pathtimenow = "./" + conf.timenow; //create a new folder for the ouputs with unique name

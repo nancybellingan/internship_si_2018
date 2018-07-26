@@ -49,6 +49,7 @@
 #include <ctime>
 #include <time.h>
 #include <fstream>
+#include <mutex>
 #include <iostream>
 #include "config.h"
 #include <string>
@@ -68,15 +69,7 @@ RunAction::RunAction()
     fNx(0), fNy(0), fNz(0)
 {
   // - Prepare data member for Run.
-  //   vector represents a list of MultiFunctionalDetector names.
-    // if the Multi functional detector is activated in the main file, then this macro happens. if not it uses the user detector
-/*
-#ifdef MFD
-	fSDName.push_back(G4String("PhantomSD"));
-#else
-	fDetector = (DetectorConstruction*)
-		          (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-#endif*/
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -115,49 +108,45 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 {
  Run* re02Run=(Run*)aRun;
   if(!IsMaster()) return;
- // std::time_t timeint = std::time(0);  // t is an integer type
- // G4String timenow = std::to_string(timeint);
-  // G4String path = "./";
-   auto flux1 = re02Run->GetSphereFlux();
- // pathtime = path + conf()->timenow;
- // mkdir(pathtime, 0777);
-  //- Run object.
-  //--- Dump all scored quantities involved in Run if is not being used the Multi functional detector
- /* if (conf()->SphereScorer==1){
+
+  auto flux1 = re02Run->GetSphereFlux();
+
+  if (conf()->SphereScorer==1 && conf()->totdata == 1){
+//static std::mutex mutexFileWrite4;
 	  std::fstream outp1;
-	  G4int sum = 0;
-	  G4String outfiler1=conf()->timenow +"/outputsphere1.dat";
-	  //  outfiler.append(std::chrono::system_clock::now());
+//	  G4int sum = 0;
+	  G4String outfiler1=conf()->timenow +"/outputspheretot.dat";
 	  outp1.open(outfiler1.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-	  outp1 << "prova" << G4endl;
-	  //   G4int n = re02Run->GetNumberOfHitsMap();
-	  //  outpr << n << G4endl;
-	  //  std::vector<G4THitsMap<G4double>*> ref = re02Run->GetSphereFlux();
-	  auto flux1 = re02Run->GetSphereFlux();
-	  for (uint i=0;i<flux1.size();i++){
+	  std::vector<G4THitsMap<G4double>*> ref = re02Run->GetSphereFlux();
+//	  auto flux1 = re02Run->GetSphereFlux();
+//	  std::lock_guard<std::mutex> lock(mutexFileWrite4);
+	  for (uint i=0;i<ref.size();i++){
 		  auto energy = conf()->ebin[i];
-		  for(auto line : *(flux1[i]) ){
-			  outp1 << "bin n° " << i <<" energy: " << energy << " id evento ? " << line.first << " boh " << *line.second << G4endl;
-			  sum += *line.second;
+		  for(auto line : *(ref[i]) ){
+
+			  outp1 << "bin n° " << i <<" energy: " << energy << " key " << line.first << " boh " << *line.second << G4endl;
+//			  sum += *line.second;
 		  }
 
 		  //gg all
 	  }
-	  outp1 << "tot events" << sum << G4endl;
+//	  outp1 << "tot events" << sum << G4endl;
 	  outp1.close();
-  } */
-  /*
-  if (conf()->DummyScorer==1){
+  }
+
+  if (conf()->DummyScorer==1 && conf()->totdata == 1){
 	  std::fstream outp1;
-	  G4String outfiler2=pathtime +"/outputfastdummy.dat";
-	  G4String outfiler3=pathtime +"/outputalbedodummy.dat";
+	  G4String outfiler2=conf()->timenow +"/outputfastdummytot.dat";
+	  G4String outfiler3=conf()->timenow +"/outputalbedodummytot.dat";
 	  outp1.open(outfiler2.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
 	  outp1 << "prova" << G4endl;
 	  auto flux2 = re02Run->GetFastFlux();
 	  for (uint i=0;i<flux2.size();i++){
 		  auto energy = conf()->ebin[i];
 		  for(auto line : *(flux2[i]) ){
-			  outp1 << "bin n° " << i <<" energy: " << energy << " id evento ? " << line.first << " boh " << *line.second << G4endl;
+			  if (line.first == 0) {
+			  outp1 << "bin n° " << i <<" energy: " << energy << "number events in the bin \t" << *line.second << G4endl;
+		  }
 		  }
 		  //gg all
 	  }
@@ -168,13 +157,15 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 	  for (uint i=0;i<flux3.size();i++){
 		  auto energy = conf()->ebin[i];
 		  for(auto line : *(flux3[i]) ){
-			  outp1 << "bin n° " << i <<" energy: " << energy << " id evento ? " << line.first << " boh " << *line.second << G4endl;
+			  if (line.first == 0) {
+			  outp1 << "bin n° " << i <<" energy: " << energy << "number events in the bin \t" << *line.second << G4endl;
+		  }
 		  }
 		  //gg all
 	  }
 	  outp1.close();
   }
-*/
+
 /*if(conf()->SiLayersDep ==1){
 
 

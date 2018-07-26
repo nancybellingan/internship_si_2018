@@ -82,7 +82,6 @@ Run::Run() : G4Run()
 	G4SDManager* pSDman = G4SDManager::GetSDMpointer();
 
 	if(conf()->SphereScorer==1){
-		//voglio dire nell header che la dimensione sarebbe conf ebin.size ma non me lo fa fare mi dava errore)
 		SphereFluxID.resize(conf()->ebin.size());
 		for (uint i=0;i<conf()->ebin.size();i++){
 			G4String evtID =std::to_string(i);
@@ -180,8 +179,6 @@ void PrintOnDep(const G4VHitsCollection* eventMap, std::ofstream* file, const G4
 	    }
 	if(index>0){
 	*file << "\n"  << G4endl;
-		//need to ask roy because i have an issue here; i never know when is printing the last item
-		//but i want a newline at the end of the map. but only if i actually prin
 	}
 
 }
@@ -207,23 +204,42 @@ void Run::RecordEvent(const G4Event* aEvent) {
 	//when you switch to the other sensor style, change plug in the other function and gg...
 	if(conf()->SphereScorer==1){
 
-		//	eventSphereFlux.resize(conf()->ebin.size());
-		//	totSphereFlux.resize(conf()->ebin.size());
+		    eventSphereFlux.resize(conf()->ebin.size());
+			totSphereFlux.resize(conf()->ebin.size());
 
 		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
-			//		eventSphereFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[binSlot]));
-			printOnHit(pHCE->GetHC(SphereFluxID[binSlot]),conf()->SphereFlux,binSlot, aEvent);
-			//		conf()->SphereFlux->flush();
-			//		*totSphereFlux[binSlot] += *eventSphereFlux[binSlot];
+			if(totSphereFlux[binSlot] == nullptr){
+
+				totSphereFlux[binSlot] = new G4THitsMap<G4double>();
+			}
+			eventSphereFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[binSlot]));
+//			printOnHit(pHCE->GetHC(SphereFluxID[binSlot]),conf()->SphereFlux,binSlot, aEvent);
+			printOnHit(eventSphereFlux[binSlot],conf()->SphereFlux,binSlot, aEvent);
+
+			*totSphereFlux[binSlot] += *eventSphereFlux[binSlot];
 		}
 	}
 	if(conf()->DummyScorer==1){
 		//Here the sensor has 8 LAYER, but we do not care
+		eventAlbedoFlux.resize(conf()->ebin.size());
+		totAlbedoFlux.resize(conf()->ebin.size());
+		eventFastFlux.resize(conf()->ebin.size());
+		totFastFlux.resize(conf()->ebin.size());
+
 		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
-			printOnHit(pHCE->GetHC(FastFluxID[binSlot]), conf()->fastFlux,binSlot, aEvent);
-			printOnHit(pHCE->GetHC(AlbedoFluxID[binSlot]), conf()->albedoFlux,binSlot, aEvent);
-			//		conf()->fastFlux->flush();
-			//		conf()->albedoFlux->flush();
+			if(totAlbedoFlux[binSlot] == nullptr){
+				totAlbedoFlux[binSlot] = new G4THitsMap<G4double>();
+			}
+			if(totFastFlux[binSlot] == nullptr){
+				totFastFlux[binSlot] = new G4THitsMap<G4double>();
+			}
+			eventAlbedoFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(AlbedoFluxID[binSlot]));
+			eventFastFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(FastFluxID[binSlot]));
+
+			printOnHit(eventFastFlux[binSlot], conf()->fastFlux,binSlot, aEvent);
+			printOnHit(eventAlbedoFlux[binSlot], conf()->albedoFlux,binSlot, aEvent);
+			*totAlbedoFlux[binSlot] += *eventAlbedoFlux[binSlot];
+			*totFastFlux[binSlot] += *eventFastFlux[binSlot];
 		}
 	}
 	if(conf()->SiLayersDep==1){
@@ -309,67 +325,3 @@ void Run::Merge(const G4Run * aRun)
 	G4Run::Merge(aRun);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//
-//  Access method for HitsMap of the RUN
-//
-//-----
-// Access HitsMap.
-//  By  MultiFunctionalDetector name and Collection Name.
-//G4THitsMap<G4double>* Run::GetHitsMap(const G4String& detName,
-//					 const G4String& colName){
-//    G4String fullName = detName+"/"+colName;
-//    return GetHitsMap(fullName);
-//}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//
-//-----
-// Access HitsMap.
-//  By full description of collection name, that is
-//    <MultiFunctional Detector Name>/<Primitive Scorer Name>
-//G4THitsMap<G4double>* Run::GetHitsMap(){
-//    G4int nCol = fCollName.size();
-//    for ( G4int i = 0; i < nCol; i++){
-//	if ( fCollName[i] == fullName ){
-//	    return fRunMap[i];
-//	}
-//    }
-//    return NULL;
-//}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//
-//-----
-// - Dump All HitsMap of this RUN. (for debuging and monitoring of quantity).
-//   This method calls G4THisMap::PrintAll() for individual HitsMap.
-//void Run::DumpAllScorer(  std::fstream& out){
-
-
-//    out << "prova dentro run" <<G4endl;
-//  // - Number of HitsMap in this RUN.
-//  G4int n = GetNumberOfHitsMap();
-//  // - GetHitsMap and dump values.
-//  for ( G4int i = 0; i < n ; i++ ){
-//    G4THitsMap<G4double>* runMap =GetHitsMap(i);
-//    if ( runMap ) {
-//      out << " PrimitiveScorer RUN "
-//	     << runMap->GetSDname() <<","<< runMap->GetName() << G4endl;
-//      out << " Number of entries " << runMap->entries() << G4endl;
-//      std::map<G4int,G4double*>::iterator itr = runMap->GetMap()->begin();
-//      for(; itr != runMap->GetMap()->end(); itr++) {
-//	out << "  copy no.: " << itr->first
-//	       << "  Run Value : " << *(itr->second)
-//	       << G4endl;
-//      }
-//    }
-//  }
-
-//}
-/**/
-
-
-//std::vector<G4THitsMap<G4double>*> Run::GetSphereFlux()
-//{
-//	return totSphereFlux;
-//}

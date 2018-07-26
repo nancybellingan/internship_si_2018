@@ -121,10 +121,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 		fAir    = NISTman->FindOrBuildMaterial("G4_AIR");
 		fPMMA   = NISTman->FindOrBuildMaterial("G4_PLEXIGLASS");
-
 		fthsc_H = new G4Element("TS_H_of_Water","h_Water",1.0,1.0079*g/mole);
 		fO = NISTman->FindOrBuildElement("O");
-
 		fWater = new G4Material("G4_WATER",1.000*g/cm3,2,kStateLiquid,295*kelvin);
 		fWater->SetChemicalFormula("H_2O");
 		fWater->AddElement(fthsc_H,2);
@@ -171,8 +169,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		fAir->AddElement(N,0.755268);
 		fAir->AddElement(Ar,0.231781);
 
-		fWater = new G4Material("G4_WATER",0.998*g/cm3,2,
-		                        kStateLiquid,293.15*kelvin);
+		fWater = new G4Material("G4_WATER",0.998*g/cm3,2,kStateLiquid,293.15*kelvin);
 		fWater->SetChemicalFormula("H_2O");
 		fWater->AddElement(fthsc_H,2);
 		fWater->AddElement(fO,1);
@@ -195,25 +192,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4cout << G4endl << "The materials defined are : " << G4endl << G4endl;
 	G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 
-
-
 	//============================================================================
 	//      Definitions of Solids, Logical Volumes, Physical Volumes
 	//============================================================================
-
-
 	//-------------
 	// World Volume
 	//-------------
 
 	G4ThreeVector worldSize = G4ThreeVector(500.*cm, 500.*cm, 1500.*cm);
 
-	G4Box * solidWorld
-	        = new G4Box("world", worldSize.x()/2.,
-	                    worldSize.y()/2.,
-	                    worldSize.z()/2.);
-	G4LogicalVolume * logicWorld
-	        = new G4LogicalVolume(solidWorld, fAir, "World", nullptr, nullptr, nullptr);
+	G4Box * solidWorld = new G4Box("world", worldSize.x()/2.,worldSize.y()/2.,worldSize.z()/2.);
+	G4LogicalVolume * logicWorld= new G4LogicalVolume(solidWorld, fAir, "World", nullptr, nullptr, nullptr);
 
 	G4VPhysicalVolume * physiWorld
 	        = new G4PVPlacement(nullptr,               // no rotation
@@ -257,7 +246,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	// Thermal scattering hydrogen:
 	G4Element* thsc_H = new G4Element("TS_H_of_Polyethylene","H_POLYETHYLENE",1.0,1.0079*g/mole);
 
-	//-------------------------------------------------------------------------
+	//-Epoxy------------------------------------------------------------------------
 
 	Air = NistManager->FindOrBuildMaterial("G4_AIR");
 	Vacuum = NistManager->FindOrBuildMaterial("G4_Galactic");
@@ -417,8 +406,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		physicscorer= new G4PVPlacement(nullptr,positionscorer,logicscorer,
 		                                "physicscorer",logicWorld,false,0);
 
-		//		fUSDVolumes.push_back(logicscorer); //logical name
-		//		fUSDNames.push_back("logicscorername"); //3rd par in logical volume
 	}
 
 
@@ -811,61 +798,31 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sou
 	albedo_converter = new G4PVPlacement(0,G4ThreeVector(0, 0, albedo_posConverter),"albedo_Converter",
 	                                     albedo_converter_log, albedo_housing, false, 0);
 
-	albedo_ceramic = new G4PVPlacement(0,
-	                                   G4ThreeVector(0,
-	                                                 0,
-	                                                 albedo_posCeramic),
-	                                   "albedo_Ceramic",
-	                                   albedo_ceramic_log,
-	                                   albedo_housing,
-	                                   false,
-	                                   0);
+	albedo_ceramic = new G4PVPlacement(0,G4ThreeVector(0, 0,albedo_posCeramic),"albedo_Ceramic",
+	                                   albedo_ceramic_log,albedo_housing,false,0);
 
-	albedo_hullBack = new G4PVPlacement(0,
-	                                    G4ThreeVector(0,
-	                                                  0,
-	                                                  albedo_posHullBack),
-	                                    "albedo_HullBack",
-	                                    albedo_hullBack_log,
-	                                    albedo_housing,
-	                                    false,
-	                                    0);
+	albedo_hullBack = new G4PVPlacement(0,G4ThreeVector(0, 0, albedo_posHullBack), "albedo_HullBack",
+	                                    albedo_hullBack_log, albedo_housing, false, 0);
 
-	albedo_hole = new G4PVPlacement(0,
-	                                G4ThreeVector(0,0,0),
-	                                "albedo_Hole",
-	                                albedo_hole_log,
-	                                albedo_hullBack,
-	                                false,
-	                                0);
+	albedo_hole = new G4PVPlacement(0,G4ThreeVector(0,0,0), "albedo_Hole", albedo_hole_log,
+	                                albedo_hullBack,false,0);
 
 
 	//=========================================================================
+	// logic fast sens -> logYRepDet -> logxRepDet which will be the mother volume for the silicon layers
+	/*G4String yDetRepName("DetRepY");
+	G4VSolid* solYRepDet = new G4Box(yDetRepName, sensorWidth/2., sensorWidth/2., detectorThickness/2.);
 
-	G4String yDetRepName("DetRepY");
-	G4VSolid* solYRepDet = new G4Box(yDetRepName,
-	                                 sensorWidth/2.,
-	                                 sensorWidth/2.,
-	                                 detectorThickness/2.);
-
-	G4LogicalVolume* logYRepDet = new G4LogicalVolume(solYRepDet,
-	                                                  fWater,
-	                                                  yDetRepName);
+	G4LogicalVolume* logYRepDet = new G4LogicalVolume(solYRepDet,fWater, yDetRepName);
 	//G4PVReplica* yReplica =
-	new G4PVReplica(yDetRepName,logYRepDet,logicFastSens,
-	                kYAxis,1,sensorWidth);
+	new G4PVReplica(yDetRepName,logYRepDet,logicFastSens,kYAxis,1,sensorWidth);
 	// X Slice
 	G4String xDetRepName("DetRepX");
-	G4VSolid* solXRepDet = new G4Box(xDetRepName,
-	                                 sensorWidth/2.,
-	                                 sensorWidth/2.,
-	                                 detectorThickness/2.);
+	G4VSolid* solXRepDet = new G4Box(xDetRepName,sensorWidth/2., sensorWidth/2., detectorThickness/2.);
 	
-	G4LogicalVolume* logXRepDet = new G4LogicalVolume(solXRepDet,
-	                                                  fWater,
-	                                                  xDetRepName);
+	G4LogicalVolume* logXRepDet = new G4LogicalVolume(solXRepDet,fWater, xDetRepName);
 	//G4PVReplica* xReplica =
-	new G4PVReplica(xDetRepName,logXRepDet,logYRepDet,kXAxis,1,sensorWidth);
+	new G4PVReplica(xDetRepName,logXRepDet,logYRepDet,kXAxis,1,sensorWidth); */
 
 	//----------------------------------------------------------------------------
 
@@ -874,125 +831,72 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sou
 	//..................................
 	// Z Slice
 	G4String zDetVoxName("FastSens");
-	G4VSolid* solDetVoxel = new G4Box(zDetVoxName,
-	                                  sensorWidth/2.,
-	                                  sensorWidth/2.,
-	                                  layerThickness/2.);
+	G4VSolid* solDetVoxel = new G4Box(zDetVoxName,sensorWidth/2., sensorWidth/2., layerThickness/2.);
 
 	LogicFastSi = new G4LogicalVolume(solDetVoxel,fWater,zDetVoxName);
 
 	std::vector<G4Material*> fastSensMat(2,Silicon);
 	fastSensMat[1]=Silicon;
 
-
-	//----- if the layers are 100 and checking the E dep on each of them
-	//if (conf()->SiLayersDep == 1)
-	//{
 	fNz=numberOfLayers;
 
 	G4ThreeVector detSize(sensorWidth,sensorWidth,layerThickness);
-	NestedPhantomParameterisation* paramFastSens
-	        = new NestedPhantomParameterisation(detSize/2.,
-	                                            fNz,
-	                                            fastSensMat);
+	NestedPhantomParameterisation* paramFastSens= new NestedPhantomParameterisation(detSize/2., fNz,fastSensMat);
 
 	//G4VPhysicalVolume * physiPhantomSens =
 	new G4PVParameterised("FastSens",     // their name
 	                      LogicFastSi,    // their logical volume
-	                      logXRepDet,           // Mother logical volume
-	                      kUndefined,        // Are placed along this axis
+	                      logicFastSens,      // Mother logical volume
+	                      kZAxis,        // Are placed along this axis
 	                      numberOfLayers,           // Number of cells
 	                      paramFastSens);     // Parameterisation.
 
 
-	G4Box* solidAlbedoSens = new G4Box("solidAlbedoSens",
-	                                   sensorWidth/2.,
-	                                   sensorWidth/2.,
-	                                   detectorThickness/2.);
+	G4Box* solidAlbedoSens = new G4Box("solidAlbedoSens", sensorWidth/2., sensorWidth/2., detectorThickness/2.);
 
-	G4LogicalVolume* logicAlbedoSens = new G4LogicalVolume(solidAlbedoSens,
-	                                                       Silicon,
-	                                                       "logicAlbedoSens");
+	G4LogicalVolume* logicAlbedoSens = new G4LogicalVolume(solidAlbedoSens, Silicon, "logicAlbedoSens");
 
-	G4double zPosAlbedoSens = albedo_sensorThickness/2.
-	        - albedo_converterThickness
-	        - albedo_gapThickness
-	        - albedo_hullThicknessFront
-	        - detectorThickness/2.;
+	G4double zPosAlbedoSens = albedo_sensorThickness/2.- albedo_converterThickness- albedo_gapThickness
+	        - albedo_hullThicknessFront- detectorThickness/2.;
 
-	physiAlbedoSens = new G4PVPlacement(0,
-	                                    G4ThreeVector(0,0,zPosAlbedoSens),
-	                                    "physiAlbedoSens",
-	                                    logicAlbedoSens,
-	                                    albedo_housing,
-	                                    false,
-	                                    0,
-	                                    1);
+	physiAlbedoSens = new G4PVPlacement(0, G4ThreeVector(0,0,zPosAlbedoSens),"physiAlbedoSens",
+	                                    logicAlbedoSens, albedo_housing, false, 0, 1);
 
-	G4String yADetRepName("ADetRepY");
-	G4VSolid* solYRepADet = new G4Box(yADetRepName,
-	                                  sensorWidth/2.,
-	                                  sensorWidth/2.,
-	                                  detectorThickness/2.);
+	/*G4String yADetRepName("ADetRepY");
+	G4VSolid* solYRepADet = new G4Box(yADetRepName, sensorWidth/2.,sensorWidth/2., detectorThickness/2.);
 
-	G4LogicalVolume* logYRepADet = new G4LogicalVolume(solYRepADet,
-	                                                   fWater,
-	                                                   yDetRepName);
+	G4LogicalVolume* logYRepADet = new G4LogicalVolume(solYRepADet, fWater,  yDetRepName);
 
-	new G4PVReplica(yADetRepName,
-	                logYRepADet,
-	                logicAlbedoSens,
-	                kYAxis,
-	                1,
-	                sensorWidth);
+	new G4PVReplica(yADetRepName, logYRepADet, logicAlbedoSens, kYAxis,1, sensorWidth);
 
 	G4String xADetRepName("ADetRepX");
-	G4VSolid* solXRepADet = new G4Box(xADetRepName,
-	                                  sensorWidth/2.,
-	                                  sensorWidth/2.,
-	                                  detectorThickness/2.);
+	G4VSolid* solXRepADet = new G4Box(xADetRepName, sensorWidth/2., sensorWidth/2., detectorThickness/2.);
 
-	G4LogicalVolume* logXRepADet = new G4LogicalVolume(solXRepADet,
-	                                                   fWater,
-	                                                   xDetRepName);
-	new G4PVReplica(xADetRepName,
-	                logXRepADet,
-	                logYRepADet,
-	                kXAxis,
-	                1,
-	                sensorWidth);
+	G4LogicalVolume* logXRepADet = new G4LogicalVolume(solXRepADet,fWater,xDetRepName);
+	new G4PVReplica(xADetRepName,logXRepADet, logYRepADet,kXAxis,1, sensorWidth);*/
 
 
 	G4String zADetVoxName("AlbedoSens");
-	G4VSolid* solADetVoxel = new G4Box(zDetVoxName,
-	                                   sensorWidth/2.,
-	                                   sensorWidth/2.,
-	                                   layerThickness/2.);
+	G4VSolid* solADetVoxel = new G4Box(zDetVoxName,sensorWidth/2., sensorWidth/2., layerThickness/2.);
 	LogicAlbedoSi = new G4LogicalVolume(solADetVoxel,fWater,zADetVoxName);
 
 	std::vector<G4Material*> albedoSensMat(2,Silicon);
 	albedoSensMat[1]=Silicon;
 
 
-	//----- LogicAlbedoSi is the logical volume which is made from the parametisation
+	//----- LogicAlbedoSi is the logical volume which is made from the parametisation of the albedo sensor made of Si
 
 	fNz=numberOfLayers;
 
 	G4ThreeVector adetSize(sensorWidth,sensorWidth,layerThickness);
-	NestedPhantomParameterisation* paramAlbedoSens
-	        = new NestedPhantomParameterisation(adetSize/2.,fNz, albedoSensMat);
+	NestedPhantomParameterisation* paramAlbedoSens= new NestedPhantomParameterisation(adetSize/2.,fNz, albedoSensMat);
 
 	new G4PVParameterised("AlbedoSens",     // their name
-	                      LogicAlbedoSi,logXRepADet, kUndefined, numberOfLayers,paramAlbedoSens);
-
-
-
-
-
+	                      LogicAlbedoSi,logicAlbedoSens, kZAxis, numberOfLayers,paramAlbedoSens);
 
 	return physiWorld;
 }
-
+// here the primitive scorers and their filters are defined
 void DetectorConstruction::ConstructSDandField() {
 
 	// G4SDManager* pSDman = G4SDManager::GetSDMpointer();
@@ -1007,6 +911,9 @@ void DetectorConstruction::ConstructSDandField() {
 	G4MultiFunctionalDetector* AlbedoDepDetector = new G4MultiFunctionalDetector("albedoDetDep");
 	G4SDManager::GetSDMpointer()->AddNewDetector(AlbedoDepDetector);
 
+
+	// if it´s enabled from config.ini, a sphere around the am-be source is created and it scores the neutrons by
+	// energy binning
 	if(conf()->SphereScorer ==1){
 		//declare my sphere Scorer as multifunctional detector scorer
 		std::vector<double> binningenergy = conf()->ebin;

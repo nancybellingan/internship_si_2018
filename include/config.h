@@ -47,6 +47,7 @@ struct Conf{
 	bool multithreading = false;
 	int numbercores = 0;
 	bool albedocentre = true;
+	bool totdata = false;
 };
 const Conf* conf();
 
