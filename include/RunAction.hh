@@ -91,11 +91,11 @@ public:
 private:
    // Data member
    // - vector of MultiFunctionalDetecor names.
-  std::vector<G4String> fSDName;  
- G4String pathtime;
+ // std::vector<G4String> fSDName;
+// G4String pathtime;
   // for conversion of sengment number to copyNo.
   G4int fNx, fNy, fNz;
-	DetectorConstruction* fDetector;
+//	DetectorConstruction* fDetector;
 
 };
 

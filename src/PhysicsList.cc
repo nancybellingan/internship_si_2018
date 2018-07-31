@@ -41,7 +41,7 @@
 //
 //----------------------------------------------------------------------------
 //
-#include <iomanip>
+/*#include <iomanip>
 
 #include "globals.hh"
 #include "G4ios.hh"
@@ -115,7 +115,7 @@ template<class T> TPhysicsList<T>::TPhysicsList(G4int ver):  T()
 template<class T> TPhysicsList<T>::~TPhysicsList()
 {
 }
-
+//TPhysicsList<G4VModularPhysicsList> PhysicsList;
 template<class T> void TPhysicsList<T>::SetCuts()
 {
   if (this->verboseLevel >1){
@@ -140,6 +140,6 @@ G4double prodcut = 0.001*CLHEP::mm;
 
 }
 
-
+*/
 
 // 2002 by J.P. Wellisch

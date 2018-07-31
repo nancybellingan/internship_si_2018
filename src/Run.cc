@@ -76,11 +76,12 @@
 //   (The vector of MultiFunctionalDetector name has to given.)
 Run::Run() : G4Run()
 {
-
-
-
+	// get the pointer pSDman for the sensitive scorers
 	G4SDManager* pSDman = G4SDManager::GetSDMpointer();
 
+
+	//if the spherescorer is enabled, resize the vector containing all the IDs of the scorers
+	//and get the ID for each of them via pSDman
 	if(conf()->SphereScorer==1){
 		SphereFluxID.resize(conf()->ebin.size());
 		for (uint i=0;i<conf()->ebin.size();i++){
@@ -89,6 +90,8 @@ Run::Run() : G4Run()
 			SphereFluxID[i] = pSDman->GetCollectionID(detectorName.pathSphere+evtID);
 		}
 	}
+	//if the DummyScorer is enabled, resize the vector containing all the IDs of the scorers
+	//and get the ID for each of them via pSDman, for both fast and albedo
 	if(conf()->DummyScorer==1){
 		FastFluxID.resize(conf()->ebin.size());
 		AlbedoFluxID.resize(conf()->ebin.size());
@@ -99,22 +102,15 @@ Run::Run() : G4Run()
 
 		}
 	}
+	// if the energy deposition is wanted, get the ID for both fast and albedo
 	if(conf()->SiLayersDep==1){
 		EDepFastID = pSDman->GetCollectionID("fastDetDep/EDepFast");
 		EDepAlbedoID = pSDman->GetCollectionID("albedoDetDep/EDepAlbedo");
 	}
 
-
-
-
-
 	//=================================================
 	//  Initalize RunMaps for accumulation.
 	//  Get CollectionIDs for HitCollections.
-
-
-	// G4cout << "Run Constructor" << G4endl;
-
 
 	//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 	//
@@ -123,22 +119,20 @@ Run::Run() : G4Run()
 }
 Run::~Run()
 {
-
-	//--- Clear HitsMap for RUN
-	G4int nMap = fRunMap.size();
-	for ( G4int i = 0; i < nMap; i++){
-		if(fRunMap[i] ) fRunMap[i]->clear();
-	}
-	fCollName.clear();
-	fCollID.clear();
-	fRunMap.clear();
-
 }
+
+// elements needed for the multithreading (mutable variable and the counterforfileflush)
 #include <mutex>
 static std::mutex mutexFileWrite;
 static std::mutex mutexFileWrite2;
+static std::mutex mutexFileWrite3;
 static int counterForFlileFlush = 0;
 static int counterForFlileFlush2 = 0;
+static int counterForFlileFlush3 = 0;
+
+// print function for the number of neutrons per binning for the sphere and dummy scorers
+// arguments to pass are the hitsmap, the file where to save, the binning slot aka number
+// of scorer and the event
 void printOnHit(const G4VHitsCollection* eventMap, std::ofstream* file, const uint binSlot, const G4Event* aEvent ){
 	const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
 	auto map = castedMap->GetMap();
@@ -151,6 +145,8 @@ void printOnHit(const G4VHitsCollection* eventMap, std::ofstream* file, const ui
 			counterForFlileFlush++;
 			auto eventRegistered = *iter->second;
 			std::lock_guard<std::mutex> lock(mutexFileWrite);
+			// for each time there is a scoring, it prints the number of the binning slot
+			// for future histogram
 			for(int i=0; i < eventRegistered; i++){
 				*file << "EventID= \t" << aEvent->GetEventID() << "\t Bin number \t" << binSlot << G4endl;
 			}
@@ -171,17 +167,40 @@ void PrintOnDep(const G4VHitsCollection* eventMap, std::ofstream* file, const G4
 		auto edep = *it->second;
 
 		if(edep>0){
-	index++;
+			index++;
 
-	        *file << "fNz number for event ID \t" <<  aEvent->GetEventID() << "\t = \t"<< it->first << "\t E Dep in MeV = \t" << edep << "\t \t";
+			*file << "fNz number for event ID \t" <<  aEvent->GetEventID() << "\t = \t"<< it->first << "\t E Dep in MeV = \t" << edep << "\t \t";
 
-		    }
-	    }
+		}
+	}
 	if(index>0){
-	*file << "\n"  << G4endl;
+		*file << "\n"  << G4endl;
 	}
 
 }
+// this function is to print the total energy deposited by an event over the first 10 segments
+// weighted with the correction factor
+void PrintDeptot(const G4VHitsCollection* eventMap, std::ofstream* file, const G4Event* aEvent){
+	const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
+	std::map<G4int,G4double*>::iterator it = castedMap->GetMap()->begin();
+	counterForFlileFlush3++;
+	std::lock_guard<std::mutex> lock(mutexFileWrite3);
+	int index = 0;
+	double etot = 0;
+	for(; it != castedMap->GetMap()->end(); it++){
+		if (it->first<10){
+			auto edep = *it->second;
+			index++;
+			//cumulative etot
+			etot = etot + edep*correctionfactor.at(it->first);
+		}
+	}
+	if (etot > 0){
+		*file << "event ID = \t" << aEvent->GetEventID() << "\t Edeptot (MeV)= \t" << etot << G4endl ;
+	}
+
+}
+
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -204,8 +223,8 @@ void Run::RecordEvent(const G4Event* aEvent) {
 	//when you switch to the other sensor style, change plug in the other function and gg...
 	if(conf()->SphereScorer==1){
 
-		    eventSphereFlux.resize(conf()->ebin.size());
-			totSphereFlux.resize(conf()->ebin.size());
+		eventSphereFlux.resize(conf()->ebin.size());
+		totSphereFlux.resize(conf()->ebin.size());
 
 		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
 			if(totSphereFlux[binSlot] == nullptr){
@@ -213,7 +232,7 @@ void Run::RecordEvent(const G4Event* aEvent) {
 				totSphereFlux[binSlot] = new G4THitsMap<G4double>();
 			}
 			eventSphereFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[binSlot]));
-//			printOnHit(pHCE->GetHC(SphereFluxID[binSlot]),conf()->SphereFlux,binSlot, aEvent);
+			//			printOnHit(pHCE->GetHC(SphereFluxID[binSlot]),conf()->SphereFlux,binSlot, aEvent);
 			printOnHit(eventSphereFlux[binSlot],conf()->SphereFlux,binSlot, aEvent);
 
 			*totSphereFlux[binSlot] += *eventSphereFlux[binSlot];
@@ -245,8 +264,11 @@ void Run::RecordEvent(const G4Event* aEvent) {
 	if(conf()->SiLayersDep==1){
 		auto depMapFast = (G4THitsMap<G4double>*)(pHCE->GetHC(EDepFastID));
 		auto depMapAlbedo = (G4THitsMap<G4double>*)(pHCE->GetHC(EDepAlbedoID));
+
 		PrintOnDep(depMapFast,conf()->fastDep, aEvent);
 		PrintOnDep(depMapAlbedo,conf()->albedoDep, aEvent);
+		PrintDeptot(depMapFast,conf()->fastTotDep, aEvent);
+		PrintDeptot(depMapAlbedo,conf()->albedoTotDep, aEvent);
 	}
 	if(counterForFlileFlush > 128){
 		std::lock_guard<std::mutex> lock(mutexFileWrite);
@@ -261,17 +283,7 @@ void Run::RecordEvent(const G4Event* aEvent) {
 		conf()->fastDep->flush();
 		counterForFlileFlush2 = 0;
 	}
-	//auto ref = eventSphereFlux->GetMap();
-	//	for(int i = 0; i < ref->size(); i++){
-	//		auto ref2 = ref->at(i);
-	//		G4cout << "pos " << i << " value:" << ref2 << G4endl;
-	//	}
-	/*
-	for (auto pair: *(eventSphereFlux->GetMap())){
-		G4double flux =*(pair.second);
-		G4int copyNb = *(pair.first);
-	}
-	*/
+
 	G4Run::RecordEvent(aEvent);
 }
 
@@ -290,7 +302,6 @@ void Run::Merge(const G4Run * aRun)
 {
 
 	G4cout << "MERGE" << G4endl;
-
 
 	const Run* localRun = static_cast<const Run*>(aRun);
 	//=======================================================
@@ -315,13 +326,6 @@ void Run::Merge(const G4Run * aRun)
 			*totAlbedoFlux.at(num)  += *localRun->totAlbedoFlux[num];
 		}
 	}
-
-	//SphereFlux += *(localRun->SphereFlux);
-	//FastFlux += *(localRun->FastFlux);
-	//AlbedoFlux += *(localRun->AlbedoFlux);
-
-
-
 	G4Run::Merge(aRun);
 }
 

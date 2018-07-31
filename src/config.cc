@@ -101,47 +101,61 @@ ConfigHandler::ConfigHandler() {
 	}
 
 	swap("enableRoom",conf.enableRoom); //true in order to consider the room geometry
-	swap("isotropic",conf.isotropic);
-	swap("eventNumber",conf.eventNumber);
-	swap("accuracy",conf.accuracy);
 	swap("SiLayersDep",conf.SiLayersDep); //true for the energy deposition on the Si divided in 40 layers
-	swap("DefMaterials",conf.DefMaterials);
-	swap("EnableRoom",conf.EnableRoom);
+	swap("EnableRoom",conf.EnableRoom); // enable the concrete geometry
 	swap("SphereScorer", conf.SphereScorer); //true for the dummy sphere around the Am-Be source for E Kin
-	swap("Sourcexcm",conf.Sourcexcm);
-	swap("Sourceycm",conf.Sourceycm);
-	swap("Sourcezcm",conf.Sourcezcm);
+	swap("Sourcexcm",conf.Sourcexcm); //coordinates of the neutron source
+	swap("Sourceycm",conf.Sourceycm); //coordinates of the neutron source
+	swap("Sourcezcm",conf.Sourcezcm); //coordinates of the neutron source
 	swap("DummyScorer",conf.DummyScorer); //true for the dummy Si scorer only for E kin
 	swap("print_stored_trajectories",conf.print_stored_trajectories);
 	swap("Iondummy",conf.Iondummy); //true if only the E kin of ions in the Si dummy is wanted
 	swap("multithreading",conf.multithreading); //if use MT Manager
 	swap("numbercores",conf.numbercores); //  number of cores to use for the MT
 	swap("totdata",conf.totdata); //to print the accumulated quantities on the sphere scorer and the dummy scorer
-	//Now load the binning Info
+	swap("distancephantsurf",conf.distancephantsurf);
+	//distance of the neutron source from the closest phantom surface
+	swap("albedocentre", conf.albedocentre); //if 1, the albedo is in the centre,
+	// if 0, fast is in the centre
 	loadBinning(conf.ebin,"configbinning.ini"); //load the binning energies
 
 
 
-	G4String pathtimenow = "./" + conf.timenow; //create a new folder for the ouputs with unique name
+	G4String pathtimenow = "./" + conf.timenow;
+	//create a new folder for the ouputs with unique name
 	mkdir(pathtimenow, 0777);
 
-	G4String outputEDistr ="./" + conf.timenow + "/Edistr.dat"; //output file for initial E Kin of neutrons
+	G4String outputEDistr ="./" + conf.timenow + "/Edistr.dat";
+	//output file for initial E Kin of neutrons
 	conf.edistr = openFile(outputEDistr);
 
-	G4String outfiler1="./" + conf.timenow + "/outputSphere.dat"; //output for dummy sphere
+	G4String outfiler1="./" + conf.timenow + "/outputSphere.dat";
+	//output for dummy sphere
 	conf.SphereFlux = openFile(outfiler1);
 
-	G4String fastFlux="./" + conf.timenow + "/outputFastFlux.dat"; //output for dummy fast
+	G4String fastFlux="./" + conf.timenow + "/outputFastFlux.dat";
+	//output for dummy fast
 	conf.fastFlux = openFile(fastFlux);
 
-	G4String albedoFlux="./" + conf.timenow + "/outputAlbedoFlux.dat"; // output for dummy albedo
+	G4String albedoFlux="./" + conf.timenow + "/outputAlbedoFlux.dat";
+	// output for dummy albedo
 	conf.albedoFlux = openFile(albedoFlux);
 
-	G4String albedoDep="./" + conf.timenow + "/outputAlbedoDept.dat"; //output for E deposition in albedo
+	G4String albedoDep="./" + conf.timenow + "/outputAlbedoDept.dat";
+	//output for E deposition in albedo
 	conf.albedoDep =openFile(albedoDep);
 
-	G4String fastDep="./" + conf.timenow + "/outputFastDept.dat"; // output for E deposition in fast
+	G4String fastDep="./" + conf.timenow + "/outputFastDept.dat";
+	// output for E deposition in fast
 	conf.fastDep =openFile(fastDep);
+
+	G4String albedoTotDep="./" + conf.timenow + "/outputAlbedoDeptcorrected.dat";
+	//output for E deposition in albedo corrected
+	conf.albedoTotDep =openFile(albedoTotDep);
+
+	G4String fastTotDep="./" + conf.timenow + "/outputFastDeptcorrected.dat";
+	// output for E deposition in fast corrected
+	conf.fastTotDep =openFile(fastTotDep);
 }
 
 const Conf *conf() {

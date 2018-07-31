@@ -111,13 +111,13 @@ std::vector<G4THitsMap<G4double>*>  GetSphereFlux()  {return totSphereFlux;};
   void DumpAllScorer(std::fstream& out);
 
 private:
-  std::vector<G4String> fCollName;
-  std::vector<G4int> fCollID;
-  std::vector<G4THitsMap<G4double>*> fRunMap;
-	std::vector<G4String> fScorParticles;
-	std::vector<G4String> fSDNames;
-	std::vector<G4double> fBinningVector;
-	DetectorConstruction* fDetector;
+ // std::vector<G4String> fCollName;
+//  std::vector<G4int> fCollID;
+//  std::vector<G4THitsMap<G4double>*> fRunMap;
+//	std::vector<G4String> fScorParticles;
+//	std::vector<G4String> fSDNames;
+//	std::vector<G4double> fBinningVector;
+//	DetectorConstruction* fDetector;
 //	std::map<G4String,DetectorCollect*> DetectorCollectMap;
 G4int nEvent;
 std::vector<G4int> SphereFluxID;

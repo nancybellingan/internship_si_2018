@@ -1,5 +1,5 @@
 // NOT USED BY  MY CODE, TO FULLY REMOVE
-#include "G4SystemOfUnits.hh"
+/*#include "G4SystemOfUnits.hh"
 
 #include "DetectorCollect.hh"
 #include "SDCollect.hh"
@@ -8,7 +8,7 @@
 #include <map>
 
 //constructing the DetectorCollect class
-/*DetectorCollect::DetectorCollect(const G4String& detName,
+DetectorCollect::DetectorCollect(const G4String& detName,
 						 const std::vector<G4double>& eBinning,
 						 const std::vector<G4String>& scorParticles)
 	: fDetectorName(detName), fBinningVector(eBinning), 

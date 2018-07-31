@@ -4,6 +4,7 @@
 #include <chrono>
 #include <ctime>
 #include <time.h>
+#include <vector>
 typedef unsigned long long u64;
 typedef long long i64;
 
@@ -15,6 +16,18 @@ struct DetectorName{
 	G4String pathFastDep = "fastDet/totaldep";
 	G4String pathAlbedoDep = "albedoDet/totaldep";
 	G4String pathAlbedoDepScorer ="EDepFast";
+};
+static const std::vector<double> correctionfactor{ // for the silicon layers correction factor
+	1, // from 0 to 10 um
+	1, // from 10 to 20 um
+	1, // from 20 to 30 um
+	1, // from 30 to 40 um
+	0.94, // from 40 to 50 um
+	0.7059, // from 50 to 60 um
+	0.4052, // from 60 to 70 um
+	0.1831, // from 70 to 80 um
+	0.0737, // from 80 to 90 um
+	0.02458 // from 90 to 100 um
 };
 
 static const DetectorName detectorName;
@@ -32,6 +45,7 @@ struct Conf{
 	double Sourcexcm = 0;
 	double Sourceycm = 0;
 	double Sourcezcm = 0;
+	double distancephantsurf = 100;
 	bool DummyScorer = 0;
 	std::vector<double> ebin;
 	G4String folder;
@@ -44,6 +58,9 @@ struct Conf{
 	mutable std::ofstream* albedoFlux = nullptr;
 	mutable std::ofstream* albedoDep = nullptr;
 	mutable std::ofstream* fastDep = nullptr;
+	mutable std::ofstream* albedoTotDep = nullptr;
+	mutable std::ofstream* fastTotDep = nullptr;
+
 	bool multithreading = false;
 	int numbercores = 0;
 	bool albedocentre = true;

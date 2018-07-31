@@ -59,17 +59,12 @@
 //
 //
 //=======================================================================
-
-//#define MFD 1
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Constructor
 RunAction::RunAction()
   : G4UserRunAction(),
     fNx(0), fNy(0), fNz(0)
 {
-  // - Prepare data member for Run.
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -77,10 +72,7 @@ RunAction::RunAction()
 RunAction::~RunAction()
 {
     // if the debug is activated from main, it is given the information that the destructor is happening
-
 	G4cout << "Destructor RunAction" << G4endl;
-
-  fSDName.clear();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -166,90 +158,8 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 	  outp1.close();
   }
 
-/*if(conf()->SiLayersDep ==1){
-
-
-G4SDManager* pSDman = G4SDManager::GetSDMpointer();
-	const DetectorConstruction* detector =
-		(const DetectorConstruction*)
-		(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-//	detector->GetNumberOfSegmentsInPhantom(fNx,fNy,fNz); //Fill fNx,y,z.
-	
-
-	std::vector<G4String> sds = detector->GetUSDNames();
-
-
-    //------- Energy Deposition will be printed in output folder, for both cases of 100 layers and 8 (1+7)
-if(conf()->SphereScorer==1){
-	for(size_t i = 1; i< sds.size(); i++) {
-		FluenceEnergyDistributionSD* sensDet
-	               = (FluenceEnergyDistributionSD*) (pSDman->
-			                       FindSensitiveDetector(sds[i]));
-		G4String outfile= pathtime + "/" + sds[i] + "ErgfileVoxels.dat";
-//		std::fstream outp(outfile.c_str(),std::fstream::out |
-//										  std::fstream::in  |
-//										  std::fstream::trunc);
-                std::fstream outp;
-                outp.open(outfile.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-                outp << "prova" << G4endl;
-                outp << sds.size() << G4endl;
- //  outp << totflux << G4endl;
-// outp << G4THitsMap->GetHitsMap(sds[i]) << G4endl;
-	      sensDet->FluenceEnergyDistributionSD::DumpAllDetectorCollects(outp);
-		outp.close();
-    }
-} else{
-	for(size_t i = 0; i< sds.size(); i++) {
-		FluenceEnergyDistributionSD* sensDet
-		           = (FluenceEnergyDistributionSD*) (pSDman->
-		                           FindSensitiveDetector(sds[i]));
-		G4String outfile=pathtime + "/" + sds[i] + "ErgfileVoxels.dat";
-//		std::fstream outp(outfile.c_str(),std::fstream::out |
-//										  std::fstream::in  |
-//										  std::fstream::trunc);
-		        std::fstream outp;
-				outp.open(outfile.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-				outp << "prova" << G4endl;
-				outp << sds.size() << G4endl;
- //  outp << totflux << G4endl;
-// outp << G4THitsMap->GetHitsMap(sds[i]) << G4endl;
-				sensDet->FluenceEnergyDistributionSD::DumpAllDetectorCollects(outp);
-		outp.close();
-	}
-}
-}*/
-
-
-
-
-/*
-
-std::vector<G4String> mfdName = fDetector->GetUSDNames();
-G4int nMfd = mfdName.size();
-for ( G4int idet = 0; idet < nMfd ; idet++)
-    {
-    G4String detName = mfdName[idet];
-    DetectorCollect* DetCol = (DetectorCollect*)(pSDman->FindSensitiveDetector(detName));
-//	SDCollect* SDDetCol = (SDCollect*)(pSDman->FindSensitiveDetector(detName));
-    std::fstream outp2;
-    G4String outfile2="./outputs/" + mfdName[idet] + "multidet.dat";
-    outp2.open(outfile2.c_str(), std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-    outp2 << "prova2" << G4endl;
-    DetCol->SDCollect::DumpCollects(out2);
-    //DetectorCollect::DumpDetectorCollect(outp2);
-    outp2.close();
-
- //with DetCol -> i am communicating which detector should be taken in consideration already, so the whole dumpdetectorcollect happen
-// for that one only.
-
-
-}
-
-*/
-
-
 
 }
 
 
-// --
+

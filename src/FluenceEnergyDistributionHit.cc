@@ -25,10 +25,10 @@
 //
 // $Id: FluenceEnergyDistributionHit.cc 69706 2013-05-13 09:12:40Z gcosmo $
 //
-/// \file FluenceEnergyDistributionHit.cc
-/// \brief Implementation of the FluenceEnergyDistributionHit class
+// \file FluenceEnergyDistributionHit.cc
+// \brief Implementation of the FluenceEnergyDistributionHit class
 
-#include "FluenceEnergyDistributionHit.hh"
+/*#include "FluenceEnergyDistributionHit.hh"
 #include "G4UnitsTable.hh"
 #include "G4VVisManager.hh"
 #include "G4Circle.hh"
@@ -37,7 +37,7 @@
 #include "G4SystemOfUnits.hh"
 
 #include <iomanip>
-/*
+
 G4ThreadLocal G4Allocator<FluenceEnergyDistributionHit>* FluenceEnergyDistributionHitAllocator=0;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

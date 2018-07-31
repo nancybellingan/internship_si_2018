@@ -371,7 +371,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 	//------sphere scorer around source
 	if(conf()->SphereScorer == 1){
-		G4ThreeVector positionscorer = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sourcezcm*cm);
+		G4ThreeVector positionscorer = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm);
 		G4double scorerr1= 9*cm;
 		G4double scorerr2= 10*cm;
 		solidscorer= new G4Sphere("solidscorer",scorerr1,scorerr2,0,twopi,0,twopi/2);
@@ -382,7 +382,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	}
 	//Phantom shape, logical volume and position
 	G4ThreeVector  PMMAPhantomSize = G4ThreeVector(30.*cm,30.*cm,15.*cm);
-	G4ThreeVector  PMMAPhantomPos  = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sourcezcm+92.5*cm);
+	G4ThreeVector  PMMAPhantomPos  = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm+ PMMAPhantomSize.z()/2);
 	G4RotationMatrix* PMMAPhantomRot = new G4RotationMatrix();
 
 	fSolidPMMAPhantom = new G4Box("solidPMMAPhantom",
@@ -435,9 +435,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4RotationMatrix* rotFast = new G4RotationMatrix();
 	rotFast->rotateY(180.*deg);
 	if (conf()->albedocentre==1){
- Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm+3*cm,conf()->Sourceycm,conf()->Sourcezcm+85*cm-fast_sensorThickness/2.);
+ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm+3*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(fast_sensorThickness/2.)*mm);
 	} else {
-Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sourcezcm+85*cm-fast_sensorThickness/2.);
+Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(fast_sensorThickness/2.)*mm);
 	}
 	// the position is 1.5 cm on the side of the beam, on the phantom
 	G4PVPlacement* fast_housing = new G4PVPlacement(rotFast,Fast_housing_pos,fast_housing_log,"Fast_Housing",
@@ -520,8 +520,9 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sou
 	//-------------------------------------------------------------------------
 
 	G4double zPosFastSens = fast_sensorThickness/2. - fast_waxThickness- fast_leadThicknessFront- detectorThickness/2.;
-
-	physiFastSens = new G4PVPlacement(nullptr,G4ThreeVector(0,0,zPosFastSens), "physiFastSens",
+	G4RotationMatrix* Fastsensrot = new G4RotationMatrix();
+	Fastsensrot->rotateY(180.*deg);
+	physiFastSens = new G4PVPlacement(Fastsensrot,G4ThreeVector(0,0,zPosFastSens), "physiFastSens",
 	                                  logicFastSens, fast_housing, false, 0, 1);
 	//Albedo sensor and box
 	//=========================================================================
@@ -548,9 +549,9 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sou
 	G4RotationMatrix* rotAlbedo = new G4RotationMatrix();
 	rotAlbedo->rotateY(180.*deg);
 	if (conf()->albedocentre==1){
-		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sourcezcm+85*cm-fast_sensorThickness/2.);
+		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(albedo_sensorThickness/2.)*mm);
 	}else {
-		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm+3*cm,conf()->Sourceycm,conf()->Sourcezcm+85*cm-fast_sensorThickness/2.);
+		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm+3*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(albedo_sensorThickness/2.)*mm);
 }
 	G4PVPlacement* albedo_housing =new G4PVPlacement(rotAlbedo,albedo_housing_pos,albedo_housing_log,
 	                              "Albedo_Housing", logicWorld,false,0, true);
@@ -657,7 +658,7 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sou
 	G4String zDetVoxName("FastSens");
 	G4VSolid* solDetVoxel = new G4Box(zDetVoxName,sensorWidth/2., sensorWidth/2., layerThickness/2.);
 
-	LogicFastSi = new G4LogicalVolume(solDetVoxel,fWater,zDetVoxName);
+	LogicFastSi = new G4LogicalVolume(solDetVoxel,Silicon,zDetVoxName);
 
 	std::vector<G4Material*> fastSensMat(2,Silicon);
 	fastSensMat[1]=Silicon;
@@ -682,14 +683,15 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm,conf()->Sourceycm,conf()->Sou
 
 	G4double zPosAlbedoSens = albedo_sensorThickness/2.- albedo_converterThickness- albedo_gapThickness
 	        - albedo_hullThicknessFront- detectorThickness/2.;
-
-	physiAlbedoSens = new G4PVPlacement(0, G4ThreeVector(0,0,zPosAlbedoSens),"physiAlbedoSens",
+	G4RotationMatrix* Albedosensrot = new G4RotationMatrix();
+	Albedosensrot->rotateY(180.*deg);
+	physiAlbedoSens = new G4PVPlacement(Albedosensrot, G4ThreeVector(0,0,zPosAlbedoSens),"physiAlbedoSens",
 	                                    logicAlbedoSens, albedo_housing, false, 0, 1);
 
 
 	G4String zADetVoxName("AlbedoSens");
 	G4VSolid* solADetVoxel = new G4Box(zDetVoxName,sensorWidth/2., sensorWidth/2., layerThickness/2.);
-	LogicAlbedoSi = new G4LogicalVolume(solADetVoxel,fWater,zADetVoxName);
+	LogicAlbedoSi = new G4LogicalVolume(solADetVoxel,Silicon,zADetVoxName);
 
 	std::vector<G4Material*> albedoSensMat(2,Silicon);
 	albedoSensMat[1]=Silicon;

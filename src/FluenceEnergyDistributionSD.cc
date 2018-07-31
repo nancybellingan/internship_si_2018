@@ -25,9 +25,9 @@
 //
 // $Id: FluenceEnergyDistributionSD.cc 68058 2013-03-13 14:47:43Z gcosmo $
 //
-/// \file FluenceEnergyDistributionSD.cc
-/// \brief Implementation of the FluenceEnergyDistributionSD class
-
+// \file FluenceEnergyDistributionSD.cc
+// \brief Implementation of the FluenceEnergyDistributionSD class
+/*
 #include "FluenceEnergyDistributionSD.hh"
 #include "FluenceEnergyDistributionHit.hh"
 #include "G4HCofThisEvent.hh"
@@ -200,3 +200,4 @@ out << "Event ID with hit" << G4endl;
 
 }
 
+*/
