@@ -1,1 +1,17 @@
-Layers in Si not enabled
+
+SiLayersDep = 0 if not to enable the energy deposition scoring in the active layer of the silicon, 1 for scoring and getting the data for the histogram
+EnableRoom  = 0 if the concrete walls aren´t wanted, 1 if the radiation labor geometry is implemented
+SphereScorer = to enable the sphere radius 10 cm around the am-be source scoring crossing E-kin for neutrons
+DummyScorer = if enabled, it´s a scorer for kinetic energy of neutrons with the volume of the housing of the sensors
+Sourcexcm ... cm = x position of the am-be source relative to the center of the world
+Sourceycm .... cm = y position of the am-be source relative to the center of the world
+Sourcezcm ... cm = z position of the am-be source relative to the center of the world
+distancephantsurf = distance of the phantom closest surface to the am-be source
+print_stored_trajectories = if print the stored trajectories or not (?)
+Iondummy 0 = for the future, not really used now
+multithreading 1 = careful, if multithreading is on, some parts of the code such as the total spectra for the ekin of neutrons in dummies, wont work
+numbercores = number of cores for the multithreading
+albedocentre = if 0, the fast sensor is put at same x and y of the am-be, if 1, the albedo is
+totdata = if the total sum of dummies e-kin per binning is wanted, then it will be created a new output file at the end of the whole simulation with cumulative data for histogram. 
+phantomon = if 0, the phantom is disactivated, if 1, the phantom is enabled.
+

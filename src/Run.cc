@@ -235,7 +235,14 @@ void Run::RecordEvent(const G4Event* aEvent) {
 			//			printOnHit(pHCE->GetHC(SphereFluxID[binSlot]),conf()->SphereFlux,binSlot, aEvent);
 			printOnHit(eventSphereFlux[binSlot],conf()->SphereFlux,binSlot, aEvent);
 
+			if (conf()->totdata==1){
+				if(totSphereFlux[binSlot] == nullptr){
+
+					totSphereFlux[binSlot] = new G4THitsMap<G4double>();
+				}
 			*totSphereFlux[binSlot] += *eventSphereFlux[binSlot];
+			}
+
 		}
 	}
 	if(conf()->DummyScorer==1){
@@ -257,8 +264,17 @@ void Run::RecordEvent(const G4Event* aEvent) {
 
 			printOnHit(eventFastFlux[binSlot], conf()->fastFlux,binSlot, aEvent);
 			printOnHit(eventAlbedoFlux[binSlot], conf()->albedoFlux,binSlot, aEvent);
-			*totAlbedoFlux[binSlot] += *eventAlbedoFlux[binSlot];
-			*totFastFlux[binSlot] += *eventFastFlux[binSlot];
+
+			if (conf()->totdata==1){
+				if(totAlbedoFlux[binSlot] == nullptr){
+					totAlbedoFlux[binSlot] = new G4THitsMap<G4double>();
+				}
+				if(totFastFlux[binSlot] == nullptr){
+					totFastFlux[binSlot] = new G4THitsMap<G4double>();
+				}
+				*totAlbedoFlux[binSlot] += *eventAlbedoFlux[binSlot];
+				*totFastFlux[binSlot] += *eventFastFlux[binSlot];
+			}
 		}
 	}
 	if(conf()->SiLayersDep==1){
@@ -302,23 +318,23 @@ void Run::Merge(const G4Run * aRun)
 {
 
 	G4cout << "MERGE" << G4endl;
-
+// Roy this is the part doesnt work in multi threading if i have the tot...flux on.
 	const Run* localRun = static_cast<const Run*>(aRun);
 	//=======================================================
 	// Merge HitsMap of working threads
 	//=======================================================
-	bool a = sameSize(totSphereFlux,localRun->totSphereFlux);
-	bool b = sameSize(totFastFlux,localRun->totFastFlux);
-	bool c = sameSize(totAlbedoFlux,localRun->totAlbedoFlux);
-	if(!(a && b && c)){
-		abort();
-	}
-	if(conf()->SphereScorer==1){
+	//bool a = sameSize(totSphereFlux,localRun->totSphereFlux);
+	//bool b = sameSize(totFastFlux,localRun->totFastFlux);
+	//bool c = sameSize(totAlbedoFlux,localRun->totAlbedoFlux);
+	//if(!(a && b && c)){
+//		abort();
+	//}
+	if(conf()->SphereScorer==1 && conf()->totdata==1){
 		for(uint num = 0; num < totSphereFlux.size(); num++){
 			*totSphereFlux.at(num)  += *localRun->totSphereFlux[num];
 		}
 	}
-	if(conf()->DummyScorer==1){
+	if(conf()->DummyScorer==1 && conf()->totdata==1){
 		for(uint num = 0; num < totFastFlux.size(); num++){
 			*totFastFlux.at(num)  += *localRun->totFastFlux[num];
 		}

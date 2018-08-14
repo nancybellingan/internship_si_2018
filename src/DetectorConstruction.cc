@@ -381,6 +381,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 	}
 	//Phantom shape, logical volume and position
+	if(conf()->phantomon == 1){
 	G4ThreeVector  PMMAPhantomSize = G4ThreeVector(30.*cm,30.*cm,15.*cm);
 	G4ThreeVector  PMMAPhantomPos  = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm+ PMMAPhantomSize.z()/2);
 	G4RotationMatrix* PMMAPhantomRot = new G4RotationMatrix();
@@ -401,7 +402,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	                                      false,
 	                                      0,
 	                                      true);
-
+}
 	// sensors and their boxes:
 
 	G4double detectorThickness = 400*um; // Silicon layer
@@ -552,7 +553,8 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf(
 		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(albedo_sensorThickness/2.)*mm);
 	}else {
 		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm+3*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(albedo_sensorThickness/2.)*mm);
-}
+}top
+
 	G4PVPlacement* albedo_housing =new G4PVPlacement(rotAlbedo,albedo_housing_pos,albedo_housing_log,
 	                              "Albedo_Housing", logicWorld,false,0, true);
 	//Albedo Sensor components

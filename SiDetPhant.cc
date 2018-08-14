@@ -46,14 +46,22 @@
 #ifdef G4UI_USE
 #include "G4UIExecutive.hh"
 #endif
-
+#include "iostream"
 #ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
 #endif
-
+#include "ios"
 #include "config.h"
 int main(int argc,char** argv) 
 {
+
+	// G4String copyconfig="./"+conf()->timenow + "/config.ini";
+	std::ifstream inputfile("config.ini");
+	std::ofstream outputfile("./"+conf()->timenow + "/config.ini");
+	//doesnt work. the file gets created but not written
+	outputfile << inputfile.rdbuf();
+
+
 	//thi is to STOP on start, wait a USER input, so we an attach a debugger.
 //	printf("Type any char (and enter) to continue \n");
 //	int x;
@@ -64,8 +72,8 @@ int main(int argc,char** argv)
 	if (conf()->multithreading ==0){
 		G4RunManager * runManager = new G4RunManager;
 		DetectorConstruction* detector = new DetectorConstruction;
-		// set mandatory initialization classes
-printf("using single thread");
+		// set mandatory initialization class
+		printf("using single thread");
         runManager->SetUserInitialization(detector);
 		runManager->SetUserInitialization(new PhysicsList());
 

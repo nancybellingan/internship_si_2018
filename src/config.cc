@@ -117,6 +117,7 @@ ConfigHandler::ConfigHandler() {
 	//distance of the neutron source from the closest phantom surface
 	swap("albedocentre", conf.albedocentre); //if 1, the albedo is in the centre,
 	// if 0, fast is in the centre
+	swap("phantomon",conf.phantomon);
 	loadBinning(conf.ebin,"configbinning.ini"); //load the binning energies
 
 
@@ -156,8 +157,13 @@ ConfigHandler::ConfigHandler() {
 	G4String fastTotDep="./" + conf.timenow + "/outputFastDeptcorrected.dat";
 	// output for E deposition in fast corrected
 	conf.fastTotDep =openFile(fastTotDep);
+
+//	G4String copyconfig="./"+conf.timenow + "/config.ini";
+//	conf.copyconfig=openFile(copyconfig);
 }
 
 const Conf *conf() {
 	return &ConfigHandler::getInstance().conf;
 }
+
+
