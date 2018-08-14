@@ -1,9 +1,6 @@
-#
-# Macro file for the initialization phase of "exampleRE02.cc"
-# when runing in interactive mode
-#
+
 # Sets some default verbose
-#
+
 #/control/verbose 2
 #/run/verbose 2
 #
@@ -20,9 +17,6 @@
 #
 # draw scene
 #
-#/vis/viewer/set/viewpointThetaPhi 90 180 deg
-#/vis/viewer/zoom 1.4
-#/vis/viewer/flush
 #
 # for drawing the tracks
 # (if too many tracks cause core dump => storeTrajectory 0)
@@ -38,28 +32,53 @@
 #
 /gps/particle neutron
 
-/gps/pos/type Surface
-#parallel
-#/gps/pos/shape Cylinder
-#/gps/pos/centre 0 0 -115 cm
-#/gps/pos/radius 6. cm
-#/gps/pos/halfz 0 cm
-#/gps/ang/type cos
-#/gps/direction 0. 0. 1.
 
 #isotropic
 #/gps/pos/type Point
-#/gps/pos/centre 0 0 -115 cm
+#/gps/pos/centre 0 -61 -92.5 cm
 #/gps/ang/type iso
 #/gps/ene/type Arb
 #/gps/hist/type arb
 
 #beam
+#/gps/pos/type Point
+#/gps/position 0 -61 -92.5 cm
+#/gps/direction 0 0 1
+#/gps/ene/type Arb
+#/gps/hist/type arb
+
+
+#rectangular beam
+#/gps/pos/type Plane
+#/gps/pos/shape Rectangle
+#/gps/pos/centre 0 -61 -92.5 cm
+#/gps/direction 0 0 1
+#/gps/pos/halfx 0.65 cm
+#/gps/pos/halfy 0.65 cm
+#/gps/ene/type Arb
+#/gps/hist/type arb
+
+#cone irradiating part of the phantom at 24 cm distance
+#/gps/pos/type Point
+#/gps/position 0 -61 -92.5 cm
+#/gps/ang/maxtheta 15 deg
+#/gps/ang/rot1 0 1 0
+#/gps/ang/rot2 1 0 0
+#/gps/ang/type iso
+#/gps/ene/type Arb
+#/gps/hist/type arb
+
+#cone irradiating whole phantom at 24 cm distance
 /gps/pos/type Point
-/gps/position 0 0 -115 cm
-/gps/direction 0 0 1
+/gps/position 0 -61 -92.5 cm
+/gps/ang/maxtheta 33 deg
+/gps/ang/rot1 0 1 0
+/gps/ang/rot2 1 0 0
+/gps/ang/type iso
 /gps/ene/type Arb
 /gps/hist/type arb
+
+
 
 
 
@@ -222,5 +241,5 @@
 /gps/hist/inter Lin
 
 
-/run/beamOn 2000000
+/run/beamOn 1000000000
 
