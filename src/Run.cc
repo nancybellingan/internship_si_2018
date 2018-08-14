@@ -126,9 +126,11 @@ Run::~Run()
 static std::mutex mutexFileWrite;
 static std::mutex mutexFileWrite2;
 static std::mutex mutexFileWrite3;
+static std::mutex mutexFileWrite4;
 static int counterForFlileFlush = 0;
 static int counterForFlileFlush2 = 0;
 static int counterForFlileFlush3 = 0;
+static int counterForFlileFlush4 = 0;
 
 // print function for the number of neutrons per binning for the sphere and dummy scorers
 // arguments to pass are the hitsmap, the file where to save, the binning slot aka number
@@ -201,7 +203,26 @@ void PrintDeptot(const G4VHitsCollection* eventMap, std::ofstream* file, const G
 
 }
 
+void PrintDeptotfiltered(const G4VHitsCollection* eventMap, std::ofstream* file, const G4Event* aEvent){
+	const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
+	std::map<G4int,G4double*>::iterator it = castedMap->GetMap()->begin();
+	counterForFlileFlush4++;
+	std::lock_guard<std::mutex> lock(mutexFileWrite4);
+	int index = 0;
+	double etot = 0;
+	for(; it != castedMap->GetMap()->end(); it++){
+		if (it->first<10){
+			auto edep = *it->second;
+			index++;
+			//cumulative etot
+			etot = etot + edep*correctionfactor.at(it->first);
+		}
+	}
+	if (etot > 0.199){
+		*file << "event ID = \t" << aEvent->GetEventID() << "\t Edeptot (MeV)= \t" << etot << G4endl ;
+	}
 
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //

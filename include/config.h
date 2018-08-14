@@ -60,6 +60,8 @@ struct Conf{
 	mutable std::ofstream* fastDep = nullptr;
 	mutable std::ofstream* albedoTotDep = nullptr;
 	mutable std::ofstream* fastTotDep = nullptr;
+	mutable std::ofstream* albedoTotDepfilt = nullptr;
+	mutable std::ofstream* fastTotDepfilt = nullptr;
 	bool multithreading = false;
 	int numbercores = 0;
 	bool albedocentre = true;
