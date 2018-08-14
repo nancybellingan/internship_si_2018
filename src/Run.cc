@@ -218,7 +218,7 @@ void PrintDeptotfiltered(const G4VHitsCollection* eventMap, std::ofstream* file,
 			etot = etot + edep*correctionfactor.at(it->first);
 		}
 	}
-	if (etot > 0.199){
+	if (etot > 0.15){
 		*file << "event ID = \t" << aEvent->GetEventID() << "\t Edeptot (MeV)= \t" << etot << G4endl ;
 	}
 
@@ -306,12 +306,15 @@ void Run::RecordEvent(const G4Event* aEvent) {
 		PrintOnDep(depMapAlbedo,conf()->albedoDep, aEvent);
 		PrintDeptot(depMapFast,conf()->fastTotDep, aEvent);
 		PrintDeptot(depMapAlbedo,conf()->albedoTotDep, aEvent);
+		PrintDeptotfiltered(depMapAlbedo,conf()->albedoTotDepfilt, aEvent);
+		PrintDeptotfiltered(depMapFast,conf()->fastTotDepfilt, aEvent);
 	}
 	if(counterForFlileFlush > 128){
 		std::lock_guard<std::mutex> lock(mutexFileWrite);
 		conf()->SphereFlux->flush();
 		conf()->fastFlux->flush();
 		conf()->albedoFlux->flush();
+
 		counterForFlileFlush = 0;
 	}
 	if(counterForFlileFlush2 > 128){
@@ -320,6 +323,20 @@ void Run::RecordEvent(const G4Event* aEvent) {
 		conf()->fastDep->flush();
 		counterForFlileFlush2 = 0;
 	}
+	if(counterForFlileFlush3 > 128){
+		std::lock_guard<std::mutex> lock(mutexFileWrite3);
+		conf()->fastTotDep->flush();
+		conf()->albedoTotDep->flush();
+		counterForFlileFlush3 = 0;
+	}
+	if(counterForFlileFlush4 > 128){
+		std::lock_guard<std::mutex> lock(mutexFileWrite4);
+		conf()->albedoTotDepfilt->flush();
+		conf()->fastTotDepfilt->flush();
+		counterForFlileFlush4 = 0;
+	}
+
+
 
 	G4Run::RecordEvent(aEvent);
 }
@@ -351,15 +368,23 @@ void Run::Merge(const G4Run * aRun)
 //		abort();
 	//}
 	if(conf()->SphereScorer==1 && conf()->totdata==1){
+		static std::mutex mutexFileWrite5;
 		for(uint num = 0; num < totSphereFlux.size(); num++){
+	std::lock_guard<std::mutex> lock(mutexFileWrite5);
 			*totSphereFlux.at(num)  += *localRun->totSphereFlux[num];
 		}
 	}
 	if(conf()->DummyScorer==1 && conf()->totdata==1){
+		static std::mutex mutexFileWrite5;
+		static std::mutex mutexFileWrite6;
 		for(uint num = 0; num < totFastFlux.size(); num++){
+			std::lock_guard<std::mutex> lock(mutexFileWrite5);
+
 			*totFastFlux.at(num)  += *localRun->totFastFlux[num];
 		}
 		for(uint num = 0; num < totAlbedoFlux.size(); num++){
+			std::lock_guard<std::mutex> lock(mutexFileWrite6);
+
 			*totAlbedoFlux.at(num)  += *localRun->totAlbedoFlux[num];
 		}
 	}

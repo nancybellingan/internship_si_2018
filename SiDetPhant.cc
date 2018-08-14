@@ -34,11 +34,12 @@
 #include "DetectorConstruction.hh"
 #include "PhysicsList.hh"
 #include "ActionInitialization.hh"
-
-
+#include <thread>
+#include <climits>
 #include "G4MTRunManager.hh"
 #include "G4RunManager.hh"
-
+#include <sstream>
+#include <stdlib.h>
 #include "Randomize.hh"
 #include "G4UImanager.hh"
 #include "G4SystemOfUnits.hh"    
@@ -60,6 +61,7 @@ int main(int argc,char** argv)
 	std::ofstream outputfile("./"+conf()->timenow + "/config.ini");
 	//doesnt work. the file gets created but not written
 	outputfile << inputfile.rdbuf();
+	outputfile << "\n" << "number of cores= " << std::thread::hardware_concurrency();
 
 
 	//thi is to STOP on start, wait a USER input, so we an attach a debugger.
@@ -110,11 +112,16 @@ int main(int argc,char** argv)
 #endif
 		delete runManager;
 	} else if (conf()->multithreading==1) {
-		printf("using multithreading with \n");
-		printf("%d",conf()->numbercores);
+
 
 		G4MTRunManager * runManager = new G4MTRunManager;
-		runManager->SetNumberOfThreads(conf()->numbercores);
+		//runManager->SetNumberOfThreads(conf()->numbercores);
+		unsigned int threadtouse =std::thread::hardware_concurrency();
+		int multicore = int(threadtouse);
+	outputfile << "spacecheck" << multicore;
+	    printf("using multithreading with \n");
+		printf("%d",multicore);
+		runManager->SetNumberOfThreads(multicore);
 		DetectorConstruction* detector = new DetectorConstruction;
 		// set mandatory initialization classes
 

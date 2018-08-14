@@ -157,6 +157,13 @@ ConfigHandler::ConfigHandler() {
 	G4String fastTotDep="./" + conf.timenow + "/outputFastDeptcorrected.dat";
 	// output for E deposition in fast corrected
 	conf.fastTotDep =openFile(fastTotDep);
+	G4String albedoTotDepfilt="./" + conf.timenow + "/outputAlbedoDeptcorrectedfiltered.dat";
+	//output for E deposition in albedo corrected
+	conf.albedoTotDepfilt =openFile(albedoTotDepfilt);
+
+	G4String fastTotDepfilt="./" + conf.timenow + "/outputFastDeptcorrectedfiltered.dat";
+	// output for E deposition in fast corrected
+	conf.fastTotDepfilt =openFile(fastTotDepfilt);
 
 //	G4String copyconfig="./"+conf.timenow + "/config.ini";
 //	conf.copyconfig=openFile(copyconfig);
