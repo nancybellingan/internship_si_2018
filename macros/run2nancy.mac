@@ -34,11 +34,11 @@
 
 
 #isotropic
-#/gps/pos/type Point
-#/gps/pos/centre 0 -61 -92.5 cm
-#/gps/ang/type iso
-#/gps/ene/type Arb
-#/gps/hist/type arb
+/gps/pos/type Point
+/gps/pos/centre 0 -61 -92.5 cm
+/gps/ang/type iso
+/gps/ene/type Arb
+/gps/hist/type arb
 
 #beam
 #/gps/pos/type Point
@@ -69,14 +69,14 @@
 #/gps/hist/type arb
 
 #cone irradiating whole phantom at 24 cm distance
-/gps/pos/type Point
-/gps/position 0 -61 -92.5 cm
-/gps/ang/maxtheta 33 deg
-/gps/ang/rot1 0 1 0
-/gps/ang/rot2 1 0 0
-/gps/ang/type iso
-/gps/ene/type Arb
-/gps/hist/type arb
+#/gps/pos/type Point
+#/gps/position 0 -61 -92.5 cm
+#/gps/ang/maxtheta 33 deg
+#/gps/ang/rot1 0 1 0
+#/gps/ang/rot2 1 0 0
+#/gps/ang/type iso
+#/gps/ene/type Arb
+#/gps/hist/type arb
 
 
 

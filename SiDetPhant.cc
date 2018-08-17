@@ -43,7 +43,7 @@
 #include "Randomize.hh"
 #include "G4UImanager.hh"
 #include "G4SystemOfUnits.hh"    
-
+#include "time.h"
 #ifdef G4UI_USE
 #include "G4UIExecutive.hh"
 #endif
@@ -56,6 +56,13 @@
 int main(int argc,char** argv) 
 {
 
+
+// for the randomization and have each simulation different
+	CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine());
+	G4long seed = time(NULL);
+	CLHEP::HepRandom::setTheSeed(seed);
+
+//to copy the config file into the output folder
 	// G4String copyconfig="./"+conf()->timenow + "/config.ini";
 	std::ifstream inputfile("config.ini");
 	std::ofstream outputfile("./"+conf()->timenow + "/config.ini");
@@ -70,7 +77,7 @@ int main(int argc,char** argv)
 //	scanf("%d",&x);
 	// Construct the default run manager
 
-
+// code for single threading
 	if (conf()->multithreading ==0){
 		G4RunManager * runManager = new G4RunManager;
 		DetectorConstruction* detector = new DetectorConstruction;
@@ -112,14 +119,15 @@ int main(int argc,char** argv)
 #endif
 		delete runManager;
 	} else if (conf()->multithreading==1) {
+// code for multi threading
 
 
 		G4MTRunManager * runManager = new G4MTRunManager;
-		//runManager->SetNumberOfThreads(conf()->numbercores);
+// how to automatically check the available cores
 		unsigned int threadtouse =std::thread::hardware_concurrency();
 		int multicore = int(threadtouse);
-	outputfile << "spacecheck" << multicore;
-	    printf("using multithreading with \n");
+		outputfile << "spacecheck" << multicore;
+		printf("using multithreading with \n");
 		printf("%d",multicore);
 		runManager->SetNumberOfThreads(multicore);
 		DetectorConstruction* detector = new DetectorConstruction;
