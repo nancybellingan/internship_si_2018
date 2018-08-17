@@ -58,7 +58,6 @@
 //=====================================================================
 
 #include "Run.hh"
-#include "FluenceEnergyDistributionSD.hh"
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
 #include "G4Event.hh"

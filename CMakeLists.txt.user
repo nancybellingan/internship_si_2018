@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.6.2, 2018-08-14T14:29:39. -->
+<!-- Written by QtCreator 4.6.2, 2018-08-17T12:16:34. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -204,7 +204,7 @@
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments">/home/nancy/geant/project/SiDetPhant-Build/macros/run2nancy.mac</value>
     <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">true</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
-    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory.default">/home/nancy/geant/project/SiDetPhant-Build</value>
+    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory.default"></value>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">SiDetPhant</value>

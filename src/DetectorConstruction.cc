@@ -30,7 +30,6 @@
 //
 
 #include "DetectorConstruction.hh"
-#include "FluenceEnergyDistributionSD.hh"
 #include "G4PSEnergyDeposit3D.hh"
 #include "G4PSDoseDeposit3D.hh"
 #include "G4PSCellFlux3D.hh"
@@ -457,7 +456,7 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf(
 	G4Box* solidFastSens = new G4Box("solidFastSens", sensorWidth/2., sensorWidth/2., detectorThickness/2.);
 	//-------------------------------------------------------------------------
 
-	G4LogicalVolume* fast_leadFront_log =new G4LogicalVolume(fast_leadFront_s,Lead,"fast_leadFront_log");
+	fast_leadFront_log =new G4LogicalVolume(fast_leadFront_s,Lead,"fast_leadFront_log");
 	//    fast_leadFront_log->SetVisAttributes(lead_vis);
 
 	//-------------------------------------------------------------------------
@@ -584,7 +583,7 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf(
 
 	//-------------------------------------------------------------------------
 	
-	G4LogicalVolume* albedo_hullFront_log =new G4LogicalVolume(albedo_hullFront_s,Cadmium,"albedo_hullFront_log");
+	albedo_hullFront_log =new G4LogicalVolume(albedo_hullFront_s,Cadmium,"albedo_hullFront_log");
 	//albedo_hullFront_log->SetVisAttributes(lead_vis);
 
 
@@ -769,9 +768,11 @@ void DetectorConstruction::ConstructSDandField() {
 
 	if(conf()->DummyScorer ==1){
 		std::vector<double> binningenergy = conf()->ebin;
-		std::vector<G4PSPassageCellCurrent*> fastflux(conf()->ebin.size());
+		std::vector<G4PSFlatSurfaceCurrent*> fastflux(conf()->ebin.size());
+//		std::vector<G4PSPassageCellCurrent*> fastflux(conf()->ebin.size());
 		std::vector<G4SDParticleWithEnergyFilter*> fastbinfilter(conf()->ebin.size());
-		std::vector<G4PSPassageCellCurrent*> albedoflux(conf()->ebin.size());
+//		std::vector<G4PSPassageCellCurrent*> albedoflux(conf()->ebin.size());
+		std::vector<G4PSFlatSurfaceCurrent*> albedoflux(conf()->ebin.size());
 		std::vector<G4SDParticleWithEnergyFilter*> albedobinfilter(conf()->ebin.size());
 
 		for (uint i=0;i<conf()->ebin.size();i++){
@@ -790,8 +791,9 @@ void DetectorConstruction::ConstructSDandField() {
 			fastbinfilter[i]->show();
 			G4String pt3 ="totfastflux";
 			G4String pt4 =std::to_string(i);
-			fastflux[i] = new G4PSPassageCellCurrent(pt3+pt4);
+			fastflux[i] = new G4PSFlatSurfaceCurrent(pt3+pt4,0);
 			fastflux[i]->SetFilter(fastbinfilter[i]);
+			fastflux[i]->DivideByArea(false);
 			FastDetector->RegisterPrimitive(fastflux[i]);
 		}
 		for (uint i=0;i<conf()->ebin.size();i++){
@@ -810,12 +812,13 @@ void DetectorConstruction::ConstructSDandField() {
 			albedobinfilter[i]->show();
 			G4String pt5 ="totalbedoflux";
 			G4String pt6 =std::to_string(i);
-			albedoflux[i] = new G4PSPassageCellCurrent(pt5+pt6);
+			albedoflux[i] = new G4PSFlatSurfaceCurrent(pt5+pt6, 0);
 			albedoflux[i]->SetFilter(albedobinfilter[i]);
+			albedoflux[i]->DivideByArea(false);
 			AlbedoDetector->RegisterPrimitive(albedoflux[i]);
 		}
-		fast_housing_log->SetSensitiveDetector(FastDetector);
-		albedo_housing_log->SetSensitiveDetector(AlbedoDetector);
+		fast_leadFront_log->SetSensitiveDetector(FastDetector);
+		albedo_hullFront_log->SetSensitiveDetector(AlbedoDetector);
 	}
 	// for the energy deposition scorer the different layers over the 3 directions are given
 	if(conf()->SiLayersDep==1){

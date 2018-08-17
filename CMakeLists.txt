@@ -39,10 +39,7 @@ endif()
 #if one of the following option is ON, then the correspondent definition is enabled and back in the SRC files the ifdef with such definition is enabled and executed
 
 
-option(WITH_SPECSHOOT "Using ProbVec.in for energy distribution" OFF)
-if(WITH_SPECSHOOT)
-	add_definitions(-DSPECSCHUSS)
-endif()
+
 
 #FLUKA, fluctuating cascade in german, simulation package for particles and nuclei in matter
 option(WITH_FLUKA_PSF "Using Fluka particle wise phase space file" OFF)

@@ -127,7 +127,8 @@ private:
 	G4ThreeVector albedo_housing_pos;
 
 	//==========================================================================
-
+	G4LogicalVolume* fast_leadFront_log;
+	G4LogicalVolume* albedo_hullFront_log;
 	G4Box *fSolidPMMAPhantom;
 	G4LogicalVolume* fLogicPMMAPhantom;
 	G4VPhysicalVolume* fPhysiPMMAPhantom;

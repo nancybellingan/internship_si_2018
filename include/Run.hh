@@ -37,8 +37,6 @@
 #include "G4Event.hh"
 #include "DetectorConstruction.hh"
 
-#include "DetectorCollect.hh"
-#include "SDCollect.hh"
 
 #include "G4THitsMap.hh"
 #include <vector>

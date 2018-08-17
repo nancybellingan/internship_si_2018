@@ -37,11 +37,7 @@
 #include "G4MTRunManager.hh"
 #include "G4SDManager.hh"
 #include "DetectorConstruction.hh"
-#include "FluenceEnergyDistributionSD.hh"
-#include "FluenceEnergyDistributionHit.hh"
 #include "G4THitsMap.hh"
-#include "DetectorCollect.hh"
-#include "SDCollect.hh"
 #include <sys/stat.h>
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"    
