@@ -265,7 +265,7 @@ mutexFileWrite4.lock();
 			if (conf()->totdata==1){
 				if(totSphereFlux[binSlot] == nullptr){
 totSphereFlux[binSlot] = new G4THitsMap<G4double>();
-                    *totSphereFlux[binSlot] = *eventSphereFlux[binSlot];
+
 				}else{
 			*totSphereFlux[binSlot] += *eventSphereFlux[binSlot];
 			}
