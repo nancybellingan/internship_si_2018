@@ -62,11 +62,14 @@ struct Conf{
 	mutable std::ofstream* fastTotDep = nullptr;
 	mutable std::ofstream* albedoTotDepfilt = nullptr;
 	mutable std::ofstream* fastTotDepfilt = nullptr;
+	mutable std::ofstream* phantomFlux = nullptr;
 	bool multithreading = false;
 	int numbercores = 0;
 	bool albedocentre = true;
 	bool totdata = false;
 	bool phantomon = true;
+	bool EnableRoomv2 = false;
+	bool phantomscorer = true;
 };
 const Conf* conf();
 

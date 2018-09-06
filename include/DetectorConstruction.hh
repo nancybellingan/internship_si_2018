@@ -133,6 +133,9 @@ private:
 	G4LogicalVolume* fLogicPMMAPhantom;
 	G4VPhysicalVolume* fPhysiPMMAPhantom;
 
+	G4PVPlacement* physicsphantomscorer;
+	G4LogicalVolume* logicphantomscorer;
+
 	G4Box* outerBox;
 	G4Box* innerBox;
 	G4SubtractionSolid* solidroom;

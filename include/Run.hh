@@ -104,7 +104,7 @@ public:
 std::vector<G4THitsMap<G4double>*>  GetAlbedoFlux()  {return totAlbedoFlux;};
 std::vector<G4THitsMap<G4double>*>  GetFastFlux()  {return totFastFlux;};
 std::vector<G4THitsMap<G4double>*>  GetSphereFlux()  {return totSphereFlux;};
-
+std::vector<G4THitsMap<G4double>*>  GetPhantomFlux()  {return totPhantomFlux;};
 
   void DumpAllScorer(std::fstream& out);
 
@@ -118,14 +118,18 @@ private:
 //	DetectorConstruction* fDetector;
 //	std::map<G4String,DetectorCollect*> DetectorCollectMap;
 G4int nEvent;
+std::vector<G4int> PhantomFluxID;
 std::vector<G4int> SphereFluxID;
 std::vector<G4int> FastFluxID;
 std::vector<G4int> AlbedoFluxID;
 G4int EDepFastID;
 G4int EDepAlbedoID;
+  std::vector<G4THitsMap<G4double>*> totPhantomFlux;
   std::vector<G4THitsMap<G4double>*> totSphereFlux;
   std::vector<G4THitsMap<G4double>*> totFastFlux;
   std::vector<G4THitsMap<G4double>*> totAlbedoFlux;
+
+  std::vector<G4THitsMap<G4double>*> eventPhantomFlux;
   std::vector<G4THitsMap<G4double>*> eventSphereFlux;
   std::vector<G4THitsMap<G4double>*> eventFastFlux;
   std::vector<G4THitsMap<G4double>*> eventAlbedoFlux;

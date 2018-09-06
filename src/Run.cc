@@ -67,6 +67,8 @@
 #include "G4VPrimitiveScorer.hh"
 #include "config.h"
 #include <string>
+
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //
 //#define MFD 1
@@ -87,6 +89,14 @@ Run::Run() : G4Run()
 			G4String evtID =std::to_string(i);
 
 			SphereFluxID[i] = pSDman->GetCollectionID(detectorName.pathSphere+evtID);
+		}
+	}
+	if(conf()->phantomscorer ==1){
+		PhantomFluxID.resize(conf()->ebin.size());
+		for (uint i=0;i<conf()->ebin.size();i++){
+			G4String evtID =std::to_string(i);
+
+			PhantomFluxID[i] = pSDman->GetCollectionID("phantomscorer/totalphantomFlux"+evtID);
 		}
 	}
 	//if the DummyScorer is enabled, resize the vector containing all the IDs of the scorers
@@ -247,21 +257,44 @@ void Run::RecordEvent(const G4Event* aEvent) {
 		totSphereFlux.resize(conf()->ebin.size());
 
 		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
-			if(totSphereFlux[binSlot] == nullptr){
 
-				totSphereFlux[binSlot] = new G4THitsMap<G4double>();
-			}
 			eventSphereFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(SphereFluxID[binSlot]));
 			//			printOnHit(pHCE->GetHC(SphereFluxID[binSlot]),conf()->SphereFlux,binSlot, aEvent);
 			printOnHit(eventSphereFlux[binSlot],conf()->SphereFlux,binSlot, aEvent);
-
+mutexFileWrite4.lock();
 			if (conf()->totdata==1){
 				if(totSphereFlux[binSlot] == nullptr){
-
-					totSphereFlux[binSlot] = new G4THitsMap<G4double>();
-				}
+totSphereFlux[binSlot] = new G4THitsMap<G4double>();
+                    *totSphereFlux[binSlot] = *eventSphereFlux[binSlot];
+				}else{
 			*totSphereFlux[binSlot] += *eventSphereFlux[binSlot];
 			}
+			}
+mutexFileWrite4.unlock();
+
+		}
+	}
+	if (conf()->phantomscorer==1){
+
+		eventPhantomFlux.resize(conf()->ebin.size());
+		totPhantomFlux.resize(conf()->ebin.size());
+
+		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
+			if(totPhantomFlux[binSlot] == nullptr){
+
+				totPhantomFlux[binSlot] = new G4THitsMap<G4double>();
+			}
+			eventPhantomFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(PhantomFluxID[binSlot]));
+			printOnHit(eventPhantomFlux[binSlot],conf()->phantomFlux,binSlot, aEvent);
+mutexFileWrite3.lock();
+			if (conf()->totdata==1){
+				if(totPhantomFlux[binSlot] == nullptr){
+
+					totPhantomFlux[binSlot] = new G4THitsMap<G4double>();
+				}
+			*totPhantomFlux[binSlot] += *eventPhantomFlux[binSlot];
+			}
+			mutexFileWrite3.unlock();
 
 		}
 	}
@@ -285,6 +318,7 @@ void Run::RecordEvent(const G4Event* aEvent) {
 			printOnHit(eventFastFlux[binSlot], conf()->fastFlux,binSlot, aEvent);
 			printOnHit(eventAlbedoFlux[binSlot], conf()->albedoFlux,binSlot, aEvent);
 
+mutexFileWrite2.lock();
 			if (conf()->totdata==1){
 				if(totAlbedoFlux[binSlot] == nullptr){
 					totAlbedoFlux[binSlot] = new G4THitsMap<G4double>();
@@ -295,6 +329,7 @@ void Run::RecordEvent(const G4Event* aEvent) {
 				*totAlbedoFlux[binSlot] += *eventAlbedoFlux[binSlot];
 				*totFastFlux[binSlot] += *eventFastFlux[binSlot];
 			}
+			mutexFileWrite2.unlock();
 		}
 	}
 	if(conf()->SiLayersDep==1){
@@ -313,6 +348,7 @@ void Run::RecordEvent(const G4Event* aEvent) {
 		conf()->SphereFlux->flush();
 		conf()->fastFlux->flush();
 		conf()->albedoFlux->flush();
+		conf()->phantomFlux->flush();
 
 		counterForFlileFlush = 0;
 	}
@@ -368,24 +404,33 @@ void Run::Merge(const G4Run * aRun)
 	//}
 	if(conf()->SphereScorer==1 && conf()->totdata==1){
 		static std::mutex mutexFileWrite5;
+		mutexFileWrite5.lock();
 		for(uint num = 0; num < totSphereFlux.size(); num++){
-	std::lock_guard<std::mutex> lock(mutexFileWrite5);
 			*totSphereFlux.at(num)  += *localRun->totSphereFlux[num];
 		}
+		mutexFileWrite5.unlock();
+	}
+	if(conf()->phantomscorer==1 && conf()->totdata==1){
+		static std::mutex mutexFileWrite5;
+		mutexFileWrite5.lock();
+		for(uint num = 0; num < totPhantomFlux.size(); num++){
+
+			*totPhantomFlux.at(num)  += *localRun->totPhantomFlux[num];
+		}
+		mutexFileWrite5.unlock();
 	}
 	if(conf()->DummyScorer==1 && conf()->totdata==1){
 		static std::mutex mutexFileWrite5;
-		static std::mutex mutexFileWrite6;
+		mutexFileWrite5.lock();
 		for(uint num = 0; num < totFastFlux.size(); num++){
-			std::lock_guard<std::mutex> lock(mutexFileWrite5);
 
 			*totFastFlux.at(num)  += *localRun->totFastFlux[num];
 		}
 		for(uint num = 0; num < totAlbedoFlux.size(); num++){
-			std::lock_guard<std::mutex> lock(mutexFileWrite6);
 
 			*totAlbedoFlux.at(num)  += *localRun->totAlbedoFlux[num];
 		}
+		mutexFileWrite5.unlock();
 	}
 	G4Run::Merge(aRun);
 }

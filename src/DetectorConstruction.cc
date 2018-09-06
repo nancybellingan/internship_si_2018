@@ -367,6 +367,37 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logiccolumn = new G4LogicalVolume(solidcolumn,concrete,"logiccolumn",0,0,0);
 		physiccolumn= new G4PVPlacement(0,positioncolumn,logiccolumn,"physiccolumn",logicWorld,false,0);
 	}
+	if (conf()->EnableRoomv2 ==1)
+	{
+
+		// concrete walls of the room
+		G4ThreeVector positionroom = G4ThreeVector (0,0,0);
+		G4ThreeVector innersize= G4ThreeVector(393*cm, 400*cm,1301*cm);
+		G4ThreeVector outersize= G4ThreeVector(innersize.x()+40*cm,innersize.y()+40*cm,innersize.z()+40*cm);
+		//shape as substraction of 2 boxes to have the room walls but inside empty
+
+		outerBox = new G4Box("Outer Box",outersize.x()/2,outersize.y()/2,outersize.z()/2);
+		innerBox = new G4Box("Inner Box",innersize.x()/2,innersize.y()/2,innersize.z()/2);
+		solidroom = new G4SubtractionSolid("solidroom",outerBox,innerBox);
+		// logic
+		logicroom = new G4LogicalVolume(solidroom,concrete,"logicroom",0,0,0);
+		// physics and placement
+		physicroom = new G4PVPlacement(0,positionroom,logicroom,"physicroom",logicWorld, false, 0);
+
+		//.......PVC floor ............................................
+		G4ThreeVector positionfloor = G4ThreeVector(0,-innersize.y()/2+0.1*cm,0);
+		G4ThreeVector sizefloor = G4ThreeVector(innersize.x(),0.2*cm,innersize.z());
+		solidfloor= new G4Box ("solidfloor",sizefloor.x()/2,sizefloor.y()/2,sizefloor.z()/2);
+		logicfloor = new G4LogicalVolume(solidfloor,pvc,"logicfloor",0,0,0);
+		physicfloor= new G4PVPlacement(0,positionfloor,logicfloor,"physicfloor",logicWorld,false,0);
+
+		//..................column................................
+		G4ThreeVector positioncolumn =G4ThreeVector ((innersize.x()-80*cm)/2,0,innersize.z()/2-360*cm-58/2*cm);
+		G4ThreeVector sizecolumn =G4ThreeVector(80*cm,400*cm,58*cm);
+		solidcolumn = new G4Box("solidcolumn",sizecolumn.x()/2,sizecolumn.y()/2,sizecolumn.z()/2);
+		logiccolumn = new G4LogicalVolume(solidcolumn,concrete,"logiccolumn",0,0,0);
+		physiccolumn= new G4PVPlacement(0,positioncolumn,logiccolumn,"physiccolumn",logicWorld,false,0);
+	}
 
 	//------sphere scorer around source
 	if(conf()->SphereScorer == 1){
@@ -401,6 +432,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	                                      false,
 	                                      0,
 	                                      true);
+	if (conf()->phantomscorer == 1){
+		G4ThreeVector positionphantomscorer = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm+ PMMAPhantomSize.z()/2);
+		G4ThreeVector innersizescorer= G4ThreeVector(31.4*cm, 31.4*cm,31.4*cm);
+		G4ThreeVector outersizescorer= G4ThreeVector(31.5*cm, 31.5*cm,31.5*cm);
+		//shape as substraction of 2 boxes to have the scorer hollow
+		G4Box* outerBoxphantom = new G4Box("outerBoxphantom",outersizescorer.x()/2,outersizescorer.y()/2,outersizescorer.z()/2);
+		G4Box* innerBoxphantom = new G4Box("innerBoxphantom",innersizescorer.x()/2,innersizescorer.y()/2,innersizescorer.z()/2);
+		G4SubtractionSolid* solidphantomscorer = new G4SubtractionSolid("solidphantomscorer",outerBoxphantom,innerBoxphantom);
+		// logic
+		logicphantomscorer = new G4LogicalVolume(solidphantomscorer,concrete,"logicphantomscorer",0,0,0);
+		// physics and placement
+		physicsphantomscorer = new G4PVPlacement(0,positionphantomscorer,logicphantomscorer,"physicsphantomscorer",logicWorld, false, 0);
+
+	}
 }
 	// sensors and their boxes:
 
@@ -718,6 +763,8 @@ void DetectorConstruction::ConstructSDandField() {
 	//step one is declaring the multi functional detector and having the SD pointer
 	G4MultiFunctionalDetector* myScorer = new G4MultiFunctionalDetector("mySphereScorer");
 	G4SDManager::GetSDMpointer()->AddNewDetector(myScorer);
+	G4MultiFunctionalDetector* phantomscorer = new G4MultiFunctionalDetector("phantomscorer");
+	G4SDManager::GetSDMpointer()->AddNewDetector(phantomscorer);
 	G4MultiFunctionalDetector* FastDetector = new G4MultiFunctionalDetector("fastDet");
 	G4SDManager::GetSDMpointer()->AddNewDetector(FastDetector);
 	G4MultiFunctionalDetector* AlbedoDetector = new G4MultiFunctionalDetector("albedoDet");
@@ -764,6 +811,35 @@ void DetectorConstruction::ConstructSDandField() {
 		}
 		// link it to the logical volume
 		logicscorer->SetSensitiveDetector(myScorer);
+	}
+
+	if (conf()->phantomscorer == 1){
+		std::vector<double> binningenergy = conf()->ebin;
+		std::vector<G4PSPassageCellCurrent*> totalphantomFlux(conf()->ebin.size());
+		std::vector<G4SDParticleWithEnergyFilter*> binfilter(conf()->ebin.size());
+		for (uint i=0;i<conf()->ebin.size();i++){
+			if (i==0){
+				// creaters 1 filter with that energy binning
+				binfilter[i]=new G4SDParticleWithEnergyFilter("ebinfilter"+std::to_string(i),
+				                                              0,binningenergy.at(i));
+			}else {
+				binfilter[i]=new G4SDParticleWithEnergyFilter("ebinfilter"+std::to_string(i),
+				                                              binningenergy.at(i-1),binningenergy.at(i));
+			}
+
+			binfilter[i]->add("neutron");
+			// binfilter[i]->show();
+			G4String pt1 ="totalphantomFlux";
+			G4String pt2 =std::to_string(i);
+			// add the quantity to be scored as number of neutrons crossing the area
+			totalphantomFlux[i]= new G4PSPassageCellCurrent(pt1+pt2);
+			//add the filter to the scorer
+			totalphantomFlux[i]->SetFilter(binfilter[i]);
+			// register the scorer to the multi functional detector
+			phantomscorer->RegisterPrimitive(totalphantomFlux[i]);
+		}
+		// link it to the logical volume
+		logicphantomscorer->SetSensitiveDetector(phantomscorer);
 	}
 
 	if(conf()->DummyScorer ==1){

@@ -118,6 +118,8 @@ ConfigHandler::ConfigHandler() {
 	swap("albedocentre", conf.albedocentre); //if 1, the albedo is in the centre,
 	// if 0, fast is in the centre
 	swap("phantomon",conf.phantomon);
+	swap("EnableRoomv2", conf.EnableRoomv2);
+	swap("phantomscorer", conf.phantomscorer);
 	loadBinning(conf.ebin,"configbinning.ini"); //load the binning energies
 
 
@@ -138,6 +140,8 @@ ConfigHandler::ConfigHandler() {
 	//output for dummy fast
 	conf.fastFlux = openFile(fastFlux);
 
+	G4String phantomFlux="./"+ conf.timenow + "/phantomflux.dat";
+	conf.phantomFlux = openFile(phantomFlux);
 	G4String albedoFlux="./" + conf.timenow + "/outputAlbedoFlux.dat";
 	// output for dummy albedo
 	conf.albedoFlux = openFile(albedoFlux);

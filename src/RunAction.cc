@@ -98,10 +98,13 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   if(!IsMaster()) return;
 
   auto flux1 = re02Run->GetSphereFlux();
-
+static std::mutex mutexFileWrite7;
+static std::mutex mutexFileWrite8;
+static std::mutex mutexFileWrite9;
+mutexFileWrite7.lock();
   if (conf()->SphereScorer==1 && conf()->totdata == 1){
 
-static std::mutex mutexFileWrite7;
+
 	  std::fstream outp1;
 //	  G4int sum = 0;
 	  G4String outfiler1=conf()->timenow +"/outputspheretot.dat";
@@ -111,21 +114,43 @@ static std::mutex mutexFileWrite7;
 	  for (uint i=0;i<ref.size();i++){
 		  auto energy = conf()->ebin[i];
 		  for(auto line : *(ref[i]) ){
-			  std::lock_guard<std::mutex> lock(mutexFileWrite7);
-
 			  outp1 << "bin n° " << i <<" energy: " << energy << " key " << line.first << " boh " << *line.second << G4endl;
 //			  sum += *line.second;
 		  }
 	outp1.flush();
 		  //gg all
 	  }
+	  outp1 << "tot events" << G4endl;
+	  outp1.close();
+  }
+  mutexFileWrite7.unlock();
+
+  mutexFileWrite8.lock();
+  if (conf()->phantomscorer==1 && conf()->totdata == 1){
+
+
+	  std::fstream outp1;
+//	  G4int sum = 0;
+	  G4String outfiler1=conf()->timenow +"/outputphantomtot.dat";
+	  outp1.open(outfiler1.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+	  std::vector<G4THitsMap<G4double>*> ref = re02Run->GetPhantomFlux();
+//	  auto flux1 = re02Run->GetSphereFlux();
+	  for (uint i=0;i<ref.size();i++){
+		  auto energy = conf()->ebin[i];
+		  for(auto line : *(ref[i]) ){
+			  outp1 << "bin n° " << i <<" energy: " << energy << " key " << line.first << " boh " << *line.second << G4endl;
+//			  sum += *line.second;
+		  }
+	outp1.flush();
+	      //gg all
+	  }
 //	  outp1 << "tot events" << sum << G4endl;
 	  outp1.close();
   }
+  mutexFileWrite8.unlock();
 
+mutexFileWrite9.lock();
   if (conf()->DummyScorer==1 && conf()->totdata == 1){
-	  static std::mutex mutexFileWrite8;
-	      static std::mutex mutexFileWrite9;
 	  std::fstream outp1;
 	  G4String outfiler2=conf()->timenow +"/outputfastdummytot.dat";
 	  G4String outfiler3=conf()->timenow +"/outputalbedodummytot.dat";
@@ -138,7 +163,6 @@ static std::mutex mutexFileWrite7;
 		  auto energy = conf()->ebin[i];
 		  for(auto line : *(flux2[i]) ){
 			  if (line.first == 0) {
-				  std::lock_guard<std::mutex> lock(mutexFileWrite8);
 			  outp1 << "bin n° " << i <<" energy: " << energy << "number events in the bin \t" << *line.second << G4endl;
 		  }
 			  outp1.flush();
@@ -153,7 +177,6 @@ static std::mutex mutexFileWrite7;
 		  auto energy = conf()->ebin[i];
 		  for(auto line : *(flux3[i]) ){
 			  if (line.first == 0) {
-				  std::lock_guard<std::mutex> lock(mutexFileWrite9);
 
 			  outp1 << "bin n° " << i <<" energy: " << energy << "number events in the bin \t" << *line.second << G4endl;
 		  }
@@ -164,6 +187,7 @@ static std::mutex mutexFileWrite7;
 	  }
 	  outp1.close();
   }
+  mutexFileWrite9.unlock();
 
 
 }
