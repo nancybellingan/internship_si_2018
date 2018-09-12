@@ -48,7 +48,7 @@ class G4PVPlacement;
 class G4Material;
 class G4SubtractionSolid;
 class G4Sphere;
-
+class G4Region;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
@@ -84,6 +84,7 @@ private:
 	G4LogicalVolume* fast_housing_log;
 	G4LogicalVolume* albedo_housing_log;
 
+	G4Region* concretewalls;
 	// Data for all Threads
 	//==========================================================================
 

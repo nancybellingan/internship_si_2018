@@ -72,9 +72,9 @@ int main(int argc,char** argv)
 
 
 	//thi is to STOP on start, wait a USER input, so we an attach a debugger.
-//	printf("Type any char (and enter) to continue \n");
-//	int x;
-//	scanf("%d",&x);
+	printf("Type any char (and enter) to continue \n");
+	int x;
+	scanf("%d",&x);
 	// Construct the default run manager
 
 // code for single threading

@@ -366,7 +366,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		solidcolumn = new G4Box("solidcolumn",sizecolumn.x()/2,sizecolumn.y()/2,sizecolumn.z()/2);
 		logiccolumn = new G4LogicalVolume(solidcolumn,concrete,"logiccolumn",0,0,0);
 		physiccolumn= new G4PVPlacement(0,positioncolumn,logiccolumn,"physiccolumn",logicWorld,false,0);
+
+		concretewalls = new G4Region("concretewalls");
+		concretewalls->AddRootLogicalVolume(logiccolumn);
+		concretewalls->AddRootLogicalVolume(logicfloor);
+		concretewalls->AddRootLogicalVolume(logicroom);
 	}
+
 	if (conf()->EnableRoomv2 ==1)
 	{
 
@@ -397,13 +403,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		solidcolumn = new G4Box("solidcolumn",sizecolumn.x()/2,sizecolumn.y()/2,sizecolumn.z()/2);
 		logiccolumn = new G4LogicalVolume(solidcolumn,concrete,"logiccolumn",0,0,0);
 		physiccolumn= new G4PVPlacement(0,positioncolumn,logiccolumn,"physiccolumn",logicWorld,false,0);
+
+
+		concretewalls = new G4Region("concretewalls");
+		concretewalls->AddRootLogicalVolume(logiccolumn);
+		concretewalls->AddRootLogicalVolume(logicfloor);
+		concretewalls->AddRootLogicalVolume(logicroom);
+
 	}
 
 	//------sphere scorer around source
 	if(conf()->SphereScorer == 1){
 		G4ThreeVector positionscorer = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm);
-		G4double scorerr1= 9*cm;
-		G4double scorerr2= 10*cm;
+		G4double scorerr1= 4*cm;
+		G4double scorerr2= 5*cm;
 		solidscorer= new G4Sphere("solidscorer",scorerr1,scorerr2,0,twopi,0,twopi/2);
 		logicscorer = new G4LogicalVolume(solidscorer,Air,"logicscorername",nullptr,nullptr,nullptr);
 		physicscorer= new G4PVPlacement(nullptr,positionscorer,logicscorer,
@@ -840,6 +853,7 @@ void DetectorConstruction::ConstructSDandField() {
 		}
 		// link it to the logical volume
 		logicphantomscorer->SetSensitiveDetector(phantomscorer);
+		//fLogicPMMAPhantom->SetSensitiveDetector(phantomscorer);
 	}
 
 	if(conf()->DummyScorer ==1){

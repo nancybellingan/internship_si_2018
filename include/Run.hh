@@ -101,12 +101,24 @@ public:
   // - Dump All HitsMap of this RUN.
   //   This method calls G4THisMap::PrintAll() for individual HitsMap.
 
-std::vector<G4THitsMap<G4double>*>  GetAlbedoFlux()  {return totAlbedoFlux;};
-std::vector<G4THitsMap<G4double>*>  GetFastFlux()  {return totFastFlux;};
-std::vector<G4THitsMap<G4double>*>  GetSphereFlux()  {return totSphereFlux;};
-std::vector<G4THitsMap<G4double>*>  GetPhantomFlux()  {return totPhantomFlux;};
+
+
+
+  std::vector<int>  GetAlbedoFluxv2()  {return totAlbedoFluxv2;};
+  std::vector<int>  GetFastFluxv2()  {return totFastFluxv2;};
+  std::vector<int>  GetSphereFluxv2()  {return totSphereFluxv2;};
+  std::vector<int>  GetPhantomFluxv2()  {return totPhantomFluxv2;};
+
+//std::vector<G4THitsMap<G4double>*>  GetAlbedoFlux()  {return totAlbedoFlux;};
+//std::vector<G4THitsMap<G4double>*>  GetFastFlux()  {return totFastFlux;};
+//std::vector<G4THitsMap<G4double>*>  GetSphereFlux()  {return totSphereFlux;};
+//std::vector<G4THitsMap<G4double>*>  GetPhantomFlux()  {return totPhantomFlux;};
 
   void DumpAllScorer(std::fstream& out);
+  void printOnHitsphere(const G4VHitsCollection* , std::ofstream* , const uint , const G4Event*  );
+ void printOnHitphantom (const G4VHitsCollection* , std::ofstream* , const uint , const G4Event*  );
+   void printOnHitfast(const G4VHitsCollection* , std::ofstream* , const uint , const G4Event*  );
+ void printOnHitalbedo(const G4VHitsCollection* , std::ofstream* , const uint , const G4Event*  );
 
 private:
  // std::vector<G4String> fCollName;
@@ -128,6 +140,16 @@ G4int EDepAlbedoID;
   std::vector<G4THitsMap<G4double>*> totSphereFlux;
   std::vector<G4THitsMap<G4double>*> totFastFlux;
   std::vector<G4THitsMap<G4double>*> totAlbedoFlux;
+
+  std::vector<int>  totPhantomFluxv2;
+  std::vector<int>  totSphereFluxv2;
+  std::vector<int> totFastFluxv2;
+  std::vector<int>  totAlbedoFluxv2;
+
+  std::vector<int>  partialsumPhantomFluxv2;
+  std::vector<int>  partialsumSphereFluxv2;
+  std::vector<int> partialsumFastFluxv2;
+  std::vector<int>  partialsumAlbedoFluxv2;
 
   std::vector<G4THitsMap<G4double>*> eventPhantomFlux;
   std::vector<G4THitsMap<G4double>*> eventSphereFlux;
