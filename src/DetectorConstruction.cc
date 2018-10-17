@@ -68,6 +68,8 @@
 #include <iostream>
 #include "config.h"
 #include <string>
+
+#include "G4UserLimits.hh"
 //=======================================================================
 
 DetectorConstruction::DetectorConstruction()
@@ -186,9 +188,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	                            0);              // copy number
 
 	//----------------------------------------------------------------------------
-
 	G4double temperature = 293.15*kelvin;
-
+	logicWorld->SetUserLimits(new G4UserLimits(DBL_MAX, DBL_MAX, DBL_MAX,10*MeV));
 	// getting materials required to build the sensors
 	G4NistManager* NistManager = G4NistManager::Instance();
 
@@ -445,6 +446,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	                                      false,
 	                                      0,
 	                                      true);
+
+	phantomregion = new G4Region("phantomregion");
+	phantomregion->AddRootLogicalVolume(fLogicPMMAPhantom);
+
+
 	if (conf()->phantomscorer == 1){
 		G4ThreeVector positionphantomscorer = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm+ PMMAPhantomSize.z()/2);
 		G4ThreeVector innersizescorer= G4ThreeVector(31.4*cm, 31.4*cm,31.4*cm);
@@ -493,9 +499,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4RotationMatrix* rotFast = new G4RotationMatrix();
 	rotFast->rotateY(180.*deg);
 	if (conf()->albedocentre==1){
- Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm+3*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(fast_sensorThickness/2.)*mm);
+ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm+3*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(fast_sensorThickness/2.)*mm + conf()->sensorposz*mm);
 	} else {
-Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(fast_sensorThickness/2.)*mm);
+Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(fast_sensorThickness/2.)*mm + conf()->sensorposz*mm);
 	}
 	// the position is 1.5 cm on the side of the beam, on the phantom
 	G4PVPlacement* fast_housing = new G4PVPlacement(rotFast,Fast_housing_pos,fast_housing_log,"Fast_Housing",
@@ -607,9 +613,9 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf(
 	G4RotationMatrix* rotAlbedo = new G4RotationMatrix();
 	rotAlbedo->rotateY(180.*deg);
 	if (conf()->albedocentre==1){
-		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(albedo_sensorThickness/2.)*mm);
+		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(albedo_sensorThickness/2.)*mm + conf()->sensorposz*mm);
 	}else {
-		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm+3*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(albedo_sensorThickness/2.)*mm);
+		albedo_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm+3*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm+conf()->distancephantsurf*cm-(albedo_sensorThickness/2.)*mm + conf()->sensorposz*mm);
 }
 
 	G4PVPlacement* albedo_housing =new G4PVPlacement(rotAlbedo,albedo_housing_pos,albedo_housing_log,
@@ -654,6 +660,7 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf(
 	
 	G4LogicalVolume* albedo_converter_log =new G4LogicalVolume(albedo_converter_s,LiF_CH2, "albedo_converter_log");
 	//albedo_converter_log->SetVisAttributes(converter_vis);
+
 
 	//-------------------------------------------------------------------------
 	

@@ -1,3 +1,4 @@
+
 //
 // ********************************************************************
 // * License and Disclaimer                                           *
@@ -136,7 +137,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 	  auto ref = re02Run->GetSphereFluxv2();
 	  for (uint i=0;i<ref.size();i++){
 		  auto energy = conf()->ebin[i];
-		   outp1 << "bin n° " << i <<" energy: " << energy << " number of neutrons " << ref[i] << G4endl;
+		    outp1 << "bin n° \t" << i <<"\t energy: " << energy << " \tnumber of neutrons= \t"<< ref[i] << G4endl;
 		  }
 	outp1.flush();
 		  //gg all
@@ -154,7 +155,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 		//	  auto flux1 = re02Run->GetSphereFlux();
 		for (uint i=0;i<ref.size();i++){
 			auto energy = conf()->ebin[i];
-			outp1 << "bin n° " << i <<" energy: " << energy << " number of neutrons " << ref[i] << G4endl;
+			outp1 << "bin n° \t" << i <<"\t energy: " << energy << " \tnumber of neutrons= \t" << ref[i] << G4endl;
 			}
 			outp1.flush();
 			//gg all
@@ -172,7 +173,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 		//outp1 << "prova" << G4endl;
 		for (uint i=0;i<reffast.size();i++){
 			auto energy = conf()->ebin[i];
-			outp1 << "bin n° " << i <<" energy: " << energy << " number of neutrons " << reffast[i] << G4endl;
+			outp1 << "bin n° \t" << i <<"\t energy: " << energy << " \tnumber of neutrons= \t" << reffast[i] << G4endl;
 				}
 		    outp1.flush();
 
@@ -182,7 +183,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 		outp1 << "prova" << G4endl;
 		for (uint i=0;i<refalbedo.size();i++){
 			auto energy = conf()->ebin[i];
-			outp1 << "bin n° " << i <<" energy: " << energy << " number of neutrons " << refalbedo[i] << G4endl;
+			outp1 << "bin n° \t" << i <<"\t energy: " << energy << " \tnumber of neutrons= \t" << refalbedo[i] << G4endl;
 			outp1.flush();
 				
 			}

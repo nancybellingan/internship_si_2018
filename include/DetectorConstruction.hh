@@ -85,6 +85,7 @@ private:
 	G4LogicalVolume* albedo_housing_log;
 
 	G4Region* concretewalls;
+	G4Region* phantomregion;
 	// Data for all Threads
 	//==========================================================================
 

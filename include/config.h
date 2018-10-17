@@ -70,6 +70,8 @@ struct Conf{
 	bool phantomon = true;
 	bool EnableRoomv2 = false;
 	bool phantomscorer = true;
+	bool lightsim = true;
+	int sensorposz = 0;
 };
 const Conf* conf();
 

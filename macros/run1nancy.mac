@@ -36,5 +36,5 @@
 /beam/energy/EnergyFWHM 0
 /random/setSeeds 6657 2
 #
-/run/beamOn 1000
+/run/beamOn 20000
 

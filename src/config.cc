@@ -120,6 +120,8 @@ ConfigHandler::ConfigHandler() {
 	swap("phantomon",conf.phantomon);
 	swap("EnableRoomv2", conf.EnableRoomv2);
 	swap("phantomscorer", conf.phantomscorer);
+	swap("lightsim",conf.lightsim);
+	swap("sensorposz", conf.sensorposz); // 0 is on surface, then goes in mm of depth
 	loadBinning(conf.ebin,"configbinning.ini"); //load the binning energies
 
 
