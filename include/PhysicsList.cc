@@ -36,13 +36,13 @@
 // 26.04.2007 G.Folger: Enable quasielastic for QGS string model
 // 16.05.2007 V.Ivanchenko: rename EM builders
 // 04.06.2010 G.Folger: Use new ctor for builders
-// 16.08.2010 H.Kurashige: Remove inclusion of G4ParticleWithCuts
+// 16.08.2010 H.Kurashige: Remove inclusion of G4ParticleWithCuts 
 // 16.10.2012 A.Ribon: Use new default stopping and ion physics
 //
 //----------------------------------------------------------------------------
 //
-#include <iomanip>
-#include "PhysicsList.hh"
+#include <iomanip>   
+
 #include "globals.hh"
 #include "G4ios.hh"
 #include "G4ProcessManager.hh"
@@ -61,7 +61,7 @@
 #include "G4IonPhysics.hh"
 #include "G4StoppingPhysics.hh"
 //#include "G4HadronElasticPhysicsHP.hh"
-// G4HadronElasticPhysiscsHP extended to
+// G4HadronElasticPhysiscsHP extended to 
 #include "ThermalNeutronScattering.hh"
 
 #include "G4DataQuestionaire.hh"
@@ -77,9 +77,9 @@
 #include "CLHEP/Units/PhysicalConstants.h"
 #include "G4ProcessManager.hh"
 
-template<class T> TPhysicsList<T>::TPhysicsList(G4int ver):T()
+template<class T> TPhysicsList<T>::TPhysicsList(G4int ver):  T()
 {
-  // default cut value  (1.0mm)
+  // default cut value  (1.0mm) 
   // defaultCutValue = 1.0*CLHEP::mm;
 
   G4DataQuestionaire it(photon, neutron);
@@ -88,15 +88,15 @@ template<class T> TPhysicsList<T>::TPhysicsList(G4int ver):T()
 
 
 
-
-
+  
+  
   if (conf()->lightsim == 1){
 this->defaultCutValue = 200*CLHEP::mm;
 } else {
 this->defaultCutValue =  1.0*CLHEP::mm;
 }
-//
-
+//    
+    
   this->SetVerboseLevel(ver);
 
   // EM Physics
@@ -119,7 +119,7 @@ this->defaultCutValue =  1.0*CLHEP::mm;
 
   // Ion Physics
   this->RegisterPhysics( new G4IonPhysics(ver));
-
+  
 
 }
 
@@ -135,49 +135,49 @@ template<class T> void TPhysicsList<T>::SetCuts()
 
 
   if (this->verboseLevel >1){
-	G4cout << "PhysicsList::SetCuts:";
-  }
-  //  " G4VUserPhysicsList::SetCutsWithDefault" method sets
-  //   the default cut value for all particle types
+    G4cout << "PhysicsList::SetCuts:";
+  }  
+  //  " G4VUserPhysicsList::SetCutsWithDefault" method sets 
+  //   the default cut value for all particle types 
 
-  this->SetCutsWithDefault();
+  this->SetCutsWithDefault();   
 
-    //Set proton cut value to 0 for producing low energy recoil nucleus
-    this->SetCutValue(0, "proton");
+	//Set proton cut value to 0 for producing low energy recoil nucleus
+	this->SetCutValue(0, "proton");
 
  // if (this->verboseLevel >0)
- G4VUserPhysicsList::DumpCutValuesTable();
+ G4VUserPhysicsList::DumpCutValuesTable();  
 
 
 
 
   if (conf()->lightsim == 1)
-    {
+	{
 	if (conf()->EnableRoomv2 ==1 || conf()->EnableRoom ==1){
  G4Region* detectorconcrete1 = G4RegionStore::GetInstance()->GetRegion("concretewalls");
   G4ProductionCuts* detectorCutsconcrete = new G4ProductionCuts();
  G4double prodcutconcrete = 50*CLHEP::mm;
  detectorCutsconcrete->SetProductionCut(prodcutconcrete);
   detectorconcrete1->SetProductionCuts(detectorCutsconcrete);
- }
-}
+ } 
+} 
 
-
+  
  // G4ProcessManager* pmanager = G4Gamma::Gamma()->GetProcessManager();
 // pmanager->AddProcess(new G4UserSpecialCuts(),-1,-1,1);
-
-
-
-    if(conf()->phantomon == 1){
+ 
+ 
+ 
+	if(conf()->phantomon == 1){
 	 G4Region* phantomarea = G4RegionStore::GetInstance()->GetRegion("phantomregion");
    G4ProductionCuts* detectorCutsphantom = new G4ProductionCuts();
   G4double prodcutphantom = 0.1*CLHEP::mm;
    detectorCutsphantom->SetProductionCut(prodcutphantom);
     phantomarea->SetProductionCuts(detectorCutsphantom);
-
-	 }
-
-  G4double prodcut = 0.001*CLHEP::mm;
+ 
+     } 
+     
+  G4double prodcut = 0.001*CLHEP::mm;   
    G4Region* detector = G4RegionStore::GetInstance()->GetRegion("detectorRegion");
    G4ProductionCuts* detectorCuts = new G4ProductionCuts();
    detectorCuts->SetProductionCut(prodcut);
