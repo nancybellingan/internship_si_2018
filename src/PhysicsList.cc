@@ -41,8 +41,8 @@
 //
 //----------------------------------------------------------------------------
 //
-/*#include <iomanip>
-
+#include <iomanip>
+#include "PhysicsList.hh"
 #include "globals.hh"
 #include "G4ios.hh"
 #include "G4ProcessManager.hh"
@@ -70,13 +70,14 @@
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
 #include "G4ProductionCuts.hh"
-
+#include "config.h"
 #include "PhysicsList.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
-
+#include "G4UserSpecialCuts.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
+#include "G4ProcessManager.hh"
 
-template<class T> TPhysicsList<T>::TPhysicsList(G4int ver):  T()
+template<class T> TPhysicsList<T>::TPhysicsList(G4int ver):T()
 {
   // default cut value  (1.0mm)
   // defaultCutValue = 1.0*CLHEP::mm;
@@ -85,9 +86,18 @@ template<class T> TPhysicsList<T>::TPhysicsList(G4int ver):  T()
   G4cout << "<<< Geant4 Physics List simulation engine: PhysicsList 2.0"<<G4endl;
   G4cout <<G4endl;
 
-  this->defaultCutValue = 0.1*CLHEP::mm;
-  this->SetVerboseLevel(ver);
 
+
+
+
+  if (conf()->lightsim == 1){
+this->defaultCutValue = 200*CLHEP::mm;
+} else {
+this->defaultCutValue =  1.0*CLHEP::mm;
+}
+//
+
+  this->SetVerboseLevel(ver);
 
   // EM Physics
   this->RegisterPhysics( new G4EmStandardPhysics_option3(ver) );
@@ -110,36 +120,73 @@ template<class T> TPhysicsList<T>::TPhysicsList(G4int ver):  T()
   // Ion Physics
   this->RegisterPhysics( new G4IonPhysics(ver));
 
+
 }
 
 template<class T> TPhysicsList<T>::~TPhysicsList()
 {
 }
-//TPhysicsList<G4VModularPhysicsList> PhysicsList;
+
 template<class T> void TPhysicsList<T>::SetCuts()
 {
+
+
+
+
+
   if (this->verboseLevel >1){
-    G4cout << "PhysicsList::SetCuts:";
+	G4cout << "PhysicsList::SetCuts:";
   }
   //  " G4VUserPhysicsList::SetCutsWithDefault" method sets
   //   the default cut value for all particle types
 
   this->SetCutsWithDefault();
 
-	//Set proton cut value to 0 for producing low energy recoil nucleus
-	this->SetCutValue(0, "proton");
+    //Set proton cut value to 0 for producing low energy recoil nucleus
+    this->SetCutValue(0, "proton");
 
-//  if (this->verboseLevel >0)
-//    G4VUserPhysicsList::DumpCutValuesTable();
-G4double prodcut = 0.001*CLHEP::mm;
+ // if (this->verboseLevel >0)
+ G4VUserPhysicsList::DumpCutValuesTable();
+
+
+
+
+  if (conf()->lightsim == 1)
+    {
+	if (conf()->EnableRoomv2 ==1 || conf()->EnableRoom ==1){
+ G4Region* detectorconcrete1 = G4RegionStore::GetInstance()->GetRegion("concretewalls");
+  G4ProductionCuts* detectorCutsconcrete = new G4ProductionCuts();
+ G4double prodcutconcrete = 50*CLHEP::mm;
+ detectorCutsconcrete->SetProductionCut(prodcutconcrete);
+  detectorconcrete1->SetProductionCuts(detectorCutsconcrete);
+ }
+}
+
+
+ // G4ProcessManager* pmanager = G4Gamma::Gamma()->GetProcessManager();
+// pmanager->AddProcess(new G4UserSpecialCuts(),-1,-1,1);
+
+
+
+    if(conf()->phantomon == 1){
+	 G4Region* phantomarea = G4RegionStore::GetInstance()->GetRegion("phantomregion");
+   G4ProductionCuts* detectorCutsphantom = new G4ProductionCuts();
+  G4double prodcutphantom = 0.1*CLHEP::mm;
+   detectorCutsphantom->SetProductionCut(prodcutphantom);
+    phantomarea->SetProductionCuts(detectorCutsphantom);
+
+	 }
+
+  G4double prodcut = 0.001*CLHEP::mm;
    G4Region* detector = G4RegionStore::GetInstance()->GetRegion("detectorRegion");
-    G4ProductionCuts* detectorCuts = new G4ProductionCuts();
-    detectorCuts->SetProductionCut(prodcut);
-    detectorCuts->SetProductionCut(0,"proton");
-    detector->SetProductionCuts(detectorCuts);
+   G4ProductionCuts* detectorCuts = new G4ProductionCuts();
+   detectorCuts->SetProductionCut(prodcut);
+   detectorCuts->SetProductionCut(0,"proton");
+   detectorCuts->SetProductionCut(1000,"gamma");
+   detector->SetProductionCuts(detectorCuts);
 
 }
 
-*/
+
 
 // 2002 by J.P. Wellisch

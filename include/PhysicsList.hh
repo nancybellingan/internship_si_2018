@@ -59,10 +59,9 @@ public:
 private:
   enum {ok = CompileTimeConstraints::IsA<T, G4VModularPhysicsList>::ok };
 };
-// #include "/home/nancy/geant/project/SiDetPhant/src/PhysicsList.cc"
-#include "PhysicsList.icc"
-typedef TPhysicsList<G4VModularPhysicsList> PhysicsList;
 
+typedef TPhysicsList<G4VModularPhysicsList> PhysicsList;
+//#include "../src/PhysicsList.cc"
 // 2002 by J.P. Wellisch
 
 #endif

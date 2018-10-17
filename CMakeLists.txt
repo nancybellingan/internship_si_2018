@@ -48,26 +48,12 @@ if(WITH_FLUKA_PSF)
 endif()
 
 #range shiftler as in a special kind of proton therapy with a stopping material between beam and patient
-option(WITH_RANGE_SHIFTER "Using Range Shifter" OFF)
-if(WITH_RANGE_SHIFTER)
-	add_definitions(-DRSHIFTER)
-endif()
 
-option(WITH_MFD "Using MultiFunctionalDetector" OFF)
-if(WITH_MFD)
-	add_definitions(-DMFD)
-endif()
 
-option(WITH_DEFMATERIAL "Using G4Materials" ON)
-if(WITH_DEFMATERIAL)
-	add_definitions(-DDEFMATERIAL)
-endif()
 
-# DUMP Voxel only together with VoxelPhantom
-option(WITH_DUMPVOXEL "Dumping voxel values on screen" ON)
-if(WITH_DUMPVOXEL)
-	add_definitions(-DDUMPVOXEL)
-endif()
+
+
+
 
 option(WITH_DEBUG "User defined Debug information to standard output" ON)
 if(WITH_DEBUG)
@@ -75,15 +61,8 @@ if(WITH_DEBUG)
 endif()
 
 
-option(WITH_FAST_DET "Using Fast/Albedo detector on measurement position" ON)
-if(WITH_FAST_DET)
-	add_definitions(-DFAST_DET)
-endif()
 
-option(WITH_ISOT_SOURCE "Using isotropic source instead of parallel square source" OFF)
-if(WITH_ISOT_SOURCE)
-	add_definitions(-DISOT_SOURCE)
-endif()
+
 
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions

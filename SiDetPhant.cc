@@ -81,7 +81,7 @@ int main(int argc,char** argv)
 
 // code for single threading
 	if (conf()->multithreading ==0){
-		G4RunManager * runManager = new G4RunManager;
+		G4RunManager* runManager = new G4RunManager;
 		DetectorConstruction* detector = new DetectorConstruction;
 		// set mandatory initialization class
 		printf("using single thread");
