@@ -674,7 +674,7 @@ Fast_housing_pos = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf(
 
 	//-------------------------------------------------------------------------
 	
-	G4LogicalVolume* albedo_hole_log =new G4LogicalVolume(albedo_hole_s, Air, "albedo_hole_log");
+	albedo_hole_log =new G4LogicalVolume(albedo_hole_s, Air, "albedo_hole_log");
 	//albedo_hole_log->SetVisAttributes(hole_vis);
 
 	//=========================================================================
@@ -793,7 +793,10 @@ void DetectorConstruction::ConstructSDandField() {
 	G4SDManager::GetSDMpointer()->AddNewDetector(FastDepDetector);
 	G4MultiFunctionalDetector* AlbedoDepDetector = new G4MultiFunctionalDetector("albedoDetDep");
 	G4SDManager::GetSDMpointer()->AddNewDetector(AlbedoDepDetector);
-
+	G4MultiFunctionalDetector* frontalphantom = new G4MultiFunctionalDetector("frontalphantom");
+	G4SDManager::GetSDMpointer()->AddNewDetector(frontalphantom);
+	G4MultiFunctionalDetector* backalbedo = new G4MultiFunctionalDetector("backalbedo");
+	G4SDManager::GetSDMpointer()->AddNewDetector(backalbedo);
 
 	// if it´s enabled from config.ini, a sphere around the am-be source is created and it scores the neutrons by
 	// energy binning
@@ -819,7 +822,7 @@ void DetectorConstruction::ConstructSDandField() {
 			}else{
 				binfilter[i]->add("proton");
 			}
-			binfilter[i]->show();
+	//		binfilter[i]->show();
 			G4String pt1 ="totSphereFlux";
 			G4String pt2 =std::to_string(i);
 			// add the quantity to be scored as number of neutrons crossing the area
@@ -880,12 +883,10 @@ void DetectorConstruction::ConstructSDandField() {
 				fastbinfilter[i]=new G4SDParticleWithEnergyFilter("fastebinfilter"+std::to_string(i),
 				                                                  binningenergy[i-1],binningenergy[i]);
 			}
-			if(conf()->Iondummy==0){
+
 				fastbinfilter[i]->add("neutron");
-			}else{
-				fastbinfilter[i]->add("GenericIon");
-			}
-			fastbinfilter[i]->show();
+
+		//	fastbinfilter[i]->show();
 			G4String pt3 ="totfastflux";
 			G4String pt4 =std::to_string(i);
 			fastflux[i] = new G4PSFlatSurfaceCurrent(pt3+pt4,0);
@@ -901,12 +902,10 @@ void DetectorConstruction::ConstructSDandField() {
 				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedoebinfilter"+std::to_string(i),
 				                                                    binningenergy[i-1],binningenergy[i]);
 			}
-			if(conf()->Iondummy==0){
+
 				albedobinfilter[i]->add("neutron");
-			}else{
-				albedobinfilter[i]->add("GenericIon");
-			}
-			albedobinfilter[i]->show();
+
+		//	albedobinfilter[i]->show();
 			G4String pt5 ="totalbedoflux";
 			G4String pt6 =std::to_string(i);
 			albedoflux[i] = new G4PSFlatSurfaceCurrent(pt5+pt6, 0);
@@ -926,5 +925,43 @@ void DetectorConstruction::ConstructSDandField() {
 		LogicFastSi->SetSensitiveDetector(FastDepDetector);
 		LogicAlbedoSi->SetSensitiveDetector(AlbedoDepDetector);
 	}
+
+	if (conf()->backflux==1 ){
+		std::vector<double> binningenergy = conf()->ebin;
+		std::vector<G4PSPassageCellCurrent*> backalbedoflux(conf()->ebin.size());
+		std::vector<G4SDParticleWithEnergyFilter*> albedobinfilter(conf()->ebin.size());
+		std::vector<G4PSFlatSurfaceCurrent*> phantomfrontalflux(conf()->ebin.size());
+		std::vector<G4SDParticleWithEnergyFilter*> phantombinfilter(conf()->ebin.size());
+
+		for (uint i=0;i<conf()->ebin.size();i++){
+			if (i==0){
+				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedobinfilter"+std::to_string(i),
+				                                                  0,binningenergy[i]);
+				phantombinfilter[i]=new G4SDParticleWithEnergyFilter("phantombinfilter"+std::to_string(i),
+				                                                  0,binningenergy[i]);
+			}else {
+				albedobinfilter[i]=new G4SDParticleWithEnergyFilter("albedobinfilter"+std::to_string(i),
+				                                                  binningenergy[i-1],binningenergy[i]);
+				phantombinfilter[i]=new G4SDParticleWithEnergyFilter("phantombinfilter"+std::to_string(i),
+				                                                  binningenergy[i-1],binningenergy[i]);
+			}
+			// fastbinfilter[i]->show();
+			G4String pt3 ="backalbedoflux";
+			G4String pt4 =std::to_string(i);
+			backalbedoflux[i] = new G4PSPassageCellCurrent(pt3+pt4);
+			backalbedoflux[i]->SetFilter(albedobinfilter[i]);
+			// backalbedoflux[i]->DivideByArea(false);
+			backalbedo->RegisterPrimitive(backalbedoflux[i]);
+			G4String pt5 ="phantomfrontalflux";
+			G4String pt6 =std::to_string(i);
+			phantomfrontalflux[i] = new G4PSFlatSurfaceCurrent(pt5+pt6,0);
+			phantomfrontalflux[i]->SetFilter(phantombinfilter[i]);
+			phantomfrontalflux[i]->DivideByArea(false);
+			frontalphantom->RegisterPrimitive(phantomfrontalflux[i]);
+		}
+		albedo_hole_log->SetSensitiveDetector(backalbedo);
+		//fast_leadFront_log->SetSensitiveDetector(frontalfast);
+		fLogicPMMAPhantom->SetSensitiveDetector(frontalphantom);
+	    }
 
 }

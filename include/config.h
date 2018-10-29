@@ -63,6 +63,8 @@ struct Conf{
 	mutable std::ofstream* albedoTotDepfilt = nullptr;
 	mutable std::ofstream* fastTotDepfilt = nullptr;
 	mutable std::ofstream* phantomFlux = nullptr;
+	mutable std::ofstream* phantomfrontal = nullptr;
+	mutable std::ofstream* backalbedo = nullptr;
 	bool multithreading = false;
 	int numbercores = 0;
 	bool albedocentre = true;
@@ -72,6 +74,7 @@ struct Conf{
 	bool phantomscorer = true;
 	bool lightsim = true;
 	int sensorposz = 0;
+	bool backflux = 0;
 };
 const Conf* conf();
 

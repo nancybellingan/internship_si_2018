@@ -108,6 +108,9 @@ public:
   std::vector<int>  GetFastFluxv2()  {return totFastFluxv2;};
   std::vector<int>  GetSphereFluxv2()  {return totSphereFluxv2;};
   std::vector<int>  GetPhantomFluxv2()  {return totPhantomFluxv2;};
+  std::vector<int> Getbackalbedov2()  {return totbackalbedov2;};
+  std::vector<int> GetPhantomfrontalv2(){return totFrontalPhantomv2;};
+
 
 //std::vector<G4THitsMap<G4double>*>  GetAlbedoFlux()  {return totAlbedoFlux;};
 //std::vector<G4THitsMap<G4double>*>  GetFastFlux()  {return totFastFlux;};
@@ -119,6 +122,9 @@ public:
  void printOnHitphantom (const G4VHitsCollection* , std::ofstream* , const uint , const G4Event*  );
    void printOnHitfast(const G4VHitsCollection* , std::ofstream* , const uint , const G4Event*  );
  void printOnHitalbedo(const G4VHitsCollection* , std::ofstream* , const uint , const G4Event*  );
+void printonHitbackalbedo(const G4VHitsCollection* , std::ofstream* , const uint , const G4Event*  );
+void printonHitfrontalphantom(const G4VHitsCollection* , std::ofstream* , const uint , const G4Event*  );
+
 
 private:
  // std::vector<G4String> fCollName;
@@ -130,31 +136,45 @@ private:
 //	DetectorConstruction* fDetector;
 //	std::map<G4String,DetectorCollect*> DetectorCollectMap;
 G4int nEvent;
+
 std::vector<G4int> PhantomFluxID;
 std::vector<G4int> SphereFluxID;
 std::vector<G4int> FastFluxID;
 std::vector<G4int> AlbedoFluxID;
+std::vector<G4int> backalbedoID;
+std::vector<G4int> PhantomFrontalID;
 G4int EDepFastID;
 G4int EDepAlbedoID;
+
   std::vector<G4THitsMap<G4double>*> totPhantomFlux;
   std::vector<G4THitsMap<G4double>*> totSphereFlux;
   std::vector<G4THitsMap<G4double>*> totFastFlux;
   std::vector<G4THitsMap<G4double>*> totAlbedoFlux;
+ std::vector<G4THitsMap<G4double>*> totbackalbedo;
+  std::vector<G4THitsMap<G4double>*> totFrontalPhantom;
+
 
   std::vector<int>  totPhantomFluxv2;
   std::vector<int>  totSphereFluxv2;
   std::vector<int> totFastFluxv2;
   std::vector<int>  totAlbedoFluxv2;
+  std::vector<int> totbackalbedov2;
+  std::vector<int>  totFrontalPhantomv2;
 
   std::vector<int>  partialsumPhantomFluxv2;
   std::vector<int>  partialsumSphereFluxv2;
   std::vector<int> partialsumFastFluxv2;
   std::vector<int>  partialsumAlbedoFluxv2;
+  std::vector<int> partialsumbackalbedov2;
+std::vector<int> partialsumFrontalPhantomv2;
+
 
   std::vector<G4THitsMap<G4double>*> eventPhantomFlux;
   std::vector<G4THitsMap<G4double>*> eventSphereFlux;
   std::vector<G4THitsMap<G4double>*> eventFastFlux;
   std::vector<G4THitsMap<G4double>*> eventAlbedoFlux;
+  std::vector<G4THitsMap<G4double>*> eventbackalbedo;
+  std::vector<G4THitsMap<G4double>*> eventFrontalPhantom;
 };
 
 //

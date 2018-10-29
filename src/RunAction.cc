@@ -126,6 +126,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 	static std::mutex mutexFileWrite7;
 	static std::mutex mutexFileWrite8;
 	static std::mutex mutexFileWrite9;
+	static std::mutex mutexFileWrite10;
 	mutexFileWrite7.lock();
 	
 	
@@ -163,6 +164,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 	}
 	mutexFileWrite8.unlock();
 	mutexFileWrite9.lock();
+
 	if (conf()->DummyScorer==1 && conf()->totdata == 1){
 		std::fstream outp1;
 		G4String outfiler2=conf()->timenow +"/outputfastdummytot.dat";
@@ -192,8 +194,37 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 		outp1.close();
 	}
 	mutexFileWrite9.unlock();
-	
+	mutexFileWrite10.lock();
 
+	if (conf()->backflux==1 && conf()->totdata == 1){
+		std::fstream outp1;
+		G4String outfiler4=conf()->timenow +"/outputbackalbedotot.dat";
+		G4String outfiler5=conf()->timenow +"/outputfastphantomtot.dat";
+		outp1.open(outfiler4.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+		         auto refalbedo = re02Run->Getbackalbedov2();
+				 auto refphantom = re02Run->GetPhantomfrontalv2();
+		//outp1 << "prova" << G4endl;
+		for (uint i=0;i<refalbedo.size();i++){
+			auto energy = conf()->ebin[i];
+			outp1 << "bin n° \t" << i <<"\t energy: " << energy << " \tnumber of neutrons= \t" << refalbedo[i] << G4endl;
+		        }
+		    outp1.flush();
+
+			//gg all
+			    outp1.close();
+		outp1.open(outfiler5.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+		outp1 << "prova" << G4endl;
+		for (uint i=0;i<refphantom.size();i++){
+			auto energy = conf()->ebin[i];
+			outp1 << "bin n° \t" << i <<"\t energy: " << energy << " \tnumber of neutrons= \t" << refphantom[i] << G4endl;
+			outp1.flush();
+
+		    }
+		    //gg all
+
+		outp1.close();
+	}
+	mutexFileWrite10.unlock();
 }
 
 

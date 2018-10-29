@@ -83,7 +83,7 @@ private:
 	G4LogicalVolume* LogicAlbedoSi= nullptr;
 	G4LogicalVolume* fast_housing_log;
 	G4LogicalVolume* albedo_housing_log;
-
+	G4LogicalVolume* albedo_hole_log;
 	G4Region* concretewalls;
 	G4Region* phantomregion;
 	// Data for all Threads

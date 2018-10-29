@@ -122,6 +122,7 @@ ConfigHandler::ConfigHandler() {
 	swap("phantomscorer", conf.phantomscorer);
 	swap("lightsim",conf.lightsim);
 	swap("sensorposz", conf.sensorposz); // 0 is on surface, then goes in mm of depth
+	swap("backflux", conf.backflux); // for frontal side of phantom and frontal fast incident spectra
 	loadBinning(conf.ebin,"configbinning.ini"); //load the binning energies
 
 
@@ -170,6 +171,12 @@ ConfigHandler::ConfigHandler() {
 	G4String fastTotDepfilt="./" + conf.timenow + "/outputFastDeptcorrectedfiltered.dat";
 	// output for E deposition in fast corrected
 	conf.fastTotDepfilt =openFile(fastTotDepfilt);
+
+	G4String phantomfrontal="./" + conf.timenow + "/outputphantomfrontal.dat";
+	conf.phantomfrontal= openFile(phantomfrontal);
+
+	G4String backalbedo="./" + conf.timenow + "/outputbackalbedo.dat";
+	conf.backalbedo= openFile(backalbedo);
 
 //	G4String copyconfig="./"+conf.timenow + "/config.ini";
 //	conf.copyconfig=openFile(copyconfig);

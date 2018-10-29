@@ -158,7 +158,9 @@ template<class T> void TPhysicsList<T>::SetCuts()
   G4ProductionCuts* detectorCutsconcrete = new G4ProductionCuts();
  G4double prodcutconcrete = 50*CLHEP::mm;
  detectorCutsconcrete->SetProductionCut(prodcutconcrete);
+   detectorCutsconcrete->SetProductionCut(50*CLHEP::mm,"neutron");
   detectorconcrete1->SetProductionCuts(detectorCutsconcrete);
+
  } 
 } 
 
@@ -173,8 +175,9 @@ template<class T> void TPhysicsList<T>::SetCuts()
    G4ProductionCuts* detectorCutsphantom = new G4ProductionCuts();
   G4double prodcutphantom = 0.1*CLHEP::mm;
    detectorCutsphantom->SetProductionCut(prodcutphantom);
-    phantomarea->SetProductionCuts(detectorCutsphantom);
- 
+ detectorCutsphantom->SetProductionCut(100000000,"gamma");
+    detectorCutsphantom->SetProductionCut(0.1*CLHEP::mm,"neutron");
+	phantomarea->SetProductionCuts(detectorCutsphantom);
      } 
      
   G4double prodcut = 0.001*CLHEP::mm;   
@@ -182,7 +185,8 @@ template<class T> void TPhysicsList<T>::SetCuts()
    G4ProductionCuts* detectorCuts = new G4ProductionCuts();
    detectorCuts->SetProductionCut(prodcut);
    detectorCuts->SetProductionCut(0,"proton");
-   detectorCuts->SetProductionCut(1000,"gamma");
+   detectorCuts->SetProductionCut(100000000,"gamma");
+   detectorCuts->SetProductionCut(0.001*CLHEP::mm,"neutron");
    detector->SetProductionCuts(detectorCuts);
 
 }

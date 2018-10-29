@@ -84,10 +84,16 @@ Run::Run() : G4Run()
 	totAlbedoFluxv2.resize(conf()->ebin.size());
 	totFastFluxv2.resize(conf()->ebin.size());
 	totPhantomFluxv2.resize(conf()->ebin.size());
+	totbackalbedov2.resize(conf()->ebin.size());
+	totFrontalPhantomv2.resize(conf()->ebin.size());
+
 	partialsumAlbedoFluxv2.resize(conf()->ebin.size());
 	partialsumFastFluxv2.resize(conf()->ebin.size());
 	partialsumPhantomFluxv2.resize(conf()->ebin.size());
 	partialsumSphereFluxv2.resize(conf()->ebin.size());
+	partialsumFrontalPhantomv2.resize(conf()->ebin.size());
+	partialsumbackalbedov2.resize(conf()->ebin.size());
+
 	//if the spherescorer is enabled, resize the vector containing all the IDs of the scorers
 	//and get the ID for each of them via pSDman
 	if(conf()->SphereScorer==1){
@@ -97,6 +103,17 @@ Run::Run() : G4Run()
 			
 			SphereFluxID[i] = pSDman->GetCollectionID(detectorName.pathSphere+evtID);
 		}
+	}
+
+	if (conf()->backflux==1){
+	backalbedoID.resize(conf()->ebin.size());
+	PhantomFrontalID.resize(conf()->ebin.size());
+	for (uint i=0;i<conf()->ebin.size();i++){
+		G4String evtID =std::to_string(i);
+
+		PhantomFrontalID[i] = pSDman->GetCollectionID("frontalphantom/phantomfrontalflux"+evtID);
+		backalbedoID[i] = pSDman->GetCollectionID("backalbedo/backalbedoflux"+evtID);
+	    }
 	}
 	if(conf()->phantomscorer ==1){
 		PhantomFluxID.resize(conf()->ebin.size());
@@ -136,27 +153,7 @@ Run::Run() : G4Run()
 }
 Run::~Run()
 {
-	/*	if (conf()->totdata==1){
-	G4int nmap = conf()->ebin.size();
-	for ( G4int i = 0; i < nmap; i++){
-		if(totAlbedoFlux[i] ){
-			totAlbedoFlux[i]->clear();
-		}
-		if(totFastFlux[i]){
-			totFastFlux[i]->clear();
-		}
-		if(totPhantomFlux[i]){
-			totPhantomFlux[i]->clear();
-		}
-		if(totSphereFlux[i]){
-			totSphereFlux[i]->clear();
-		}
-	}
-	totAlbedoFlux.clear();
-	totFastFlux.clear();
-	totPhantomFlux.clear();
-	totSphereFlux.clear();
-} */
+
 }
 // elements needed for the multithreading (mutable variable and the counterforfileflush)
 #include <mutex>
@@ -181,6 +178,44 @@ void Run::printOnHitsphere(const G4VHitsCollection* eventMap, std::ofstream* fil
 		partialsumSphereFluxv2[binSlot] = partialsumSphereFluxv2[binSlot] + ((int) lround(*(iter->second)));
 		//	}
 		*file << "EventID= \t" << aEvent->GetEventID() << "\t Bin number \t" << binSlot << "\t number of events: \t" << partialsumSphereFluxv2[binSlot] << G4endl;
+	}
+}
+void Run::printonHitbackalbedo(const G4VHitsCollection* eventMap, std::ofstream* file, const uint binSlot, const G4Event* aEvent ){
+	const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
+	auto map = castedMap->GetMap();
+	if(!map->empty()){
+		auto iter = map->find(0);
+		counterForFlileFlush++;
+		partialsumbackalbedov2[binSlot] =0;
+		    std::lock_guard<std::mutex> lock(mutexFileWrite2);
+			partialsumbackalbedov2[binSlot] = partialsumbackalbedov2[binSlot] + ((int) lround(*(iter->second)));
+			    *file << "EventID= \t" << aEvent->GetEventID() << "\t Bin number \t" << binSlot << "\t number of events: \t"
+			          << partialsumbackalbedov2[binSlot] << G4endl;
+	//	partialsumFrontalFastv2[binSlot] = 0;
+	//	counterForFlileFlush++;
+	//	std::lock_guard<std::mutex> lock(mutexFileWrite);
+	//	auto itr = castedMap->GetMap()->begin();
+	//	for (; itr != castedMap->GetMap()->end();itr++ ){
+	//		partialsumFrontalFastv2[binSlot] = partialsumFrontalFastv2[binSlot] + ((int) lround((*itr->second)));
+	//	}
+	//	*file << "EventID= \t" << aEvent->GetEventID() << "\t Bin number \t" << binSlot << "\t number of events: \t" << partialsumFrontalFastv2[binSlot] << G4endl;
+
+	}
+
+}
+void Run::printonHitfrontalphantom(const G4VHitsCollection* eventMap, std::ofstream* file, const uint binSlot, const G4Event* aEvent ){
+	const G4THitsMap<G4double>* castedMap = (const G4THitsMap<G4double>*) eventMap;
+	auto map = castedMap->GetMap();
+	if(! map->empty()){
+		auto iter = map->find(0);
+
+		    counterForFlileFlush++;
+			partialsumFrontalPhantomv2[binSlot] =0;
+			partialsumFrontalPhantomv2[binSlot] = partialsumFrontalPhantomv2[binSlot] + ((int) lround(*(iter->second)));
+
+		*file << "EventID= \t" << aEvent->GetEventID() << "\t Bin number \t" << binSlot << "\t number of events: \t"
+			          << partialsumFrontalPhantomv2[binSlot] << G4endl;
+
 	}
 }
 
@@ -222,7 +257,10 @@ void Run::printOnHitfast(const G4VHitsCollection* eventMap, std::ofstream* file,
 		//		for(int i=0; i<eventRegistered; i++){
 		//			*file << "EventID= \t" << aEvent->GetEventID() << "\t Bin number \t" << binSlot << G4endl;
 		//		}
+
 	}
+
+
 }
 
 void Run::printOnHitalbedo(const G4VHitsCollection* eventMap, std::ofstream* file, const uint binSlot, const G4Event* aEvent ){
@@ -342,7 +380,7 @@ void Run::RecordEvent(const G4Event* aEvent) {
 	if(conf()->SphereScorer==1){
 		
 		eventSphereFlux.resize(conf()->ebin.size());
-		totSphereFlux.resize(conf()->ebin.size());
+	//	totSphereFlux.resize(conf()->ebin.size());
 		
 		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
 			mutexFileWrite2.lock();
@@ -357,9 +395,7 @@ void Run::RecordEvent(const G4Event* aEvent) {
 				}
 				if(partialsumSphereFluxv2[binSlot] && partialsumSphereFluxv2[binSlot]!=0 ){
 					totSphereFluxv2[binSlot] = totSphereFluxv2[binSlot] + partialsumSphereFluxv2[binSlot];
-//					G4cout << "partial sum in binslot" << binSlot << "\t" << partialsumSphereFluxv2[binSlot] << G4endl;
-	//				G4cout << "tot in binslot" << binSlot << "\t" << totSphereFluxv2[binSlot] << G4endl;
-				}
+			}
 			}
 			mutexFileWrite2.unlock();
 		}
@@ -368,13 +404,10 @@ void Run::RecordEvent(const G4Event* aEvent) {
 	if (conf()->phantomscorer==1){
 
 		eventPhantomFlux.resize(conf()->ebin.size());
-		totPhantomFlux.resize(conf()->ebin.size());
+//		totPhantomFlux.resize(conf()->ebin.size());
 
 		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
-			if(totPhantomFlux[binSlot] == nullptr){
 
-				totPhantomFlux[binSlot] = new G4THitsMap<G4double>();
-			}
 			eventPhantomFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(PhantomFluxID[binSlot]));
 			printOnHitphantom(eventPhantomFlux[binSlot],conf()->phantomFlux,binSlot, aEvent);
 			mutexFileWrite4.lock();
@@ -397,11 +430,10 @@ void Run::RecordEvent(const G4Event* aEvent) {
 	    }
 
 	    if(conf()->DummyScorer==1){
-		//Here the sensor has 8 LAYER, but we do not care
+
 		eventAlbedoFlux.resize(conf()->ebin.size());
-		totAlbedoFlux.resize(conf()->ebin.size());
 		eventFastFlux.resize(conf()->ebin.size());
-		totFastFlux.resize(conf()->ebin.size());
+
 
 		for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
 			eventAlbedoFlux[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(AlbedoFluxID[binSlot]));
@@ -420,14 +452,10 @@ void Run::RecordEvent(const G4Event* aEvent) {
 				}
 				if(partialsumAlbedoFluxv2[binSlot] && partialsumAlbedoFluxv2[binSlot]!=0 ){
 					totAlbedoFluxv2[binSlot] = totAlbedoFluxv2[binSlot] + partialsumAlbedoFluxv2[binSlot];
-//					G4cout << "partial sum in binslot" << binSlot << "\t" << totAlbedoFluxv2[binSlot] << G4endl;
-//					G4cout << "tot in binslot" << binSlot << "\t" << totAlbedoFluxv2[binSlot] << G4endl;
-				}
+			}
 				if(partialsumFastFluxv2[binSlot] && partialsumFastFluxv2[binSlot]!=0 ){
 					totFastFluxv2[binSlot] = totFastFluxv2[binSlot] + partialsumFastFluxv2[binSlot];
-//					G4cout << "partial sum in binslot" << binSlot << "\t" << totFastFluxv2[binSlot] << G4endl;
-//					G4cout << "tot in binslot" << binSlot << "\t" << totFastFluxv2[binSlot] << G4endl;
-				}
+			}
 
 			}
 			mutexFileWrite.unlock();
@@ -435,6 +463,38 @@ void Run::RecordEvent(const G4Event* aEvent) {
 		    std::fill(partialsumAlbedoFluxv2.begin(), partialsumAlbedoFluxv2.end(), 0);
 			std::fill(partialsumFastFluxv2.begin(), partialsumFastFluxv2.end(), 0);
 	}
+
+		if(conf()->backflux==1){
+			eventFrontalPhantom.resize(conf()->ebin.size());
+			eventbackalbedo.resize(conf()->ebin.size());
+
+			for (uint binSlot=0;binSlot<conf()->ebin.size();binSlot++){
+
+				eventFrontalPhantom[binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(PhantomFrontalID[binSlot]));
+				printonHitfrontalphantom(eventFrontalPhantom[binSlot],conf()->phantomfrontal,binSlot, aEvent);
+				eventbackalbedo [binSlot] = (G4THitsMap<G4double>*)(pHCE->GetHC(backalbedoID[binSlot]));
+				printonHitbackalbedo(eventbackalbedo[binSlot],conf()->backalbedo,binSlot, aEvent);
+
+				if (conf()->totdata==1){
+					if((!totbackalbedov2[binSlot])){
+						totbackalbedov2[binSlot] = 0;
+					}
+					if((!totFrontalPhantomv2[binSlot])){
+						totFrontalPhantomv2[binSlot] = 0;
+					}
+					if(partialsumbackalbedov2[binSlot] && partialsumbackalbedov2[binSlot]!=0 ){
+						totbackalbedov2[binSlot] = totbackalbedov2[binSlot] + partialsumbackalbedov2[binSlot];
+				}
+					if(partialsumFrontalPhantomv2[binSlot] && partialsumFrontalPhantomv2[binSlot]!=0 ){
+						totFrontalPhantomv2[binSlot] = totFrontalPhantomv2[binSlot] + partialsumFrontalPhantomv2[binSlot];
+				}
+				}
+			}
+			std::fill(partialsumbackalbedov2.begin(), partialsumbackalbedov2.end(), 0);
+			            std::fill(partialsumFrontalPhantomv2.begin(), partialsumFrontalPhantomv2.end(), 0);
+		}
+
+
 
 	if(conf()->SiLayersDep==1){
 		auto depMapFast = (G4THitsMap<G4double>*)(pHCE->GetHC(EDepFastID));
@@ -496,17 +556,10 @@ bool sameSize(const T& lhs, const T& rhs){
 
 void Run::Merge(const G4Run * aRun)
 {	    G4cout << "MERGE" << G4endl;
-	    // Roy this is the part doesnt work in multi threading if i have the tot...flux on.
 	    const Run* localRun = static_cast<const Run*>(aRun);
 		    //=======================================================
 		    // Merge HitsMap of working threads
 		    //=======================================================
-		    //bool a = sameSize(totSphereFlux,localRun->totSphereFlux);
-		    //bool b = sameSize(totFastFlux,localRun->totFastFlux);
-		    //bool c = sameSize(totAlbedoFlux,localRun->totAlbedoFlux);
-		    //if(!(a && b && c)){
-		    //		abort();
-		    //}
 
 
 
@@ -547,6 +600,23 @@ void Run::Merge(const G4Run * aRun)
 					}
 				}
 			}
+
+			if(conf()->backflux==1 && conf()->totdata==1){
+				static std::mutex mutexFileWrite6;
+				for(uint num = 0; num < conf()->ebin.size(); num++){
+					if (localRun->totbackalbedov2[num]){
+						totbackalbedov2[num]  += localRun->totbackalbedov2[num];
+					}
+				}
+				for(uint num = 0; num < conf()->ebin.size(); num++){
+		//			G4cout << "merge4" << G4endl;
+					if (localRun->totFrontalPhantomv2[num]){
+						totFrontalPhantomv2[num]  += localRun->totFrontalPhantomv2[num];
+					}
+				}
+			}
+
+
 			G4Run::Merge(aRun);
 }
 
