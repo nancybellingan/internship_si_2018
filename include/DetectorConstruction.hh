@@ -40,6 +40,7 @@
 #include <G4PSPassageCellCurrent.hh>
 #include "G4SDParticleWithEnergyFilter.hh"
 #include "G4VPrimitiveScorer.hh"
+
 class G4Box;
 class G4Orb;
 class G4LogicalVolume;
@@ -118,6 +119,7 @@ private:
 	G4PVPlacement* fast_leadBack;
 	G4PVPlacement* physiFastSens;
 	G4ThreeVector Fast_housing_pos;
+	G4PVPlacement* fast_housing;
 
 	G4PVPlacement* albedo_hullFront;
 	G4PVPlacement* albedo_gap;
@@ -126,7 +128,10 @@ private:
 	G4PVPlacement* albedo_hullBack;
 	G4PVPlacement* albedo_hole;
 	G4PVPlacement* physiAlbedoSens;
+	G4PVPlacement* fastdummyplacement;
 	G4ThreeVector albedo_housing_pos;
+	G4ThreeVector fastdummy_pos;
+	G4PVPlacement* albedo_housing;
 
 	//==========================================================================
 	G4LogicalVolume* fast_leadFront_log;
@@ -134,9 +139,11 @@ private:
 	G4Box *fSolidPMMAPhantom;
 	G4LogicalVolume* fLogicPMMAPhantom;
 	G4VPhysicalVolume* fPhysiPMMAPhantom;
-
+	G4LogicalVolume* fast_leadBack_log;
 	G4PVPlacement* physicsphantomscorer;
 	G4LogicalVolume* logicphantomscorer;
+G4LogicalVolume* fastdummy_log;
+
 
 	G4Box* outerBox;
 	G4Box* innerBox;

@@ -34,12 +34,8 @@ static const DetectorName detectorName;
 
 
 struct Conf{
-	bool enableRoom = false;
-	i64 eventNumber = 5000;
-	bool isotropic = true;
-	double accuracy = 1;
+	bool DefMaterials = 1;
 	bool SiLayersDep = 0;
-	bool  DefMaterials = 1;
 	bool EnableRoom = 1;
 	bool SphereScorer = 0;
 	double Sourcexcm = 0;
@@ -75,6 +71,8 @@ struct Conf{
 	bool lightsim = true;
 	int sensorposz = 0;
 	bool backflux = 0;
+	bool albedoon = 1;
+	bool faston = 1;
 };
 const Conf* conf();
 

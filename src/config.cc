@@ -99,8 +99,7 @@ ConfigHandler::ConfigHandler() {
 
 		settings.insert(std::pair<std::string,std::string>(key,val));
 	}
-
-	swap("enableRoom",conf.enableRoom); //true in order to consider the room geometry
+	swap("DefMaterials", conf.DefMaterials);
 	swap("SiLayersDep",conf.SiLayersDep); //true for the energy deposition on the Si divided in 40 layers
 	swap("EnableRoom",conf.EnableRoom); // enable the concrete geometry
 	swap("SphereScorer", conf.SphereScorer); //true for the dummy sphere around the Am-Be source for E Kin
@@ -123,6 +122,8 @@ ConfigHandler::ConfigHandler() {
 	swap("lightsim",conf.lightsim);
 	swap("sensorposz", conf.sensorposz); // 0 is on surface, then goes in mm of depth
 	swap("backflux", conf.backflux); // for frontal side of phantom and frontal fast incident spectra
+	swap("faston", conf.faston);
+	swap("albedoon",conf.albedoon);
 	loadBinning(conf.ebin,"configbinning.ini"); //load the binning energies
 
 

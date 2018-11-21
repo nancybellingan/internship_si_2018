@@ -169,20 +169,25 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 		std::fstream outp1;
 		G4String outfiler2=conf()->timenow +"/outputfastdummytot.dat";
 		G4String outfiler3=conf()->timenow +"/outputalbedodummytot.dat";
-		outp1.open(outfiler2.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-		         auto reffast = re02Run->GetFastFluxv2();
-				 auto refalbedo = re02Run->GetAlbedoFluxv2();
+
+
+		if (conf()->faston==1){
+			outp1.open(outfiler2.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
+
+			     auto reffast = re02Run->GetFastFluxv2();
+
 		//outp1 << "prova" << G4endl;
 		for (uint i=0;i<reffast.size();i++){
 			auto energy = conf()->ebin[i];
 			outp1 << "bin n° \t" << i <<"\t energy: " << energy << " \tnumber of neutrons= \t" << reffast[i] << G4endl;
 				}
 		    outp1.flush();
-
 			//gg all
 			    outp1.close();
+		        }
+		if(conf()->albedoon==1){
 		outp1.open(outfiler3.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
-		outp1 << "prova" << G4endl;
+		auto refalbedo = re02Run->GetAlbedoFluxv2();
 		for (uint i=0;i<refalbedo.size();i++){
 			auto energy = conf()->ebin[i];
 			outp1 << "bin n° \t" << i <<"\t energy: " << energy << " \tnumber of neutrons= \t" << refalbedo[i] << G4endl;
@@ -193,13 +198,14 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 
 		outp1.close();
 	}
+	}
 	mutexFileWrite9.unlock();
 	mutexFileWrite10.lock();
 
 	if (conf()->backflux==1 && conf()->totdata == 1){
 		std::fstream outp1;
 		G4String outfiler4=conf()->timenow +"/outputbackalbedotot.dat";
-		G4String outfiler5=conf()->timenow +"/outputfastphantomtot.dat";
+		G4String outfiler5=conf()->timenow +"/outputfrontalphantomtot.dat";
 		outp1.open(outfiler4.c_str(),std::fstream::out | std::fstream::in  |   std::fstream::trunc);
 		         auto refalbedo = re02Run->Getbackalbedov2();
 				 auto refphantom = re02Run->GetPhantomfrontalv2();
