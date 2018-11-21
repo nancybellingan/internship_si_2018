@@ -241,4 +241,4 @@
 /gps/hist/inter Lin
 
 
-/run/beamOn 1000
+/run/beamOn 75000000
