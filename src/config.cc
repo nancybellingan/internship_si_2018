@@ -110,7 +110,7 @@ ConfigHandler::ConfigHandler() {
 	swap("print_stored_trajectories",conf.print_stored_trajectories);
 	swap("Iondummy",conf.Iondummy); //true if only the E kin of ions in the Si dummy is wanted
 	swap("multithreading",conf.multithreading); //if use MT Manager
-	swap("numbercores",conf.numbercores); //  number of cores to use for the MT
+	swap("numbercoreslimited",conf.numbercoreslimited); //  number of cores to use for the MT
 	swap("totdata",conf.totdata); //to print the accumulated quantities on the sphere scorer and the dummy scorer
 	swap("distancephantsurf",conf.distancephantsurf);
 	//distance of the neutron source from the closest phantom surface

@@ -62,7 +62,7 @@ struct Conf{
 	mutable std::ofstream* phantomfrontal = nullptr;
 	mutable std::ofstream* backalbedo = nullptr;
 	bool multithreading = false;
-	int numbercores = 0;
+	bool numbercoreslimited = 0;
 	bool albedocentre = true;
 	bool totdata = false;
 	bool phantomon = true;

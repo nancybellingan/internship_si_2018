@@ -126,12 +126,20 @@ int main(int argc,char** argv)
 
 		G4MTRunManager * runManager = new G4MTRunManager;
 // how to automatically check the available cores
+		if (conf()->numbercoreslimited == 0) {
 		unsigned int threadtouse =std::thread::hardware_concurrency();
 		int multicore = int(threadtouse);
 		outputfile << "spacecheck" << multicore;
 		printf("using multithreading with \n");
 		printf("%d",multicore);
 		runManager->SetNumberOfThreads(multicore);
+		} else if (conf()->numbercoreslimited == 1) {
+			int multicore = 24;
+			outputfile << "spacecheck" << multicore;
+			printf("using multithreading with \n");
+			printf("%d",multicore);
+			runManager->SetNumberOfThreads(multicore);
+		}
 		DetectorConstruction* detector = new DetectorConstruction;
 		// set mandatory initialization classes
 
