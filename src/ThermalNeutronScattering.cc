@@ -113,34 +113,6 @@ void ThermalNeutronScattering::ConstructProcess()
   }
 }
 
-void ThermalNeutronScattering::SetCuts(){
-
-
-
-	if (conf()->lightsim == 1)
-	  {
-	  if (conf()->EnableRoomv2 ==1 || conf()->EnableRoom ==1){
-   G4Region* detectorconcrete2 = G4RegionStore::GetInstance()->GetRegion("concretewalls");
-    G4ProductionCuts* detectorCutsconcrete2 = new G4ProductionCuts();
-	 detectorCutsconcrete2->SetProductionCut(50*CLHEP::mm,"neutron");
-	detectorconcrete2->SetProductionCuts(detectorCutsconcrete2);
-
-   }
-  }
-	if(conf()->phantomon == 1){
-	 G4Region* phantomarea1 = G4RegionStore::GetInstance()->GetRegion("phantomregion");
-   G4ProductionCuts* detectorCutsphantom1 = new G4ProductionCuts();
-    detectorCutsphantom1->SetProductionCut(0.1*CLHEP::mm,"neutron");
-	phantomarea1->SetProductionCuts(detectorCutsphantom1);
-	 }
-
-
-   G4Region* detector1 = G4RegionStore::GetInstance()->GetRegion("detectorRegion");
-   G4ProductionCuts* detectorCuts1 = new G4ProductionCuts();
-   detectorCuts1->SetProductionCut(0.001*CLHEP::mm,"neutron");
-   detector1->SetProductionCuts(detectorCuts1);
-
-}
 
 
 

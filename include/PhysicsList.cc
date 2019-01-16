@@ -172,18 +172,16 @@ template<class T> void TPhysicsList<T>::SetCuts()
 	if(conf()->phantomon == 1){
 	 G4Region* phantomarea = G4RegionStore::GetInstance()->GetRegion("phantomregion");
    G4ProductionCuts* detectorCutsphantom = new G4ProductionCuts();
-  G4double prodcutphantom = 0.1*CLHEP::mm;
+  G4double prodcutphantom = 0.001*CLHEP::mm;
    detectorCutsphantom->SetProductionCut(prodcutphantom);
- detectorCutsphantom->SetProductionCut(100000000,"gamma");
-	phantomarea->SetProductionCuts(detectorCutsphantom);
+phantomarea->SetProductionCuts(detectorCutsphantom);
      } 
      
-  G4double prodcut = 0.001*CLHEP::mm;   
+  G4double prodcut = 0.000002*CLHEP::mm;
    G4Region* detector = G4RegionStore::GetInstance()->GetRegion("detectorRegion");
    G4ProductionCuts* detectorCuts = new G4ProductionCuts();
    detectorCuts->SetProductionCut(prodcut);
    detectorCuts->SetProductionCut(0,"proton");
-   detectorCuts->SetProductionCut(100000000,"gamma");
    detector->SetProductionCuts(detectorCuts);
 
 }

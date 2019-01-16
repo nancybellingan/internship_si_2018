@@ -60,7 +60,9 @@ int main(int argc,char** argv)
 // for the randomization and have each simulation different
 
 	//check if it works with hepjamesrandom
-	CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom());
+	//CLHEP::HepRandom::setTheEngine(new CLHEP::HepJamesRandom());
+	CLHEP::HepRandom::setTheEngine(new CLHEP::Ranlux64Engine());
+
 	G4long seed = time(NULL);
 	CLHEP::HepRandom::setTheSeed(seed);
 
