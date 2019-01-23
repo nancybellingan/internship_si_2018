@@ -52,6 +52,8 @@
 #include "config.h"
 #include "G4RegionStore.hh"
 #include "G4ProductionCuts.hh"
+#include "G4NeutronElasticXS.hh"
+
 // factory
 #include "G4PhysicsConstructorFactory.hh"
 //
@@ -101,6 +103,11 @@ void ThermalNeutronScattering::ConstructProcess()
 	hp->SetMinEnergy( 4.0*eV);
   hel->RegisterMe(hp);
   hel->AddDataSet(new G4NeutronHPElasticData());
+
+  G4NeutronElasticXS* newlist = new G4NeutronElasticXS();
+  newlist->SetMinKinEnergy(4.0*eV);;
+  hel->RegisterMe(newlist);
+  hel->AddDataSet(new G4NeutronElasticXS());
 
 	G4NeutronHPThermalScattering* thermal = new G4NeutronHPThermalScattering();
 	thermal->SetMaxEnergy( 4.0*eV);

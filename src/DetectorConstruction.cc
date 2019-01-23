@@ -89,7 +89,7 @@ DetectorConstruction::~DetectorConstruction()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
-	if (conf()->DefMaterials == 1)
+/*	if (conf()->DefMaterials == 1)
 		//here you can choose if get the materials from the database or build them (else)
 	{
 		G4NistManager* NISTman = G4NistManager::Instance();
@@ -109,8 +109,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			exit(-1);
 		}
 	}else
-	{
-		fthsc_H = new G4Element("TS_H_of_Water","h_water",1.0,1.0079*g/mole);
+	{ */
+	    fthsc_H = new G4Element("TS_H_of_Water","h_water",1.0,1.0079*g/mole);
 		G4Isotope* O16 = new G4Isotope("O16",8,16,15.995*g/mole);
 		fO = new G4Element("Oxygen","O",1);
 		fO->AddIsotope(O16,1.);
@@ -162,7 +162,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			exit(-1);
 		}
 
-	}
+
 
 	G4cout << G4endl << "The materials defined are : " << G4endl << G4endl;
 	G4cout << *(G4Material::GetMaterialTable()) << G4endl;
@@ -190,17 +190,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 	//----------------------------------------------------------------------------
 	G4double temperature = 293.15*kelvin;
+	logicWorld->SetVisAttributes(G4VisAttributes::Invisible);
 	logicWorld->SetUserLimits(new G4UserLimits(DBL_MAX, DBL_MAX, DBL_MAX,10*MeV));
 	// getting materials required to build the sensors
 	G4NistManager* NistManager = G4NistManager::Instance();
 
 	G4Element* Al = NistManager->FindOrBuildElement("Al");
 	G4Element* O  = NistManager->FindOrBuildElement("O");
-	G4Element* C  = NistManager->FindOrBuildElement("C");
-	G4Element* H  = NistManager->FindOrBuildElement("H");
+//	G4Element* C  = NistManager->FindOrBuildElement("C");
+//	G4Element* H  = NistManager->FindOrBuildElement("H");
 	G4Element* Si = NistManager->FindOrBuildElement("Si");
 	G4Element* B  = NistManager->FindOrBuildElement("B");
-	G4Element* N  = NistManager->FindOrBuildElement("N");
+//	G4Element* N  = NistManager->FindOrBuildElement("N");
 	G4Element* F  = NistManager->FindOrBuildElement("F");
 	G4Element* Fe = NistManager->FindOrBuildElement("Fe");
 	G4Element* Pb = NistManager->FindOrBuildElement("Pb");
@@ -273,7 +274,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	//-------------------------------------------------------------------------
 
 	G4Material* Wax = new G4Material("Polyethylenwax",/*0.94*g/cm3 up to
-																					   0.97*g/cm3*/0.98*g/cm3/*measured*/,2,
+																														0.97*g/cm3*/0.98*g/cm3/*measured*/,2,
 	                                 kStateSolid,temperature);
 	Wax->SetChemicalFormula("(C_2H_4)-Polyethylene");
 	Wax->AddElement(C,(G4int)1);
@@ -300,6 +301,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4Material* Glue = new G4Material("Glue",0.83*g/cm3/*???*/,2,
 	                                  kStateLiquid,temperature);
 	Glue->AddElement(C,(G4int)1);
+	//Glue->AddElement(thsc_H,(G4int)2);
 	Glue->AddElement(H,(G4int)2);
 
 	//-------------------------------------------------------------------------
@@ -320,7 +322,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	//-------------------------------------------------------------------------
 
 	//    G4Material* h2o = NistManager->FindOrBuildMaterial("G4_WATER");
-	//  G4Material* pmma = NistManager->FindOrBuildMaterial("G4_PLEXIGLASS");
+	// G4Material* pmma = NistManager->FindOrBuildMaterial("G4_PLEXIGLASS");
 	// Thermal scattering PMMA:
 	
 	//-------------------------------------------------------------------------
@@ -330,7 +332,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4Material* pmma = new G4Material("PMMA",1.19*g/cm3,3,kStateSolid,
 	                                  temperature);
 	pmma->SetChemicalFormula("(C_5H_8O-2)-Polymethil_Methacrylate");
-	pmma->AddElement(thsc_H,(G4int)8);
+	pmma->AddElement(H,(G4int)8);
 	pmma->AddElement(C,(G4int)5);
 	pmma->AddElement(O,(G4int)2);
 
@@ -411,19 +413,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		concretewalls->AddRootLogicalVolume(logiccolumn);
 		concretewalls->AddRootLogicalVolume(logicfloor);
 		concretewalls->AddRootLogicalVolume(logicroom);
+		G4VisAttributes* concretevis = new G4VisAttributes(G4Colour(0.7,1,1,0.1));
+		logiccolumn->SetVisAttributes(concretevis);
+		logicfloor->SetVisAttributes(concretevis);
+		logicroom->SetVisAttributes(concretevis);
 
 	}
 
 	//------sphere scorer around source
 	if(conf()->SphereScorer == 1){
 		G4ThreeVector positionscorer = G4ThreeVector(conf()->Sourcexcm*cm,conf()->Sourceycm*cm,conf()->Sourcezcm*cm);
-		G4double scorerr1= 4*cm;
-		G4double scorerr2= 5*cm;
+		G4double scorerr1= 1.9*cm;
+		G4double scorerr2= 2*cm;
 		solidscorer= new G4Sphere("solidscorer",scorerr1,scorerr2,0,twopi,0,twopi/2);
 		logicscorer = new G4LogicalVolume(solidscorer,Air,"logicscorername",nullptr,nullptr,nullptr);
 		physicscorer= new G4PVPlacement(nullptr,positionscorer,logicscorer,
 		                                "physicscorer",logicWorld,false,0);
 
+		G4VisAttributes* spherecol = new G4VisAttributes(G4Colour(1,1,0,0.8));
+		logicscorer->SetVisAttributes(spherecol);
 	}
 	//Phantom shape, logical volume and position
 	if(conf()->phantomon == 1){
@@ -450,6 +458,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 		phantomregion = new G4Region("phantomregion");
 		phantomregion->AddRootLogicalVolume(fLogicPMMAPhantom);
+		G4VisAttributes* phantomcolor = new G4VisAttributes(G4Colour(0.7,0.5,0.6,0.3));
+		fLogicPMMAPhantom->SetVisAttributes(phantomcolor);
+
 
 
 		if (conf()->phantomscorer == 1){
@@ -640,6 +651,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		                      paramFastSens);     // Parameterisation.
 
 
+
+		G4VisAttributes* hullcol = new G4VisAttributes (G4Colour(1,0.5,0.6,0.3));
+		fast_housing_log->SetVisAttributes(hullcol);
+		G4VisAttributes* cercol = new G4VisAttributes (G4Colour(0.8,1,0.9,0.5));
+		fast_ceramic_log->SetVisAttributes(cercol);
+		G4VisAttributes* convcol = new G4VisAttributes (G4Colour(0.5,1,0.4,0.8));
+		fast_wax_log->SetVisAttributes(convcol);
+
+
+
 	}
 
 
@@ -818,6 +839,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 		new G4PVParameterised("AlbedoSens",     // their name
 		                      LogicAlbedoSi,logicAlbedoSens, kZAxis, numberOfLayers,paramAlbedoSens);
+
+
+		G4VisAttributes* hullcol = new G4VisAttributes (G4Colour(0.9,0.5,0,0.3));
+		albedo_housing_log->SetVisAttributes(hullcol);
+		G4VisAttributes* cercol = new G4VisAttributes (G4Colour(0.8,1,0.9,0.7));
+		albedo_ceramic_log->SetVisAttributes(cercol);
+		G4VisAttributes* convcol = new G4VisAttributes (G4Colour(1,1,0,1));
+		albedo_converter_log->SetVisAttributes(convcol);
+		albedo_hole_log->SetVisAttributes(hullcol);
+		G4VisAttributes* colorgap = new G4VisAttributes (G4Colour(0,0.5,0.6,0.6));
+		albedo_gap_log->SetVisAttributes(colorgap);
 	}
 	//----------------------------------------------------------------------------
 
@@ -982,8 +1014,8 @@ void DetectorConstruction::ConstructSDandField() {
 				FastDetector->RegisterPrimitive(fastflux[i]);
 			}
 
-			 fast_leadFront_log->SetSensitiveDetector(FastDetector);
-			 //fastdummy_log->SetSensitiveDetector(FastDetector);
+			fast_leadFront_log->SetSensitiveDetector(FastDetector);
+			//fastdummy_log->SetSensitiveDetector(FastDetector);
 			//fast_housing_log->SetSensitiveDetector(FastDetector);
 		}
 
