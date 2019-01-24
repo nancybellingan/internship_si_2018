@@ -100,14 +100,11 @@ void ThermalNeutronScattering::ConstructProcess()
 
   G4HadronicProcess* hel = mainElasticBuilder->GetNeutronProcess();
   G4NeutronHPElastic* hp = new G4NeutronHPElastic();
-	hp->SetMinEnergy( 4.0*eV);
+    hp->SetMinEnergy( 3.9*eV);
   hel->RegisterMe(hp);
   hel->AddDataSet(new G4NeutronHPElasticData());
 
-  G4NeutronElasticXS* newlist = new G4NeutronElasticXS();
-  newlist->SetMinKinEnergy(4.0*eV);;
-  hel->RegisterMe(newlist);
-  hel->AddDataSet(new G4NeutronElasticXS());
+
 
 	G4NeutronHPThermalScattering* thermal = new G4NeutronHPThermalScattering();
 	thermal->SetMaxEnergy( 4.0*eV);

@@ -66,7 +66,7 @@
 
 #include "G4DataQuestionaire.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
-//#include "G4HadronPhysicsQGSP_BERT_HP.hh"
+#include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4Region.hh"
 #include "G4RegionStore.hh"
 #include "G4ProductionCuts.hh"
@@ -112,8 +112,10 @@ this->defaultCutValue =  1.0*CLHEP::mm;
   this->RegisterPhysics( new ThermalNeutronScattering(ver) );
 
    // Hadron Physics
-  this->RegisterPhysics(  new G4HadronPhysicsQGSP_BIC_HP(ver));
+ // this->RegisterPhysics(  new G4HadronPhysicsQGSP_BIC_HP(ver));
 
+  // Hadron Physics
+ this->RegisterPhysics(  new G4HadronPhysicsQGSP_BERT_HP(ver));
   // Stopping Physics
   this->RegisterPhysics( new G4StoppingPhysics(ver) );
 

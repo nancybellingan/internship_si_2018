@@ -150,13 +150,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		fWater->AddElement(fO,1);
 		fWater->GetIonisation()->SetMeanExcitationEnergy(78.0*eV);
 
-		fPMMA = new G4Material("PMMA",1.18*g/cm3,3,kStateSolid,293.15*kelvin);
-		fPMMA->AddElement(H,0.080538158);
-		fPMMA->AddElement(C,0.599848);
-		fPMMA->AddElement(fO,0.319618);
+		//fPMMA = new G4Material("PMMA",1.18*g/cm3,3,kStateSolid,293.15*kelvin);
+		//fPMMA->AddElement(H,0.080538158);
+		//fPMMA->AddElement(C,0.599848);
+		//fPMMA->AddElement(fO,0.319618);
 
 
-		if(!fAir || !fWater || !fPMMA || !fthsc_H || !fO )
+		if(!fAir || !fWater || !fthsc_H || !fO )
 		{
 			G4cerr << "Material was not found or build!" << G4endl;
 			exit(-1);
@@ -301,8 +301,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4Material* Glue = new G4Material("Glue",0.83*g/cm3/*???*/,2,
 	                                  kStateLiquid,temperature);
 	Glue->AddElement(C,(G4int)1);
-	//Glue->AddElement(thsc_H,(G4int)2);
-	Glue->AddElement(H,(G4int)2);
+	Glue->AddElement(thsc_H,(G4int)2);
+	//Glue->AddElement(H,(G4int)2);
 
 	//-------------------------------------------------------------------------
 
@@ -332,7 +332,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4Material* pmma = new G4Material("PMMA",1.19*g/cm3,3,kStateSolid,
 	                                  temperature);
 	pmma->SetChemicalFormula("(C_5H_8O-2)-Polymethil_Methacrylate");
-	pmma->AddElement(H,(G4int)8);
+	pmma->AddElement(thsc_H,(G4int)8);
 	pmma->AddElement(C,(G4int)5);
 	pmma->AddElement(O,(G4int)2);
 
